@@ -4,7 +4,7 @@ const appStateSlice = createSlice({
   name: 'appState',
   initialState: { appInitialized: false },
   reducers: {
-    setAppInitialized: (state, action: PayloadAction<boolean>) => {
+    setAppInitialized: (state) => {
       state.appInitialized = true;
     },
   },

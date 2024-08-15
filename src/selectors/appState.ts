@@ -1,4 +1,4 @@
-import { TrackerState } from '../types';
+import { TrackerState } from "../types";
 
 export const getAppInitialized = (state: TrackerState): boolean => {
   return state.appState.appInitialized;
