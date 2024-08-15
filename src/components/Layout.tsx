@@ -1,12 +1,31 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import SideBar from './SideBar';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { getAppInitialized } from '../selectors';
+import { initializeServer } from '../controllers/app';
+import { useDispatch } from '../types';
+import { setAppInitialized } from '../models';
 
 const Layout: React.FC = () => {
 
   const dispatch = useDispatch();
 
+  const appInitialized: boolean = useSelector(state => getAppInitialized(state));
+
+  React.useEffect(() => {
+    if (!appInitialized) {
+      dispatch(initializeServer())
+        .then(() => {
+          console.log('invoke onSetAppInitialized');
+          return dispatch(setAppInitialized());
+        }) as Promise<any>;
+    }
+  }, [appInitialized]);
+
+  if (!appInitialized) {
+    return null;
+  }
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       <SideBar />
