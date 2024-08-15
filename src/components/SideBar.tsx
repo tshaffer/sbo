@@ -4,13 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-const SidebarMenuButton = {
-  Reports: 'Reports',
-  Categories: 'Categories',
-  CategoryAssignmentRules: 'Category Assignment Rules',
-  Statements: 'Statements',
-};
+import { SidebarMenuButton } from '../types';
 
 const SideBar: React.FC = () => {
 
