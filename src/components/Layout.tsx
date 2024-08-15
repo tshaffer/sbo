@@ -1,17 +1,16 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import SideBar from './SideBar';
-import { useSelector } from 'react-redux';
 import { getAppInitialized } from '../selectors';
 import { initializeServer } from '../controllers/app';
-import { useDispatch } from '../types';
+import { useDispatch, useTypedSelector } from '../types';
 import { setAppInitialized } from '../models';
 
 const Layout: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const appInitialized: boolean = useSelector(state => getAppInitialized(state));
+  const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
 
   React.useEffect(() => {
     if (!appInitialized) {
