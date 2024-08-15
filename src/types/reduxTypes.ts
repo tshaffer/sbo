@@ -11,7 +11,5 @@ export const useDispatch = () => useReduxDispatch<TrackerDispatch>();
 export const useTypedSelector: TypedUseSelectorHook<TrackerState> = useSelector;
 
 // export type TrackerDispatch = ThunkDispatch<TrackerState, undefined, TrackerAction<AnyAction>>;
-// export type TrackerVoidPromiseThunkAction = (dispatch: TrackerDispatch, getState: () => TrackerState, extraArgument: undefined) => Promise<void>;
 // export type TrackerAnyPromiseThunkAction = (dispatch: TrackerDispatch, getState: () => TrackerState, extraArgument: undefined) => Promise<any>;
-// export const initializeServer = (): ThunkAction<Promise<void>, TrackerState, undefined, AnyAction> => {
 export type TrackerVoidPromiseThunkAction = ThunkAction<Promise<void>, TrackerState, undefined, AnyAction>;
