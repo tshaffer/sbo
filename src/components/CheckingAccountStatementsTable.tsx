@@ -1,41 +1,89 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+
+import '../styles/Tracker.css';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { cloneDeep, isEmpty } from 'lodash';
+
+import { CheckingAccountStatement } from '../types';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useTypedSelector } from '../types';
+
 import { getCheckingAccountStatements } from '../selectors';
+import { formatCurrency, formatDate } from '../utilities';
+import CheckingAccountStatementTable from './CheckingAccountStatementTable';
+import { loadTransactions } from '../controllers';
 
 const CheckingAccountStatementsTable: React.FC = () => {
 
+  const dispatch = useDispatch();
+
+  const statements: CheckingAccountStatement[] = useTypedSelector(state => getCheckingAccountStatements(state));
+
+  if (isEmpty(statements)) {
+    return null;
+  }
+
+  const navigate = useNavigate();
+
+  const handleStatementClicked = (checkingAccountStatement: CheckingAccountStatement) => {
+    console.log('navigate to credit card statement', checkingAccountStatement.id);
+    dispatch(loadTransactions(checkingAccountStatement.startDate, checkingAccountStatement.endDate, false, true))
+      .then(() => {
+        navigate(`/checkingAccountStatement/${checkingAccountStatement.id}`);
+      });
+  }
+
+  let sortedStatements = cloneDeep(statements);
+  sortedStatements = sortedStatements.sort((a, b) => b.endDate.localeCompare(a.endDate));
+
   return (
-    <div>poops</div>
+    <React.Fragment>
+      <div className="table-container">
+        <div className="table-header">
+          <div className="table-row">
+            <div className="table-cell"></div>
+            <div className="table-cell">Name</div>
+            <div className="table-cell">Start Date</div>
+            <div className="table-cell">End Date</div>
+            <div className="table-cell">Transaction Count</div>
+            <div className="table-cell">Net Debits</div>
+            <div className="table-cell"># of checks</div>
+            <div className="table-cell"># of ATM withdrawals</div>
+          </div>
+        </div>
+        <div className="table-body">
+          {sortedStatements.map((statement: CheckingAccountStatement) => (
+            <React.Fragment key={statement.id}>
+              <div className="table-row">
+                <div className="table-cell"></div>
+                <div
+                  className="grid-table-cell-clickable"
+                  onClick={() => handleStatementClicked(statement)}
+                >
+                  {statement.fileName}
+                </div>
+                <div className="table-cell">{formatDate(statement.startDate)}</div>
+                <div className="table-cell">{formatDate(statement.endDate)}</div>
+                <div className="table-cell">{statement.transactionCount}</div>
+                <div className="table-cell">{formatCurrency(statement.netDebits)}</div>
+                <div className="table-cell">{statement.checkCount}</div>
+                <div className="table-cell">{statement.atmWithdrawalCount}</div>
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </React.Fragment >
   );
-  // const checkingAccountStatements = useSelector(getCheckingAccountStatements);
-  // const navigate = useNavigate();
-
-  // const handleStatementClick = (id: string) => {
-  //   navigate(`/statements/checking-account/${id}`);
-  // };
-
-  // return (
-  //   <div>
-  //     <h2>Checking Account Statements</h2>
-  //     <table>
-  //       <thead>
-  //         <tr>
-  //           <th>Name</th>
-  //           <th>ID</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {checkingAccountStatements.map(statement => (
-  //           <tr key={statement.id} onClick={() => handleStatementClick(statement.id)}>
-  //             <td>{statement.name}</td>
-  //             <td>{statement.id}</td>
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //     </table>
-  //   </div>
-  // );
 };
 
 export default CheckingAccountStatementsTable;
+
+export const CheckingAccountStatementTableWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  // return <CheckingAccountStatementTable checkingAccountStatementId={id as string} navigate={navigate} />;
+  return <CheckingAccountStatementTable />;
+};
