@@ -6,6 +6,9 @@ import { store } from '../models';
 
 import Layout from './Layout';
 import CategoriesTable from './CategoriesTable';
+import Statements from './Statements';
+import CreditCardStatementsTableWrapper from './CreditCardStatementsTable';
+import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 
 const router = createBrowserRouter([
   {
@@ -16,6 +19,20 @@ const router = createBrowserRouter([
         path: 'categories',
         element: <CategoriesTable />,
       },
+      {
+        path: 'statements',
+        element: <Statements />,
+        children: [
+          {
+            path: 'credit-card/:id',
+            element: <CreditCardStatementsTableWrapper />,
+          },
+          {
+            path: 'checking-account/:id',
+            element: <CheckingAccountStatementsTable />,
+          },
+        ],
+      },    
     ]
   }
 ]);

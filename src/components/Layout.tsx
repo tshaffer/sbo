@@ -6,6 +6,7 @@ import { initializeServer } from '../controllers/app';
 import { useDispatch, useTypedSelector } from '../types';
 import { setAppInitialized } from '../models';
 import { loadCategories } from '../controllers/category';
+import { loadCheckingAccountStatements, loadCreditCardStatements } from '../controllers/statements';
 
 const Layout: React.FC = () => {
 
@@ -15,16 +16,19 @@ const Layout: React.FC = () => {
   
   React.useEffect(() => {
     if (!appInitialized) {
-      console.log('invoke initializeServer');
       dispatch(initializeServer())
-        .then(() => {
-          console.log('invoke loadCategories');
-          return dispatch(loadCategories())
-            .then(() => {
-              console.log('invoke onSetAppInitialized');
-              return dispatch(setAppInitialized());
-            }) as Promise<any>;
-        });
+      .then(() => {
+        dispatch(loadCategories())
+      })
+      .then(() => {
+        dispatch(loadCreditCardStatements())
+      })
+      .then(() => {
+        dispatch(loadCheckingAccountStatements())
+      })
+      .then(() => {
+        dispatch(setAppInitialized())
+      });
     }
   }, [appInitialized]);
 
