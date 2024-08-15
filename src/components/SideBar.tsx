@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Box, Button, Accordion, AccordionSummary, AccordionDetails, Typography, Popper, Paper, ClickAwayListener, MenuList, MenuItem } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const SidebarMenuButton = {
   Reports: 'Reports',
@@ -12,23 +13,14 @@ const SidebarMenuButton = {
 };
 
 const SideBar: React.FC = () => {
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentMenu, setCurrentMenu] = useState<string | null>(null);
-
-  const handleHover = (event: React.MouseEvent<HTMLElement>, menu: string) => {
-    setAnchorEl(event.currentTarget);
-    setCurrentMenu(menu);
-  };
 
   const handleClose = (menuItem: string) => {
     setAnchorEl(null);
     setCurrentMenu(null);
     // Here you might want to navigate to the selected item
-  };
-
-  const handleClickAway = () => {
-    setAnchorEl(null);
-    setCurrentMenu(null);
   };
 
   const buttonStyle = {
@@ -66,43 +58,12 @@ const SideBar: React.FC = () => {
         <AccordionDetails>
           <Button
             sx={buttonStyle}
-            aria-haspopup="true"
-            onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Reports)}
-            onClick={() => handleClose('Spending')}
+            onClick={() => handleClose('List')}
+            component={NavLink}
+            to="/statements"
           >
-            <span>{SidebarMenuButton.Reports}</span><ChevronRightIcon />
+            <span>{SidebarMenuButton.Statements}</span><ChevronRightIcon />
           </Button>
-          <Popper
-            id="reports-popper"
-            open={Boolean(anchorEl) && currentMenu === SidebarMenuButton.Reports}
-            anchorEl={anchorEl}
-            placement="right-start"
-            disablePortal={false}
-            modifiers={[
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 0],
-                },
-              },
-            ]}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={handleClickAway}>
-                <MenuList>
-                  <MenuItem onClick={() => handleClose('Spending')}>
-                    <NavLink to="/reports/spending">Spending</NavLink>
-                  </MenuItem>
-                  <MenuItem onClick={() => handleClose('FixedExpenses')}>
-                    <NavLink to="/reports/fixed-expenses">Fixed Expenses</NavLink>
-                  </MenuItem>
-                  <MenuItem onClick={() => handleClose('UnidentifiedTransactions')}>
-                    <NavLink to="/reports/unidentified-transactions">Unidentified Transactions</NavLink>
-                  </MenuItem>
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Popper>
 
           <Button
             sx={buttonStyle}
@@ -124,40 +85,12 @@ const SideBar: React.FC = () => {
 
           <Button
             sx={buttonStyle}
-            aria-haspopup="true"
-            onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Statements)}
-            onClick={() => handleClose(SidebarMenuButton.Statements)}
+            onClick={() => handleClose('List')}
+            component={NavLink}
+            to="/reports"
           >
-            <span>{SidebarMenuButton.Statements}</span><ChevronRightIcon />
+            <span>{SidebarMenuButton.Reports}</span><ChevronRightIcon />
           </Button>
-          <Popper
-            id="statements-popper"
-            open={Boolean(anchorEl) && currentMenu === SidebarMenuButton.Statements}
-            anchorEl={anchorEl}
-            placement="right-start"
-            disablePortal={false}
-            modifiers={[
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 0],
-                },
-              },
-            ]}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={handleClickAway}>
-                <MenuList>
-                  <MenuItem onClick={() => handleClose('Credit Card')}>
-                    <NavLink to="/statements/credit-card">Credit Card</NavLink>
-                  </MenuItem>
-                  <MenuItem onClick={() => handleClose('Checking Account')}>
-                    <NavLink to="/statements/checking-account">Checking Account</NavLink>
-                  </MenuItem>
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Popper>
         </AccordionDetails>
       </Accordion>
     </Box>
@@ -165,3 +98,4 @@ const SideBar: React.FC = () => {
 };
 
 export default SideBar;
+
