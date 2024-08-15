@@ -6,7 +6,7 @@ const initialState: CheckingAccountStatementState = {
 };
 
 const checkingAccountStatementSlice = createSlice({
-  name: 'checkingAccountStatements',
+  name: 'checkingAccountStatement',
   initialState,
   reducers: {
     addCheckingAccountStatements: (

@@ -40,7 +40,7 @@ import React from 'react';
 
 import '../styles/Grid.css';
 
-import { isEmpty } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 
 import { CreditCardStatement } from '../types';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -71,7 +71,8 @@ const CreditCardStatementsTable: React.FC = () => {
       });
   }
 
-  const sortedStatements: CreditCardStatement[] = statements.sort((a, b) => b.endDate.localeCompare(a.endDate));
+  let sortedStatements = cloneDeep(statements);
+  sortedStatements = sortedStatements.sort((a, b) => b.endDate.localeCompare(a.endDate));
 
   return (
     <React.Fragment>

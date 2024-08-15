@@ -6,7 +6,7 @@ const initialState: CreditCardStatementState = {
 };
 
 const creditCardStatementSlice = createSlice({
-  name: 'creditCardStatements',
+  name: 'creditCardStatement',
   initialState,
   reducers: {
     addCreditCardStatements: (
