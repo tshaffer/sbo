@@ -4,15 +4,8 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { getAppInitialized, getCategories } from '../selectors';
 import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
 import '../styles/Tracker.css';
-import { cloneDeep, isNil } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useDispatch, useTypedSelector } from '../types';
-
-// interface CategoriesTableProps {
-//   appInitialized: boolean;
-//   categories: Category[];
-//   categoryAssignmentRules: CategoryAssignmentRule[];
-//   ignoreCategory: Category | undefined;
-// }
 
 const CategoriesTable: React.FC = () => {
 

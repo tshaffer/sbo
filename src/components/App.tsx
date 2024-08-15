@@ -9,6 +9,7 @@ import CategoriesTable from './CategoriesTable';
 import Statements from './Statements';
 import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
+import CreditCardStatementTable from './CreditCardStatementTable';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,12 @@ const router = createBrowserRouter([
           {
             path: 'credit-card',
             element: <CreditCardStatementsTable />,
+            children: [
+              {
+                path: ':id', // Dynamic route for CreditCardStatementDetails
+                element: <CreditCardStatementTable />,
+              },
+            ],
           },
           {
             path: 'checking-account',
