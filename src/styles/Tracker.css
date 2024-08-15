@@ -1,0 +1,147 @@
+/* src/components/CustomTable.css */
+.table-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  width: 100%;
+  /* max-width: 600px; */
+  margin: 0 auto;
+}
+
+.details-table-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  width: 80%;
+  /* max-width: 600px; */
+  margin: 0 auto;
+}
+
+.table-header {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ccc;
+}
+
+.table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 512px;
+  /* Set a fixed height for the table body */
+  overflow-y: auto;
+  /* Add vertical scrollbar */
+}
+
+.table-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+}
+
+.table-cell {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.table-cell:first-child {
+  flex: 0 0 40px;
+  /* Adjust the width of the first column */
+}
+
+.unidentified-table-cell:first-child {
+  flex: 0 0 80px;
+  /* Adjust the width of the first column */
+}
+
+.table-cell:last-child {
+  text-align: right;
+}
+
+.table-cell-category-assignment-rule {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.table-cell-category-assignment-rule:first-child {
+  flex: 0 0 800px;
+  /* Adjust the width of the first column */
+}
+
+.detail-row {
+  display: flex;
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.detail-cell {
+  flex: 1;
+  text-align: left;
+}
+
+.catalog-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-y: auto;
+  /* Add vertical scrollbar */
+}
+
+.spending-report-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 46vh;
+  overflow-y: auto;
+  /* Add vertical scrollbar */
+}
+
+.unidentified-report-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 58vh;
+  overflow-y: auto;
+  /* Add vertical scrollbar */
+}
+
+.category-assignment-rules-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow-y: auto;
+  /* Add vertical scrollbar */
+}
+
+.category-table-cell {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.chatgpt-category-table-container {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.chatgpt-category-table-header {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.chatgpt-category-table-row {
+  border-bottom: 1px solid #ccc;
+}
+
+.chatgpt-category-table-cell {
+  padding: 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.chatgpt-category-table-body {
+  width: 100%;
+}

@@ -5,20 +5,26 @@ import { getAppInitialized } from '../selectors';
 import { initializeServer } from '../controllers/app';
 import { useDispatch, useTypedSelector } from '../types';
 import { setAppInitialized } from '../models';
+import { loadCategories } from '../controllers/category';
 
 const Layout: React.FC = () => {
 
   const dispatch = useDispatch();
 
   const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
-
+  
   React.useEffect(() => {
     if (!appInitialized) {
+      console.log('invoke initializeServer');
       dispatch(initializeServer())
         .then(() => {
-          console.log('invoke onSetAppInitialized');
-          return dispatch(setAppInitialized());
-        }) as Promise<any>;
+          console.log('invoke loadCategories');
+          return dispatch(loadCategories())
+            .then(() => {
+              console.log('invoke onSetAppInitialized');
+              return dispatch(setAppInitialized());
+            }) as Promise<any>;
+        });
     }
   }, [appInitialized]);
 

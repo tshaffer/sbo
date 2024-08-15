@@ -12,4 +12,5 @@ export const useTypedSelector: TypedUseSelectorHook<TrackerState> = useSelector;
 
 // export type TrackerDispatch = ThunkDispatch<TrackerState, undefined, TrackerAction<AnyAction>>;
 // export type TrackerAnyPromiseThunkAction = (dispatch: TrackerDispatch, getState: () => TrackerState, extraArgument: undefined) => Promise<any>;
+export type TrackerAnyPromiseThunkAction = ThunkAction<Promise<any>, TrackerState, undefined, AnyAction>;
 export type TrackerVoidPromiseThunkAction = ThunkAction<Promise<void>, TrackerState, undefined, AnyAction>;

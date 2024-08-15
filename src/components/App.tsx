@@ -5,12 +5,17 @@ import { createBrowserRouter } from 'react-router-dom';
 import { store } from '../models';
 
 import Layout from './Layout';
+import CategoriesTable from './CategoriesTable';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
+      {
+        path: 'categories',
+        element: <CategoriesTable />,
+      },
     ]
   }
 ]);
