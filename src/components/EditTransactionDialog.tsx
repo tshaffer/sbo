@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch, useTypedSelector } from '../types';
 
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box,
@@ -11,22 +10,22 @@ import {
 import { Category, Transaction } from '../types';
 import { getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import { addCategory } from '../models';
+import { addCategoryRedux } from '../models';
 import SelectCategory from './SelectCategory';
 import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog';
 
-export interface EditTransactionDialogPropsFromParent {
+export interface EditTransactionDialogProps {
   open: boolean;
   transactionId: string;
   onClose: () => void;
   onSave: (updatedTransaction: Transaction) => void;
 }
 
-interface EditTransactionDialogProps extends EditTransactionDialogPropsFromParent {
-  transaction: Transaction;
-  inferredCategory: Category | null | undefined;
-  onAddCategory: (category: Category) => any;
-}
+// interface EditTransactionDialogProps extends EditTransactionDialogPropsFromParent {
+//   transaction: Transaction;
+//   inferredCategory: Category | null | undefined;
+//   onAddCategory: (category: Category) => any;
+// }
 
 const EditTransactionDialog = (props: EditTransactionDialogProps) => {
 
@@ -34,12 +33,15 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     return null;
   }
 
-  const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
-  const [overrideCategory, setOverrideCategory] = React.useState(props.transaction.overrideCategory);
-  const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.transaction.overrideCategoryId);
-  const [overrideFixedExpense, setOverrideFixedExpense] = useState(props.transaction.overrideFixedExpense);
-  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(props.transaction.overriddenFixedExpense);
-  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(props.transaction.excludeFromReportCalculations);
+  const transaction: Transaction = useTypedSelector(state => getTransactionById(state, props.transactionId)!);
+  const inferredCategory: Category | null | undefined = useTypedSelector(state => getCategoryByTransactionId(state, props.transactionId));
+
+  const [userDescription, setUserDescription] = useState(transaction.userDescription);
+  const [overrideCategory, setOverrideCategory] = React.useState(transaction.overrideCategory);
+  const [overrideCategoryId, setOverrideCategoryId] = React.useState(transaction.overrideCategoryId);
+  const [overrideFixedExpense, setOverrideFixedExpense] = useState(transaction.overrideFixedExpense);
+  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(transaction.overriddenFixedExpense);
+  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(transaction.excludeFromReportCalculations);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
   const handleEditTransactionMoreOptions = () => {
@@ -60,7 +62,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
 
   const handleSave = () => {
     const updatedTransaction: Transaction = {
-      ...props.transaction,
+      ...transaction,
       userDescription,
       overrideCategory,
       overrideCategoryId,
@@ -96,7 +98,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
             <TextField
               label="Transaction Date"
-              value={formatDate(props.transaction.transactionDate)}
+              value={formatDate(transaction.transactionDate)}
               InputProps={{
                 readOnly: true,
               }}
@@ -105,7 +107,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
             />
             <TextField
               label="Amount"
-              value={formatCurrency(-props.transaction.amount)}
+              value={formatCurrency(-transaction.amount)}
               InputProps={{
                 readOnly: true,
               }}
@@ -119,7 +121,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
             />
             <TextField
               label="Inferred Category"
-              value={props.inferredCategory?.name || 'Uncategorized'}
+              value={inferredCategory?.name || 'Uncategorized'}
               InputProps={{
                 readOnly: true,
               }}

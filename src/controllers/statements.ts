@@ -1,6 +1,6 @@
 import axios from "axios";
-import { addCheckingAccountStatements, addCreditCardStatements } from "../models";
 import { CheckingAccountStatement, CreditCardStatement, TrackerAnyPromiseThunkAction, TrackerDispatch, TrackerVoidPromiseThunkAction, apiUrlFragment, serverUrl } from "../types";
+import { addCreditCardStatements, addCheckingAccountStatements } from "../models";
 
 export const loadCreditCardStatements = (): TrackerAnyPromiseThunkAction => {
 

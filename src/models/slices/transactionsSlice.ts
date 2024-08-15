@@ -20,13 +20,13 @@ const transactionsSlice = createSlice({
         }
       });
     },
-    updateTransaction: (state, action: PayloadAction<Transaction>) => {
+    updateTransactionRedux: (state, action: PayloadAction<Transaction>) => {
       const transaction = action.payload;
       if (state.byId[transaction.id]) {
         state.byId[transaction.id] = transaction;
       }
     },
-    updateCategoryInTransactions: (
+    updateCategoryInTransactionsRedux: (
       state,
       action: PayloadAction<{ categoryId: string; transactionIds: string[] }>
     ) => {
@@ -74,7 +74,7 @@ const transactionsSlice = createSlice({
         state.byId[transactionId].overriddenFixedExpense = overriddenFixedExpense;
       }
     },
-    splitTransaction: (
+    splitTransactionRedux: (
       state,
       action: PayloadAction<{ parentTransactionId: string; splitTransactions: SplitTransaction[] }>
     ) => {
@@ -100,13 +100,13 @@ const transactionsSlice = createSlice({
 export const {
   clearTransactions,
   addTransactions,
-  updateTransaction,
-  updateCategoryInTransactions,
+  updateTransactionRedux,
+  updateCategoryInTransactionsRedux,
   setOverrideCategory,
   setOverrideCategoryId,
   setOverrideFixedExpense,
   setOverriddenFixedExpense,
-  splitTransaction,
+  splitTransactionRedux,
 } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

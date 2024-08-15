@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch, useTypedSelector } from '../types';
+
 
 import { isNil } from 'lodash';
 
@@ -11,30 +11,27 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, Tooltip } from '@mui/material';
 
-import { getAppInitialized, getCategories, getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { Category, SidebarMenuButton, Transaction } from '../types';
-import { addCategory, canAddCategoryAssignmentRule } from '../controllers';
-import { TrackerDispatch } from '../models';
 import SelectCategory from './SelectCategory';
+import { getAppInitialized, getCategories, getCategoryByTransactionId, getTransactionById } from '../selectors';
+import { canAddCategoryAssignmentRule } from '../controllers';
 
-export interface AddCategoryAssignmentRuleDialogPropsFromParent {
+export interface AddCategoryAssignmentRuleDialogProps {
   open: boolean;
   transactionId: string;
   onSaveRule: (pattern: string, categoryId: string) => void;
   onClose: () => void;
 }
 
-export interface AddCategoryAssignmentRuleDialogProps extends AddCategoryAssignmentRuleDialogPropsFromParent {
-  appInitialized: boolean;
-  transaction: Transaction | undefined;
-  categories: Category[];
-  initialCategoryId: string | null | undefined;
-  onAddCategory: (category: Category) => any;
-  onCanAddCategoryAssignmentRule: (pattern: string) => any;
-}
-
 const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogProps) => {
 
+  const dispatch = useDispatch();
+
+  const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
+  const transaction: Transaction | undefined = useTypedSelector(state => getTransactionById(state, props.transactionId));
+  const categories: Category[] = useTypedSelector(state => getCategories(state));
+  const initialCategoryId: string | null | undefined = useTypedSelector(state => getCategoryByTransactionId(state, props.transactionId)?.id);
+  
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
   const getTransactionDetails = (transaction: Transaction | undefined): string => {
@@ -47,21 +44,21 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
 
   const { open, onClose } = props;
 
-  const [pattern, setPattern] = React.useState(getTransactionDetails(props.transaction));
-  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>(props.initialCategoryId ?? '');
+  const [pattern, setPattern] = React.useState(getTransactionDetails(transaction));
+  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>(initialCategoryId ?? '');
   const textFieldRef = useRef(null);
 
   useEffect(() => {
-    setPattern(getTransactionDetails(props.transaction));
-  }, [props.open, props.transactionId, props.transaction]);
+    setPattern(getTransactionDetails(transaction));
+  }, [props.open, props.transactionId, transaction]);
 
   useEffect(() => {
     if (open) {
       setTimeout(() => {
         if (open && textFieldRef.current) {
           (textFieldRef.current as any).focus();
-          if (props.initialCategoryId) {
-            setSelectedCategoryId(props.initialCategoryId);
+          if (initialCategoryId) {
+            setSelectedCategoryId(initialCategoryId);
           } else {
             setSelectedCategoryId('');
           }
@@ -84,7 +81,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
       return;
     }
     if (pattern !== '') {
-      props.onCanAddCategoryAssignmentRule(pattern)
+      dispatch(canAddCategoryAssignmentRule(pattern))
         .then((canAddCategoryRule: boolean) => {
           if (!canAddCategoryRule) {
             alert('Pattern already exists');
@@ -118,11 +115,11 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
   };
 
   const renderTransactionDetails = (): JSX.Element => {
-    if (isNil(props.transaction)) {
+    if (isNil(transaction)) {
       return <></>;
     } else {
       return <TextField
-        defaultValue={getTransactionDetails(props.transaction)}
+        defaultValue={getTransactionDetails(transaction)}
         inputProps={{ readOnly: true }}
         disabled
       />
@@ -193,20 +190,4 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
   );
 };
 
-function mapStateToProps(state: any, ownProps: AddCategoryAssignmentRuleDialogPropsFromParent) {
-  return {
-    appInitialized: getAppInitialized(state),
-    transaction: getTransactionById(state, ownProps.transactionId),
-    categories: getCategories(state),
-    initialCategoryId: getCategoryByTransactionId(state, ownProps.transactionId)?.id,
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onAddCategory: addCategory,
-    onCanAddCategoryAssignmentRule: canAddCategoryAssignmentRule,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddCategoryAssignmentRuleDialog);
+export default AddCategoryAssignmentRuleDialog;

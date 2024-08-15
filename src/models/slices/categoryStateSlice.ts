@@ -9,10 +9,10 @@ const categoryStateSlice = createSlice({
   name: 'categories',
   initialState,
   reducers: {
-    addCategory: (state, action: PayloadAction<Category>) => {
+    addCategoryRedux: (state, action: PayloadAction<Category>) => {
       state.categories.push(action.payload);
     },
-    addCategories: (state, action: PayloadAction<Category[]>) => {
+    addCategoriesRedux: (state, action: PayloadAction<Category[]>) => {
       state.categories.push(...action.payload);
     },
     replaceCategoriesRedux: (state, action: PayloadAction<Category[]>) => {
@@ -21,6 +21,6 @@ const categoryStateSlice = createSlice({
   },
 });
 
-export const { addCategory, addCategories, replaceCategoriesRedux } = categoryStateSlice.actions;
+export const { addCategoryRedux, addCategoriesRedux, replaceCategoriesRedux } = categoryStateSlice.actions;
 
 export default categoryStateSlice.reducer;

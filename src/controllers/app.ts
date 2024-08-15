@@ -1,9 +1,10 @@
 import axios from "axios";
-import { serverUrl, apiUrlFragment, TrackerDispatch, TrackerState, TrackerVoidPromiseThunkAction } from "../types";
+import { serverUrl, apiUrlFragment, TrackerAnyPromiseThunkAction, TrackerDispatch } from "../types";
 
-export const initializeServer = (): TrackerVoidPromiseThunkAction => {
-  return async (dispatch: TrackerDispatch, getState: () => TrackerState) => {
+export const initializeServer = (): TrackerAnyPromiseThunkAction => {
+  return (dispatch: TrackerDispatch, getState: any) => {
     const path = serverUrl + apiUrlFragment + 'initializeDB';
-    await axios.post(path);
+    return axios.post(path);
   };
 };
+

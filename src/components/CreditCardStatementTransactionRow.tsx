@@ -14,7 +14,7 @@ import '../styles/Grid.css';
 import { Tooltip, IconButton, Checkbox } from '@mui/material';
 import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { updateTransaction } from '../models';
+import { addCategoryAssignmentRuleRedux, updateTransactionRedux } from '../models';
 
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
@@ -32,13 +32,20 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const dispatch = useDispatch();
 
   const creditCardTransaction: CreditCardTransaction = useTypedSelector(state => getTransactionById(state, props.creditCardTransactionId)! as CreditCardTransaction);
+  const matchingRule: MatchingRuleAssignment | null = useTypedSelector(state => findMatchingRule(state, creditCardTransaction));
+  const categoryNameFromCategoryAssignmentRule: string = matchingRule ? matchingRule.category.name : '';
+  const patternFromCategoryAssignmentRule: string | null = matchingRule ? matchingRule.pattern : null;
+  const categoryNameFromCategoryOverride = useTypedSelector(state => getOverrideCategory(state, props.creditCardTransactionId)
+    ? getCategoryById(state, getOverrideCategoryId(state, props.creditCardTransactionId))!.name
+    : '');
+  const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
 
   const handleEditTransaction = () => {
     setShowEditTransactionDialog(true);
   };
 
   const handleSaveTransaction = (transaction: Transaction) => {
-    dispatch(updateTransaction(transaction));
+    dispatch(updateTransactionRedux(transaction));
   };
 
   const handleCloseEditTransactionDialog = () => {
@@ -58,7 +65,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       categoryId
     };
     console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
+    dispatch(addCategoryAssignmentRuleRedux(categoryAssignmentRule));
   }
 
   const handleCloseAddRuleDialog = () => {
@@ -108,16 +115,16 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="grid-table-cell">{creditCardTransaction.description}</div>
       {renderEditIcon()}
       <div className="grid-table-cell">{creditCardTransaction.userDescription}</div>
-      <div className="grid-table-cell">{props.categorizedTransactionName}</div>
+      <div className="grid-table-cell">{categorizedTransactionName}</div>
       <div className="grid-table-cell">{creditCardTransaction.category}</div>
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
           <AssignmentIcon />
         </IconButton>
       </Tooltip>
-      <div className="grid-table-cell">{props.categoryNameFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{props.patternFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{props.categoryNameFromCategoryOverride}</div>
+      <div className="grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
+      <div className="grid-table-cell">{patternFromCategoryAssignmentRule}</div>
+      <div className="grid-table-cell">{categoryNameFromCategoryOverride}</div>
     </React.Fragment>
   );
 }

@@ -5,7 +5,7 @@ import { useDispatch, useTypedSelector } from '../types';
 
 import { CreditCardTransactionRowInStatementTableProperties } from '../types';
 import { isNil } from 'lodash';
-import { updateCategoryInTransactions } from '../models/slices/transactionsSlice';
+import { updateCategoryInTransactionsRedux } from '../models/slices/transactionsSlice';
 import { getCreditCardTransactionRowInStatementTableProperties, getTransactionsByStatementId } from '../selectors';
 import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
@@ -41,7 +41,7 @@ const CreditCardStatementDetails: React.FC = () => {
   };
 
   const handleSaveOverrideTransactionCategories = (categoryId: string) => {
-    dispatch(updateCategoryInTransactions({
+    dispatch(updateCategoryInTransactionsRedux({
       categoryId,
       transactionIds: Array.from(selectedTransactionIds)
     }));

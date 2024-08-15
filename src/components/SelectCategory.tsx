@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { useDispatch, useTypedSelector } from '../types';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,9 +9,9 @@ import { cloneDeep } from 'lodash';
 import { Button, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 import { Category, CategoryMenuItem, DisregardLevel, StringToCategoryMenuItemLUT } from '../types';
-import { addCategory } from '../controllers';
 import { getCategories } from '../selectors';
 import AddCategoryDialog from './AddCategoryDialog';
+import { addCategoryRedux } from '../models';
 
 export interface SelectCategoryProps {
   selectedCategoryId: string;
@@ -21,9 +20,13 @@ export interface SelectCategoryProps {
 
 const SelectCategory = (props: SelectCategoryProps) => {
 
+  const dispatch = useDispatch();
+
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>(props.selectedCategoryId);
+
+  const categories: Category[] = useTypedSelector(state => getCategories(state));
 
   React.useEffect(() => {
     setSelectedCategoryId(props.selectedCategoryId);
@@ -113,7 +116,7 @@ const SelectCategory = (props: SelectCategoryProps) => {
       transactionsRequired,
       disregardLevel: DisregardLevel.None,
     };
-    const addedCategory: Category = props.onAddCategory(category);
+    dispatch(addCategoryRedux(category));
     handleSetSelectedCategoryId(category.id);
   };
 
@@ -145,7 +148,7 @@ const SelectCategory = (props: SelectCategoryProps) => {
     );
   };
 
-  let alphabetizedCategories: Category[] = cloneDeep(props.categories);
+  let alphabetizedCategories: Category[] = cloneDeep(categories);
   alphabetizedCategories = sortCategories(alphabetizedCategories);
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems();
