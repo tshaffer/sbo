@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, Tab } from '@mui/material';
-import CreditCardStatementsTable from './CreditCardStatementsTable';
-import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 const Statements: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState<'credit-card' | 'checking-account'>('credit-card');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const selectedTab = location.pathname.includes('checking-account') ? 'checking-account' : 'credit-card';
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: 'credit-card' | 'checking-account') => {
-    setSelectedTab(newValue);
+    navigate(`/statements/${newValue}`);
   };
+
+  useEffect(() => {
+    if (location.pathname === '/statements') {
+      navigate('/statements/credit-card');
+    }
+  }, [location, navigate]);
 
   return (
     <div>
@@ -16,8 +24,7 @@ const Statements: React.FC = () => {
         <Tab label="Credit Card" value="credit-card" />
         <Tab label="Checking Account" value="checking-account" />
       </Tabs>
-      {selectedTab === 'credit-card' && <CreditCardStatementsTable />}
-      {selectedTab === 'checking-account' && <CheckingAccountStatementsTable />}
+      <Outlet />
     </div>
   );
 };

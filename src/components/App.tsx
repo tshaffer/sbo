@@ -7,8 +7,8 @@ import { store } from '../models';
 import Layout from './Layout';
 import CategoriesTable from './CategoriesTable';
 import Statements from './Statements';
-import CreditCardStatementsTableWrapper from './CreditCardStatementsTable';
 import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
+import CreditCardStatementsTable from './CreditCardStatementsTable';
 
 const router = createBrowserRouter([
   {
@@ -24,15 +24,15 @@ const router = createBrowserRouter([
         element: <Statements />,
         children: [
           {
-            path: 'credit-card/:id',
-            element: <CreditCardStatementsTableWrapper />,
+            path: 'credit-card',
+            element: <CreditCardStatementsTable />,
           },
           {
-            path: 'checking-account/:id',
+            path: 'checking-account',
             element: <CheckingAccountStatementsTable />,
           },
         ],
-      },    
+      },
     ]
   }
 ]);
