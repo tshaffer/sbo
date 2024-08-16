@@ -10,8 +10,9 @@ import { getCreditCardTransactionRowInStatementTableProperties, getTransactionsB
 import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 
-const CreditCardStatementDetails: React.FC = () => {
+const CreditCardStatementTable: React.FC = () => {
 
+  console.log('CreditCardStatementTable');
   const { id } = useParams<{ id: string }>();
 
   if (isNil(id)) {
@@ -122,4 +123,4 @@ const CreditCardStatementDetails: React.FC = () => {
   );
 };
 
-export default CreditCardStatementDetails;
+export default CreditCardStatementTable;

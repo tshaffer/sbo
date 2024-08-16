@@ -7,28 +7,36 @@ import { useDispatch, useTypedSelector } from '../types';
 import { setAppInitialized } from '../models';
 import { loadCategories } from '../controllers/category';
 import { loadCheckingAccountStatements, loadCreditCardStatements } from '../controllers/statements';
+import { loadCategoryAssignmentRules, loadMinMaxTransactionDates } from '../controllers';
 
 const Layout: React.FC = () => {
 
   const dispatch = useDispatch();
 
   const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
-  
+
   React.useEffect(() => {
     if (!appInitialized) {
       dispatch(initializeServer())
-      .then(() => {
-        dispatch(loadCategories())
-      })
-      .then(() => {
-        dispatch(loadCreditCardStatements())
-      })
-      .then(() => {
-        dispatch(loadCheckingAccountStatements())
-      })
-      .then(() => {
-        dispatch(setAppInitialized())
-      });
+        .then(() => {
+          dispatch(loadCategories())
+        })
+        .then(() => {
+          dispatch(loadCategoryAssignmentRules())
+        })
+        .then(() => {
+          dispatch(loadCreditCardStatements())
+        })
+        .then(() => {
+          dispatch(loadCheckingAccountStatements())
+        })
+        .then(() => {
+          dispatch(loadMinMaxTransactionDates())
+        })
+        .then(() => {
+          console.log('invoke onSetAppInitialized');
+          dispatch(setAppInitialized())
+        });
     }
   }, [appInitialized]);
 

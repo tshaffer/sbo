@@ -27,12 +27,10 @@ const router = createBrowserRouter([
           {
             path: 'credit-card',
             element: <CreditCardStatementsTable />,
-            children: [
-              {
-                path: ':id', // Dynamic route for CreditCardStatementDetails
-                element: <CreditCardStatementTable />,
-              },
-            ],
+          },
+          {
+            path: 'credit-card/:id',
+            element: <CreditCardStatementTable />,
           },
           {
             path: 'checking-account',
@@ -40,8 +38,8 @@ const router = createBrowserRouter([
           },
         ],
       },
-    ]
-  }
+    ],
+  },
 ]);
 
 const App = () => {
