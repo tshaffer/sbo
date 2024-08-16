@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch } from '../types';
 import { formatDate, formatCurrency, expensesPerMonth, roundTo, formatPercentage } from '../utilities';
 import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getFixedExpensesByCategory, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
 import { CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';

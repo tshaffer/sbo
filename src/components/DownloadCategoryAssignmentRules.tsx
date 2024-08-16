@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { Category, CategoryAssignmentRule, UploadedCategoryAssignmentRule } from '../types';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch } from '../types';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
 
 export interface DownloadCategoryAssignmentRulesProps {

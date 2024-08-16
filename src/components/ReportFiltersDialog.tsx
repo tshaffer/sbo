@@ -12,9 +12,9 @@ import {
   Typography,
   Box
 } from '@mui/material';
-import { TrackerDispatch, addCategoryIdToExclude, removeCategoryIdToExclude } from '../models';
+import { addCategoryIdToExclude, removeCategoryIdToExclude } from '../models';
 import { getCategories, getCategoryIdsToExclude } from '../selectors';
-import { Category } from '../types';
+import { Category, TrackerDispatch } from '../types';
 
 export interface ReportFiltersDialogPropsFromParent {
   open: boolean;

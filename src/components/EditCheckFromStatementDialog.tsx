@@ -9,7 +9,7 @@ import {
   Checkbox
 } from '@mui/material';
 import { BankTransaction, Category, CheckTransaction, CheckingAccountTransaction, Transaction } from '../types';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch } from '../types';
 import { getUnidentifiedBankTransactionById, getCategories, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 import { isNil } from 'lodash';

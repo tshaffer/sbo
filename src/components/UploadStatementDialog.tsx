@@ -8,7 +8,7 @@ import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
 import { getAppInitialized, getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
 import { bindActionCreators } from 'redux';
 import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch } from '../types';
 import { CheckingAccountStatement, CreditCardStatement } from '../types';
 
 export interface UploadStatementDialogPropsFromParent {

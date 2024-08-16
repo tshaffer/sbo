@@ -12,7 +12,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import '../styles/Tracker.css';
 import { BankTransaction, CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch } from '../types';
 import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 import { Tooltip } from '@mui/material';

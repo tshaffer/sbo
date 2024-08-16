@@ -13,7 +13,7 @@ import '../styles/Tracker.css';
 import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, DateRangeType, Statement, Transaction } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
 import { addCategoryAssignmentRuleServerAndRedux, addCategory, updateCheckTransaction, updateTransaction } from '../controllers';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch } from '../types';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import EditCheckDialog from './EditCheckDialog';

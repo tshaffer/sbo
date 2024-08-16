@@ -8,7 +8,7 @@ import SafetyDividerIcon from '@mui/icons-material/SafetyDivider';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch } from '../types';
 import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, Transaction } from '../types';
 import { categorizeTransaction, findMatchingRule, getCategories, getCategoryAssignmentRules, getCategoryById, getOverrideCategory, getOverrideCategoryId, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
