@@ -18,32 +18,33 @@ import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog
 
 import { useDispatch, useTypedSelector } from '../types';
 
-export interface EditCheckFromStatementDialogPropsFromParent {
+export interface EditCheckFromStatementDialogProps {
   transactionId: string;
   open: boolean;
   onClose: () => void;
   onSave: (updatedCheck: CheckTransaction) => void;
 }
 
-interface EditCheckFromStatementDialogProps extends EditCheckFromStatementDialogPropsFromParent {
-  check: CheckTransaction;
-  categories: Category[];
-}
+const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> = (props: EditCheckFromStatementDialogProps) => {
 
-const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) => {
+  const checkingAccountTransaction: Transaction | undefined = useTypedSelector(state => getTransactionById(state, props.transactionId));
+  const checkX: BankTransaction | null = useTypedSelector(state => getUnidentifiedBankTransactionById(state, props.transactionId));
+  const check: CheckTransaction = !isNil(checkingAccountTransaction) ? checkingAccountTransaction as CheckTransaction : checkX as CheckTransaction;
+  const categories: Category[] = useTypedSelector(getCategories);
+
 
   const dispatch = useDispatch();
 
-  const [payee, setPayee] = useState(props.check.payee);
-  const [checkNumber, setCheckNumber] = useState(props.check.checkNumber);
+  const [payee, setPayee] = useState(check.payee);
+  const [checkNumber, setCheckNumber] = useState(check.checkNumber);
   const [checkNumberError, setCheckNumberError] = useState<string | null>(null);
-  const [userDescription, setUserDescription] = useState(props.check.userDescription);
+  const [userDescription, setUserDescription] = useState(check.userDescription);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
-  const [overrideCategory, setOverrideCategory] = React.useState(props.check.overrideCategory);
-  const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.check.overrideCategoryId);
-  const [overrideFixedExpense, setOverrideFixedExpense] = useState(props.check.overrideFixedExpense);
-  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(props.check.overriddenFixedExpense);
-  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(props.check.excludeFromReportCalculations);
+  const [overrideCategory, setOverrideCategory] = React.useState(check.overrideCategory);
+  const [overrideCategoryId, setOverrideCategoryId] = React.useState(check.overrideCategoryId);
+  const [overrideFixedExpense, setOverrideFixedExpense] = useState(check.overrideFixedExpense);
+  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(check.overriddenFixedExpense);
+  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(check.excludeFromReportCalculations);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
   React.useEffect(() => {
@@ -78,7 +79,7 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
       return;
     }
     const updatedCheck: CheckTransaction = {
-      ...props.check,
+      ...check,
       payee,
       checkNumber,
       userDescription,
@@ -134,7 +135,7 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
             <TextField
               label="Transaction Date"
-              value={formatDate(props.check.transactionDate)}
+              value={formatDate(check.transactionDate)}
               InputProps={{
                 readOnly: true,
               }}
@@ -142,7 +143,7 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
             />
             <TextField
               label="Amount"
-              value={formatCurrency(-props.check.amount)}
+              value={formatCurrency(-check.amount)}
               InputProps={{
                 readOnly: true,
               }}
@@ -200,18 +201,4 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
   );
 };
 
-function mapStateToProps(state: any, ownProps: EditCheckFromStatementDialogPropsFromParent) {
-  const checkingAccountTransaction: Transaction | undefined = getTransactionById(state, ownProps.transactionId);
-  const check: BankTransaction | null = getUnidentifiedBankTransactionById(state, ownProps.transactionId);
-  return {
-    check: !isNil(checkingAccountTransaction) ? checkingAccountTransaction as CheckTransaction : check as CheckTransaction,
-    categories: getCategories(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditCheckFromStatementDialog);
+export default EditCheckFromStatementDialog;

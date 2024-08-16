@@ -22,23 +22,21 @@ import EditTransactionDialog from './EditTransactionDialog';
 import EditCheckFromStatementDialog from './EditCheckFromStatementDialog';
 import { useDispatch, useTypedSelector } from '../types';
 
-export interface CheckingAccountStatementPropsFromParent {
+export interface CheckingAccountStatementProps {
   checkingAccountTransaction: CheckingAccountTransaction;
-}
-
-export interface CheckingAccountStatementProps extends CheckingAccountStatementPropsFromParent {
-  categoryNameFromCategoryAssignmentRule: string;
-  patternFromCategoryAssignmentRule: string | null;
-  categoryNameFromCategoryOverride: string;
-  categorizedTransactionName: string;
-  onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
-  onSplitTransaction: (parentTransactionId: string, splitTransactions: SplitTransaction[]) => any;
-  onUpdateTransaction: (transaction: Transaction) => any;
-  onUpdateCheckTransaction: (check: CheckTransaction) => any;
 }
 
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
 
+  const matchingRule: MatchingRuleAssignment | null = useTypedSelector(state => findMatchingRule(state, props.checkingAccountTransaction));
+  const categoryNameFromCategoryAssignmentRule: string = matchingRule ? matchingRule.category.name : '';
+  const patternFromCategoryAssignmentRule = matchingRule ? matchingRule.pattern : '';
+  const categoryById = useTypedSelector(state => getCategoryById(state, getOverrideCategoryId(state, props.checkingAccountTransaction.id)));
+  const categoryNameFromCategoryOverride = useTypedSelector(state => getOverrideCategory(state, props.checkingAccountTransaction.id))
+    ? categoryById!.name
+    : '';
+  const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(props.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
+  
   const dispatch = useDispatch();
 
   const [transactionId, setTransactionId] = React.useState('');
@@ -62,7 +60,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
   };
 
   const handleSaveCheck = (check: CheckTransaction) => {
-    props.onUpdateCheckTransaction(check);
+    dispatch(updateTransaction(check));
   };
 
   const handleCloseEditCheckDialog = () => {
@@ -74,7 +72,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
   };
 
   const handleSaveTransaction = (transaction: Transaction) => {
-    props.onUpdateTransaction(transaction);
+    dispatch(updateTransaction(transaction));
   };
 
   const handleCloseEditTransactionDialog = () => {
@@ -89,7 +87,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       categoryId
     };
     console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    props.onAddCategoryAssignmentRule(categoryAssignmentRule);
+    dispatch(addCategoryAssignmentRuleServerAndRedux(categoryAssignmentRule));
   }
 
   const handleCloseAddRuleDialog = () => {
@@ -98,7 +96,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 
   const handleSaveSplitTransaction = (splitTransactions: any[]): void => {
     console.log('handleSaveSplitTransaction: ', splitTransactions);
-    props.onSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
+    dispatch(splitTransaction(props.checkingAccountTransaction.id, splitTransactions));
   }
 
   const handleCloseAddSplitTransactionDialog = () => {
@@ -187,35 +185,12 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
           </IconButton>
         </Tooltip>
       </div>
-      <div className="grid-table-cell">{props.categoryNameFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{props.patternFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{props.categoryNameFromCategoryOverride}</div>
-      <div className="grid-table-cell">{props.categorizedTransactionName}</div>
+      <div className="grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
+      <div className="grid-table-cell">{patternFromCategoryAssignmentRule}</div>
+      <div className="grid-table-cell">{categoryNameFromCategoryOverride}</div>
+      <div className="grid-table-cell">{categorizedTransactionName}</div>
     </React.Fragment>
   );
 }
 
-function mapStateToProps(state: any, ownProps: CheckingAccountStatementPropsFromParent) {
-  // const checkingAccountTransaction: CheckingAccountTransaction = getTransactionById(state, ownProps.checkingAccountTransactionId) as CheckingAccountTransaction;
-  const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, ownProps.checkingAccountTransaction);
-  return {
-    // checkingAccountTransaction: ownProps.checkingAccountTransaction,
-    categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
-    patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
-    categoryNameFromCategoryOverride: getOverrideCategory(state, ownProps.checkingAccountTransaction.id)
-      ? getCategoryById(state, getOverrideCategoryId(state, ownProps.checkingAccountTransaction.id))!.name
-      : '',
-    categorizedTransactionName: categorizeTransaction(ownProps.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
-    onSplitTransaction: splitTransaction,
-    onUpdateTransaction: updateTransaction,
-    onUpdateCheckTransaction: updateTransaction,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CheckingAccountStatementTransactionRow);
+export default CheckingAccountStatementTransactionRow;
