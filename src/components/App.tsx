@@ -11,6 +11,7 @@ import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
 import CreditCardStatementTable from './CreditCardStatementTable';
 import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
+import ReportsContent from './ReportsContent';
 
 const router = createBrowserRouter([
   {
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'reports',
-        element: <div>Reports</div>,
+        element: <ReportsContent activeTab={0} />,
       },
     ],
   },

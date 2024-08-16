@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 
-import { TrackerDispatch, setGeneratedReportEndDate, setGeneratedReportStartDate } from '../models';
+import { setGeneratedReportEndDate, setGeneratedReportStartDate } from '../models';
 import { getStartDate, getEndDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import { loadTransactions } from '../controllers';
 
@@ -15,11 +16,13 @@ import FixedExpensesReport from './FixedExpensesReport';
 import { DateRangeType, ReportTypes, SidebarMenuButton, Statement, StatementType } from '../types';
 import { isNil } from 'lodash';
 import ReportFiltersDialog from './ReportFiltersDialog';
+import { useDispatch, useTypedSelector } from '../types';
 
-export interface ReportsContentPropsFromParent {
+export interface ReportsContentProps {
   activeTab: number;
 }
 
+/*
 interface ReportsContentProps extends ReportsContentPropsFromParent {
   startDate: string,
   endDate: string,
@@ -30,7 +33,24 @@ interface ReportsContentProps extends ReportsContentPropsFromParent {
   onSetGeneratedReportEndDate: (date: string) => any;
 }
 
+function mapStateToProps(state: any) {
+  return {
+    startDate: getStartDate(state),
+    endDate: getEndDate(state),
+    dateRangeType: getDateRangeType(state),
+    reportStatement: getReportStatement(state, getReportStatementId(state)),
+  };
+}
+*/
+
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
+
+  const dispatch = useDispatch();
+
+  const startDate = useTypedSelector(state => getStartDate(state));
+  const endDate = useTypedSelector(state => getEndDate(state));
+  const dateRangeType = useTypedSelector(state => getDateRangeType(state));
+  const reportStatement = useTypedSelector(state => getReportStatement(state, getReportStatementId(state)));
 
   const [tabIndex, setTabIndex] = React.useState(props.activeTab);
   const [reportFiltersDialogOpen, setReportFiltersDialogOpen] = React.useState(false);
@@ -53,19 +73,19 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
 
   const handleGenerateReport = () => {
 
-    props.onSetGeneratedReportStartDate(props.startDate);
-    props.onSetGeneratedReportEndDate(props.endDate);
+    dispatch(setGeneratedReportStartDate(startDate));
+    dispatch(setGeneratedReportEndDate(endDate));
 
     let includeCreditCardTransactions = true;
     let includeCheckingAccountTransactions = true;
-    if (props.dateRangeType === DateRangeType.Statement) {
-      if (!isNil(props.reportStatement)) {
-        includeCreditCardTransactions = props.reportStatement.type === StatementType.CreditCard;
-        includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
+    if (dateRangeType === DateRangeType.Statement) {
+      if (!isNil(reportStatement)) {
+        includeCreditCardTransactions = reportStatement.type === StatementType.CreditCard;
+        includeCheckingAccountTransactions = reportStatement.type === StatementType.Checking;
       }
     }
 
-    props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
+    dispatch(loadTransactions(startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions));
   };
 
   const renderReportButtons = (tabIndex: number): JSX.Element => {
@@ -126,6 +146,8 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
   );
 };
 
+export default ReportsContent;
+/*
 function mapStateToProps(state: any) {
   return {
     startDate: getStartDate(state),
@@ -144,3 +166,4 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReportsContent);
+*/
