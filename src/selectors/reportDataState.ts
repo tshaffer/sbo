@@ -68,10 +68,10 @@ export const getReportStatement = (state: TrackerState, statementId: string): St
   return null;
 }
 
-export const getCategoryIdsToExclude = (state: TrackerState): Set<string> => {
+export const getCategoryIdsToExclude = (state: TrackerState): string[] => {
   return state.reportDataState.categoryIdsToExclude;
 }
 
 export const isCategoryIdExcluded = (state: TrackerState, categoryId: string): boolean => {
-  return getCategoryIdsToExclude(state).has(categoryId);
+  return getCategoryIdsToExclude(state).includes(categoryId);
 }

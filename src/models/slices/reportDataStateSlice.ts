@@ -20,7 +20,7 @@ const initialState: ReportDataState = {
   total: 0,
   minMaxTransactionDates: { minDate: '', maxDate: '' },
   reportStatementId: '',
-  categoryIdsToExclude: new Set(),
+  categoryIdsToExclude: [],
 };
 
 const reportDataSlice = createSlice({
@@ -77,10 +77,12 @@ const reportDataSlice = createSlice({
       ));
     },
     addCategoryIdToExclude: (state, action: PayloadAction<string>) => {
-      state.categoryIdsToExclude.add(action.payload);
+      if (!state.categoryIdsToExclude.includes(action.payload)) {
+        state.categoryIdsToExclude.push(action.payload);
+      }
     },
     removeCategoryIdToExclude: (state, action: PayloadAction<string>) => {
-      state.categoryIdsToExclude.delete(action.payload);
+      state.categoryIdsToExclude = state.categoryIdsToExclude.filter(item => item !== action.payload);
     },
   },
 });

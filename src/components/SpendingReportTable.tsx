@@ -34,7 +34,7 @@ const SpendingReportTable: React.FC = () => {
   const generatedReportEndDate: string = useTypedSelector(getGeneratedReportEndDate);
   const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategory);
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
-  const categoryIdsToExclude: Set<string> = useTypedSelector(getCategoryIdsToExclude);
+  const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
 
   const dispatch = useDispatch();
 
@@ -211,7 +211,7 @@ const SpendingReportTable: React.FC = () => {
 
   let trimmedCategories = cloneDeep(categories);
   trimmedCategories = categories.filter(category =>
-    !categoryIdsToExclude.has(category.id) && category.id !== ignoreCategory?.id
+    !categoryIdsToExclude.includes(category.id) && category.id !== ignoreCategory?.id
   );
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);

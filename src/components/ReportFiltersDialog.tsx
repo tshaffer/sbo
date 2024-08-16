@@ -28,23 +28,23 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   const dispatch = useDispatch();
 
   const categories: Category[] = useTypedSelector(getCategories);
-  const categoryIdsToExclude: Set<string> = useTypedSelector(getCategoryIdsToExclude);
+  const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
 
   if (!props.open) {
     return null;
   }
 
   const handleToggle = (id: string) => () => {
-    if (categoryIdsToExclude.has(id)) {
+    if (categoryIdsToExclude.includes(id)) {
       dispatch(removeCategoryIdToExclude(id));
     } else {
       dispatch(addCategoryIdToExclude(id));
     }
   };
 
-  const areAllChecked: boolean = categories.length > 0 && categories.every(category => categoryIdsToExclude.has(category.id));
-  const areSomeButNotAllChecked: boolean = categories.some(category => categoryIdsToExclude.has(category.id)) && !areAllChecked;
-  const areNoneChecked: boolean = categories.length > 0 && categories.every(category => !categoryIdsToExclude.has(category.id));
+  const areAllChecked: boolean = categories.length > 0 && categories.every(category => categoryIdsToExclude.includes(category.id));
+  const areSomeButNotAllChecked: boolean = categories.some(category => categoryIdsToExclude.includes(category.id)) && !areAllChecked;
+  const areNoneChecked: boolean = categories.length > 0 && categories.every(category => !categoryIdsToExclude.includes(category.id));
 
   const handleMasterToggle = () => {
 
@@ -72,7 +72,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
             onChange={handleMasterToggle}
           />
           <Box sx={{ marginLeft: '4px' }}>
-            <ListItemText primary={areNoneChecked ? 'All': 'None'} />
+            <ListItemText primary={areNoneChecked ? 'All' : 'None'} />
           </Box>
         </Box>
         <Typography variant="body1" gutterBottom>
@@ -85,7 +85,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
                 <Checkbox
                   edge="start"
                   onChange={handleToggle(category.id)}
-                  checked={categoryIdsToExclude.has(category.id)}
+                  checked={categoryIdsToExclude.includes(category.id)}
                 />
                 <Box sx={{ marginLeft: '4px' }}>
                   <ListItemText primary={category.name} />
