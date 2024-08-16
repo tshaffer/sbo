@@ -15,22 +15,29 @@ import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-interface FixedExpensesReportProps {
-  categories: Category[];
-  categoryByCategoryNameLUT: StringToCategoryLUT;
-  generatedReportStartDate: string;
-  generatedReportEndDate: string;
-  fixedExpensesByCategoryId: StringToTransactionsLUT;
-  ignoreCategory: Category | undefined;
-}
+// interface FixedExpensesReportProps {
+//   categories: Category[];
+//   categoryByCategoryNameLUT: StringToCategoryLUT;
+//   generatedReportStartDate: string;
+//   generatedReportEndDate: string;
+//   fixedExpensesByCategoryId: StringToTransactionsLUT;
+//   ignoreCategory: Category | undefined;
+// }
 
-const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExpensesReportProps) => {
+const FixedExpensesReport: React.FC = () => {
 
   const dispatch = useDispatch();
 
+  const categories: Category[] = useTypedSelector(getCategories);
+  const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);
+  const generatedReportStartDate: string = useTypedSelector(getGeneratedReportStartDate);
+  const generatedReportEndDate: string = useTypedSelector(getGeneratedReportEndDate);
+  const fixedExpensesByCategoryId: StringToTransactionsLUT = useTypedSelector(getFixedExpensesByCategory);
+  const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
+
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  if (isEmpty(props.fixedExpensesByCategoryId)) {
+  if (isEmpty(fixedExpensesByCategoryId)) {
     return null;
   }
 
@@ -79,13 +86,13 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
 
     // remove categories that have no transactions
     categories = categories.filter(category => {
-      const transactions: CategorizedTransaction[] = props.fixedExpensesByCategoryId[category.id] || [];
+      const transactions: CategorizedTransaction[] = fixedExpensesByCategoryId[category.id] || [];
       return transactions.length > 0;
     });
     
     // First pass to accumulate the total expenses for each category
     const accumulateExpenses = (category: CategoryMenuItem): number => {
-      const transactions = props.fixedExpensesByCategoryId[category.id] || [];
+      const transactions = fixedExpensesByCategoryId[category.id] || [];
       const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
       let totalExpenses = categoryTotalExpenses;
 
@@ -107,7 +114,7 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
 
     // Second pass to build rows and calculate percentages
     const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
-      const transactions = props.fixedExpensesByCategoryId[category.id] || [];
+      const transactions = fixedExpensesByCategoryId[category.id] || [];
       const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
       const categoryTransactionCount = transactions.length;
 
@@ -158,9 +165,9 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
     return flattenRows(sortedRows);
   };
 
-  let trimmedCategories = cloneDeep(props.categories);
-  if (!isNil(props.ignoreCategory)) {
-    trimmedCategories = props.categories.filter(category => category.id !== props.ignoreCategory!.id)
+  let trimmedCategories = cloneDeep(categories);
+  if (!isNil(ignoreCategory)) {
+    trimmedCategories = categories.filter(category => category.id !== ignoreCategory!.id)
   }
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
@@ -168,7 +175,7 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
   let totalAmount = 0;
   for (const categoryExpensesData of rows) {
-    const category: Category = props.categoryByCategoryNameLUT[categoryExpensesData.categoryName.trim()];
+    const category: Category = categoryByCategoryNameLUT[categoryExpensesData.categoryName.trim()];
     if (category.parentId === '') {
       totalAmount += categoryExpensesData.totalExpenses;
     }
@@ -176,9 +183,9 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
 
   return (
     <React.Fragment>
-      <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>
+      <h4>Date Range {formatDate(generatedReportStartDate)} - {formatDate(generatedReportEndDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
-      <h4>Per Month: {expensesPerMonth(totalAmount, props.generatedReportStartDate, props.generatedReportEndDate)}</h4>
+      <h4>Per Month: {expensesPerMonth(totalAmount, generatedReportStartDate, generatedReportEndDate)}</h4>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
@@ -233,21 +240,5 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
   );
 }
 
-function mapStateToProps(state: any) {
-  return {
-    categories: getCategories(state),
-    categoryByCategoryNameLUT: getCategoryByCategoryNameLUT(state),
-    generatedReportStartDate: getGeneratedReportStartDate(state),
-    generatedReportEndDate: getGeneratedReportEndDate(state),
-    fixedExpensesByCategoryId: getFixedExpensesByCategory(state),
-    ignoreCategory: getCategoryByName(state, 'Ignore'),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(FixedExpensesReport);
+export default FixedExpensesReport;
 

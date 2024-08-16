@@ -24,21 +24,17 @@ import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-interface SpendingReportTableProps {
-  categories: Category[];
-  categoryByCategoryNameLUT: StringToCategoryLUT;
-  startDate: string;
-  endDate: string;
-  generatedReportStartDate: string;
-  generatedReportEndDate: string;
-  transactionsByCategoryId: StringToTransactionsLUT;
-  ignoreCategory: Category | undefined;
-  categoryIdsToExclude: Set<string>;
-  onUpdateTransaction: (transaction: Transaction) => any;
-  onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
-}
+const SpendingReportTable: React.FC = () => {
 
-const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: SpendingReportTableProps) => {
+  const categories: Category[] = useTypedSelector(getCategories);
+  const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);
+  const startDate: string = useTypedSelector(getStartDate);
+  const endDate: string = useTypedSelector(getEndDate);
+  const generatedReportStartDate: string = useTypedSelector(getGeneratedReportStartDate);
+  const generatedReportEndDate: string = useTypedSelector(getGeneratedReportEndDate);
+  const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategory);
+  const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
+  const categoryIdsToExclude: Set<string> = useTypedSelector(getCategoryIdsToExclude);
 
   const dispatch = useDispatch();
 
@@ -47,7 +43,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
-  if (isEmpty(props.transactionsByCategoryId)) {
+  if (isEmpty(transactionsByCategoryId)) {
     return null;
   }
 
@@ -61,7 +57,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   };
 
   const handleSaveTransaction = (transaction: Transaction) => {
-    props.onUpdateTransaction(transaction);
+    dispatch(updateTransaction(transaction));
   };
 
   const handleCloseEditTransactionDialog = () => {
@@ -81,7 +77,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
       categoryId
     };
     console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    props.onAddCategoryAssignmentRule(categoryAssignmentRule);
+    dispatch(addCategoryAssignmentRuleServerAndRedux(categoryAssignmentRule));
   }
 
   const handleCloseAddRuleDialog = () => {
@@ -129,13 +125,13 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
     // remove categories that have no transactions
     categories = categories.filter(category => {
-      const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[category.id] || [];
+      const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
       return transactions.length > 0;
     });
 
     // First pass to accumulate the total expenses for each category
     const accumulateExpenses = (category: CategoryMenuItem): number => {
-      const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[category.id] || [];
+      const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
       const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
       let totalExpenses = categoryTotalExpenses;
 
@@ -157,7 +153,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
     // Second pass to build rows and calculate percentages
     const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
-      const transactions = props.transactionsByCategoryId[category.id] || [];
+      const transactions = transactionsByCategoryId[category.id] || [];
       const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
       const categoryTransactionCount = transactions.length;
 
@@ -213,9 +209,9 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     return sortedCategorizedTransactions;
   }
 
-  let trimmedCategories = cloneDeep(props.categories);
-  trimmedCategories = props.categories.filter(category =>
-    !props.categoryIdsToExclude.has(category.id) && category.id !== props.ignoreCategory?.id
+  let trimmedCategories = cloneDeep(categories);
+  trimmedCategories = categories.filter(category =>
+    !categoryIdsToExclude.has(category.id) && category.id !== ignoreCategory?.id
   );
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
@@ -224,7 +220,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
   let totalAmount = 0;
   for (const categoryExpensesData of rows) {
-    const category: Category = props.categoryByCategoryNameLUT[categoryExpensesData.categoryName.trim()];
+    const category: Category = categoryByCategoryNameLUT[categoryExpensesData.categoryName.trim()];
     if (category.parentId === '') {
       totalAmount += categoryExpensesData.totalExpenses;
     }
@@ -244,9 +240,9 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
         onClose={handleCloseEditTransactionDialog}
         onSave={handleSaveTransaction}
       />
-      <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>
+      <h4>Date Range {formatDate(generatedReportStartDate)} - {formatDate(generatedReportEndDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
-      <h4>Per Month: {expensesPerMonth(totalAmount, props.generatedReportStartDate, props.generatedReportEndDate)}</h4>
+      <h4>Per Month: {expensesPerMonth(totalAmount, generatedReportStartDate, generatedReportEndDate)}</h4>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
@@ -311,26 +307,4 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   );
 };
 
-
-function mapStateToProps(state: any) {
-  return {
-    categories: getCategories(state),
-    categoryByCategoryNameLUT: getCategoryByCategoryNameLUT(state),
-    startDate: getStartDate(state),
-    endDate: getEndDate(state),
-    generatedReportStartDate: getGeneratedReportStartDate(state),
-    generatedReportEndDate: getGeneratedReportEndDate(state),
-    transactionsByCategoryId: getTransactionsByCategory(state),
-    ignoreCategory: getCategoryByName(state, 'Ignore'),
-    categoryIdsToExclude: getCategoryIdsToExclude(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
-    onUpdateTransaction: updateTransaction,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SpendingReportTable);
+export default SpendingReportTable;

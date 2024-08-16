@@ -9,17 +9,13 @@ import { getCategories, getCategoryAssignmentRules } from '../selectors';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-export interface DownloadCategoryAssignmentRulesProps {
-  categories: Category[];
-  categoryAssignmentRules: CategoryAssignmentRule[];
-}
-
-const DownloadCategoryAssignmentRules: React.FC<any> = (props: any) => {
+const DownloadCategoryAssignmentRules: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const categoryAssignmentRules: CategoryAssignmentRule[] = props.categoryAssignmentRules;
-  const categories: Category[] = props.categories;
+  // const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
+  const categories: Category[] = useTypedSelector(getCategories);
+  const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(getCategoryAssignmentRules);
 
   const handleDownload = async () => {
 
@@ -72,17 +68,5 @@ const DownloadCategoryAssignmentRules: React.FC<any> = (props: any) => {
   );
 };
 
-function mapStateToProps(state: any, ownProps: any) {
-  return {
-    categories: getCategories(state),
-    categoryAssignmentRules: getCategoryAssignmentRules(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DownloadCategoryAssignmentRules);
+export default DownloadCategoryAssignmentRules;
 

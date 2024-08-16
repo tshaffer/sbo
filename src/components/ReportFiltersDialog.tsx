@@ -18,47 +18,43 @@ import { Category, TrackerDispatch } from '../types';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-export interface ReportFiltersDialogPropsFromParent {
+export interface ReportFiltersDialogProps {
   open: boolean;
   onClose: () => void;
-}
-
-interface ReportFiltersDialogProps extends ReportFiltersDialogPropsFromParent {
-  categories: Category[];
-  categoryIdsToExclude: Set<string>;
-  onAddCategoryIdToExclude: (categoryId: string) => any;
-  onRemoveCategoryIdToExclude: (categoryId: string) => any;
 }
 
 const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
 
   const dispatch = useDispatch();
 
+  const categories: Category[] = useTypedSelector(getCategories);
+  const categoryIdsToExclude: Set<string> = useTypedSelector(getCategoryIdsToExclude);
+
   if (!props.open) {
     return null;
   }
 
   const handleToggle = (id: string) => () => {
-    if (props.categoryIdsToExclude.has(id)) {
-      props.onRemoveCategoryIdToExclude(id);
+    if (categoryIdsToExclude.has(id)) {
+      dispatch(removeCategoryIdToExclude(id));
     } else {
-      props.onAddCategoryIdToExclude(id);
+      dispatch(addCategoryIdToExclude(id));
     }
   };
 
-  const areAllChecked: boolean = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
-  const areSomeButNotAllChecked: boolean = props.categories.some(category => props.categoryIdsToExclude.has(category.id)) && !areAllChecked;
-  const areNoneChecked: boolean = props.categories.length > 0 && props.categories.every(category => !props.categoryIdsToExclude.has(category.id));
+  const areAllChecked: boolean = categories.length > 0 && categories.every(category => categoryIdsToExclude.has(category.id));
+  const areSomeButNotAllChecked: boolean = categories.some(category => categoryIdsToExclude.has(category.id)) && !areAllChecked;
+  const areNoneChecked: boolean = categories.length > 0 && categories.every(category => !categoryIdsToExclude.has(category.id));
 
   const handleMasterToggle = () => {
 
     const newCheckedState: boolean = areNoneChecked;
 
-    props.categories.forEach(category => {
+    categories.forEach(category => {
       if (newCheckedState) {
-        props.onAddCategoryIdToExclude(category.id);
+        dispatch(addCategoryIdToExclude(category.id));
       } else {
-        props.onRemoveCategoryIdToExclude(category.id);
+        dispatch(removeCategoryIdToExclude(category.id));
       }
     });
   };
@@ -83,13 +79,13 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
           Categories to exclude
         </Typography>
         <List sx={{ paddingTop: '0px', paddingBottom: '0px' }}>
-          {props.categories.map((category) => (
+          {categories.map((category) => (
             <ListItem key={category.id} sx={{ padding: '0px' }}>
               <Box display="flex" alignItems="center">
                 <Checkbox
                   edge="start"
                   onChange={handleToggle(category.id)}
-                  checked={props.categoryIdsToExclude.has(category.id)}
+                  checked={categoryIdsToExclude.has(category.id)}
                 />
                 <Box sx={{ marginLeft: '4px' }}>
                   <ListItemText primary={category.name} />
@@ -106,18 +102,4 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   );
 };
 
-function mapStateToProps(state: any, ownProps: ReportFiltersDialogPropsFromParent) {
-  return {
-    categories: getCategories(state).slice().sort((a, b) => a.name.localeCompare(b.name)),
-    categoryIdsToExclude: getCategoryIdsToExclude(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onAddCategoryIdToExclude: addCategoryIdToExclude,
-    onRemoveCategoryIdToExclude: removeCategoryIdToExclude,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReportFiltersDialog);
+export default ReportFiltersDialog;

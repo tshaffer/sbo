@@ -21,21 +21,15 @@ import EditTransactionDialog from './EditTransactionDialog';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-interface NotIdentifiedTransactionTableProps {
-  startDate: string;
-  endDate: string;
-  dateRangeType: DateRangeType,
-  reportStatement: Statement | null,
-  generatedReportStartDate: string;
-  generatedReportEndDate: string;
-  unidentifiedBankTransactions: BankTransaction[];
-  onAddCategory: (category: Category) => any;
-  onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
-  onUpdateTransaction: (transaction: Transaction) => any;
-  onUpdateCheckTransaction: (check: CheckTransaction) => any;
-}
+const UnIdentifiedTransactionTable: React.FC = () => {
 
-const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps> = (props: NotIdentifiedTransactionTableProps) => {
+  const startDate: string = useTypedSelector(getStartDate);
+  const endDate: string = useTypedSelector(getEndDate);
+  const dateRangeType: DateRangeType = useTypedSelector(getDateRangeType);
+  const reportStatement: Statement | null = useTypedSelector(state => getReportStatement(state, getReportStatementId(state)));
+  const generatedReportStartDate: string = useTypedSelector(getGeneratedReportStartDate);
+  const generatedReportEndDate: string = useTypedSelector(getGeneratedReportEndDate);
+  const unidentifiedBankTransactions: BankTransaction[] = useTypedSelector(getUnidentifiedBankTransactions);
 
   const dispatch = useDispatch();
 
@@ -89,7 +83,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
       categoryId
     };
     console.log('handleAddRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    props.onAddCategoryAssignmentRule(categoryAssignmentRule);
+    dispatch(addCategoryAssignmentRuleServerAndRedux(categoryAssignmentRule));
   }
 
   const handleCloseAddCategoryAssignmentRuleDialog = () => {
@@ -102,7 +96,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
   };
 
   const handleSaveCheck = (check: CheckTransaction) => {
-    props.onUpdateCheckTransaction(check);
+    dispatch(updateCheckTransaction(check));
   };
 
   const handleCloseEditCheckDialog = () => {
@@ -115,7 +109,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
   };
 
   const handleSaveTransaction = (transaction: Transaction) => {
-    props.onUpdateTransaction(transaction);
+    dispatch(updateTransaction(transaction));
   };
 
   const handleCloseEditTransactionDialog = () => {
@@ -143,15 +137,15 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     );
   }
 
-  if (props.unidentifiedBankTransactions.length === 0) {
+  if (unidentifiedBankTransactions.length === 0) {
     return null;
   }
 
-  const { debits, credits } = getDebitsCredits(props.unidentifiedBankTransactions);
+  const { debits, credits } = getDebitsCredits(unidentifiedBankTransactions);
 
   const renderEditCheckDialog = (): JSX.Element | null => {
     if (showEditCheckDialog) {
-      const check = props.unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) as CheckTransaction;
+      const check = unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) as CheckTransaction;
       return (
         <EditCheckDialog
           open={showEditCheckDialog}
@@ -180,9 +174,9 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
         onSave={handleSaveTransaction}
       />
 
-      <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>
-      <h4>Remaining number of unidentified transactions: {props.unidentifiedBankTransactions.length}</h4>
-      <h4>Remaining of unique descriptions: {getUniqueDescriptionsCount(props.unidentifiedBankTransactions)}</h4>
+      <h4>Date Range {formatDate(generatedReportStartDate)} - {formatDate(generatedReportEndDate)}</h4>
+      <h4>Remaining number of unidentified transactions: {unidentifiedBankTransactions.length}</h4>
+      <h4>Remaining of unique descriptions: {getUniqueDescriptionsCount(unidentifiedBankTransactions)}</h4>
       <h4>Debits: {formatCurrency(debits)}</h4>
       <h4>Credits: {formatCurrency(credits)}</h4>
       <div className="table-container">
@@ -196,7 +190,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
           </div>
         </div>
         <div className="unidentified-report-table-body">
-          {props.unidentifiedBankTransactions.map((unidentifiedBankTransaction: BankTransaction) => (
+          {unidentifiedBankTransactions.map((unidentifiedBankTransaction: BankTransaction) => (
             <div className="table-row" key={unidentifiedBankTransaction.id}>
               <div className="table-cell">
                 <IconButton onClick={() => handleAssignCategory(unidentifiedBankTransaction)}>
@@ -216,26 +210,5 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
   );
 }
 
-function mapStateToProps(state: any) {
-  return {
-    startDate: getStartDate(state),
-    endDate: getEndDate(state),
-    dateRangeType: getDateRangeType(state),
-    reportStatement: getReportStatement(state, getReportStatementId(state)),
-    generatedReportStartDate: getGeneratedReportStartDate(state),
-    generatedReportEndDate: getGeneratedReportEndDate(state),
-    unidentifiedBankTransactions: getUnidentifiedBankTransactions(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onAddCategory: addCategory,
-    onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
-    onUpdateCheckTransaction: updateCheckTransaction,
-    onUpdateTransaction: updateTransaction,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UnIdentifiedTransactionTable);
+export default UnIdentifiedTransactionTable;
 

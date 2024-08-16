@@ -13,23 +13,17 @@ import { CheckingAccountStatement, CreditCardStatement } from '../types';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-export interface UploadStatementDialogPropsFromParent {
+export interface UploadStatementDialogProps {
   open: boolean;
   onClose: () => void;
 }
 
-export interface UploadStatementDialogProps extends UploadStatementDialogPropsFromParent {
-  appInitialized: boolean;
-  checkingAccountStatementState: CheckingAccountStatement[],
-  creditCardStatementState: CreditCardStatement[],
-  onUploadFile: (data: FormData) => any;
-  onLoadCategories: () => any;
-  onLoadCreditCardStatements: () => any;
-  onLoadCheckingAccountStatements: () => any;
-  onLoadMinMaxTransactionDates: () => any;
-}
 
-const UploadStatementDialog = (props: UploadStatementDialogProps) => {
+const UploadStatementDialog: React.FC<UploadStatementDialogProps> = (props: UploadStatementDialogProps) => {
+
+  const appInitialized: boolean = useTypedSelector(getAppInitialized);
+  const checkingAccountStatementState: CheckingAccountStatement[] = useTypedSelector(getCheckingAccountStatements);
+  const creditCardStatementState: CreditCardStatement[] = useTypedSelector(getCreditCardStatements);
 
   const dispatch = useDispatch();
 
@@ -64,7 +58,7 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     // check to see if any of the files have already been uploaded
     const selectedFilesArray: File[] = Array.from(selectedFiles);
     for (const selectedFile of selectedFilesArray) {
-      if (props.checkingAccountStatementState.some(statement => statement.fileName === selectedFile.name) || props.creditCardStatementState.some(statement => statement.fileName === selectedFile.name)) {
+      if (checkingAccountStatementState.some(statement => statement.fileName === selectedFile.name) || creditCardStatementState.some(statement => statement.fileName === selectedFile.name)) {
         setUploadStatus(selectedFile.name + ' has already been uploaded. Please select a different statement.');
         return;
       }
@@ -74,18 +68,18 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     Array.from(selectedFiles).forEach(file => {
       formData.append('files', file);
     });
-    props.onUploadFile(formData)
+    dispatch(uploadFile(formData))
     .then((response: any) => {
       setUploadStatus('success');
-      props.onLoadCategories()
+      dispatch(loadCategories())
         .then(() => {
-          return props.onLoadCreditCardStatements();
+          return dispatch(loadCreditCardStatements());
         })
         .then(() => {
-          return props.onLoadCheckingAccountStatements();
+          return dispatch(loadCheckingAccountStatements());
         })
         .then(() => {
-          return props.onLoadMinMaxTransactionDates();
+          return dispatch(loadMinMaxTransactionDates());
         });
 
     }).catch((err: any) => {
@@ -134,25 +128,7 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
   );
 };
 
-function mapStateToProps(state: any) {
-  return {
-    appInitialized: getAppInitialized(state),
-    checkingAccountStatementState: getCheckingAccountStatements(state),
-    creditCardStatementState: getCreditCardStatements(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onUploadFile: uploadFile,
-    onLoadCategories: loadCategories,
-    onLoadCreditCardStatements: loadCreditCardStatements,
-    onLoadCheckingAccountStatements: loadCheckingAccountStatements,
-    onLoadMinMaxTransactionDates: loadMinMaxTransactionDates,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UploadStatementDialog);
+export default UploadStatementDialog;
 
 
 

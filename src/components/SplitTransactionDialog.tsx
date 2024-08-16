@@ -15,22 +15,24 @@ interface SplitTransaction {
   userDescription: string;
 }
 
-interface SplitTransactionDialogPropsFromParent {
+interface SplitTransactionDialogProps {
   open: boolean;
   onClose: () => void;
   transactionId: string;
   onSave: (splits: SplitTransaction[]) => any;
 }
 
-export interface SplitTransactionDialogProps extends SplitTransactionDialogPropsFromParent {
-  transaction: CheckingAccountTransaction;
-}
+// export interface SplitTransactionDialogProps extends SplitTransactionDialogPropsFromParent {
+//   transaction: CheckingAccountTransaction;
+// }
 
-const SplitTransactionDialog: React.FC = (props: any) => {
+const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: SplitTransactionDialogProps) => {
 
   const dispatch = useDispatch();
 
-  const { open, onClose, transaction, onSave } = props;
+  const transaction = useTypedSelector(state => getTransactionById(state, props.transactionId)) as CheckingAccountTransaction;
+
+  const { open, onClose, onSave } = props;
 
   const [splits, setSplits] = React.useState<SplitTransaction[]>([
     { amount: Math.abs(transaction.amount).toString(), userDescription: 'Remainder' },
@@ -177,10 +179,4 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   );
 };
 
-function mapStateToProps(state: any, ownProps: SplitTransactionDialogPropsFromParent) {
-  return {
-    transaction: getTransactionById(state, ownProps.transactionId) as CheckingAccountTransaction,
-  };
-}
-
-export default connect(mapStateToProps)(SplitTransactionDialog);
+export default SplitTransactionDialog;

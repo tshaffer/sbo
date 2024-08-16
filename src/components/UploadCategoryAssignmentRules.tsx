@@ -10,11 +10,11 @@ import { replaceCategoryAssignmentRules } from '../controllers';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-export interface DownloadCategoryAssignmentRulesProps {
-  onReplaceCategoryAssignmentRules: (categoryAssignmentRules: CategoryAssignmentRule[]) => any;
-}
+// export interface DownloadCategoryAssignmentRulesProps {
+//   onReplaceCategoryAssignmentRules: (categoryAssignmentRules: CategoryAssignmentRule[]) => any;
+// }
 
-const UploadCategoryAssignmentRules: React.FC<any> = (props: any) => {
+const UploadCategoryAssignmentRules: React.FC = () => {
 
   const dispatch = useDispatch();
 
@@ -27,7 +27,7 @@ const UploadCategoryAssignmentRules: React.FC<any> = (props: any) => {
           const jsonString = e.target?.result as string;
           const data: UploadedCategoryAssignmentRule[] = JSON.parse(jsonString);
           console.log('Uploaded data:', data);
-          props.onReplaceCategoryAssignmentRules(data);
+          dispatch(replaceCategoryAssignmentRules(data));
         } catch (error) {
           console.error('Error parsing JSON:', error);
         }
@@ -47,16 +47,5 @@ const UploadCategoryAssignmentRules: React.FC<any> = (props: any) => {
   );
 };
 
-function mapStateToProps(state: any, ownProps: any) {
-  return {
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onReplaceCategoryAssignmentRules: replaceCategoryAssignmentRules,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UploadCategoryAssignmentRules);
+export default UploadCategoryAssignmentRules;
 
