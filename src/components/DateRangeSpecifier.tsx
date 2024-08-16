@@ -12,25 +12,23 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { formatDate, getCurrentDate, getISODateString, getRetirementDate } from '../utilities';
 
-interface DateRangeSpecifierProps {
-  dateRangeType: DateRangeType;
-  startDate: string,
-  endDate: string,
-  statementId: string,
-  minMaxTransactionDates: MinMaxDates,
-  creditCardStatements: CreditCardStatement[],
-  checkingAccountStatements: CheckingAccountStatement[],
-  onSetDateRangeType: (dateRangeType: DateRangeType) => any;
-  onSetStartDate: (startDate: string) => any;
-  onSetEndDate: (endDate: string) => any;
-  onSetReportStatementId: (statementId: string) => any;
-}
+import { useDispatch, useTypedSelector } from '../types';
 
-const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeSpecifierProps) => {
+const DateRangeSpecifier: React.FC = () => {
+
+  const dispatch = useDispatch();
+
+  const dateRangeType = useTypedSelector(state => getDateRangeType(state));
+  const startDate: string = useTypedSelector(state => getStartDate(state));
+  const endDate = useTypedSelector(state => getEndDate(state));
+  const statementId = useTypedSelector(state => getReportStatementId(state));
+  const minMaxTransactionDates = useTypedSelector(state => getMinMaxTransactionDates(state));
+  const creditCardStatements = useTypedSelector(state => getCreditCardStatements(state));
+  const checkingAccountStatements = useTypedSelector(state => getCheckingAccountStatements(state));
 
   React.useEffect(() => {
-    props.onSetStartDate(getStartDate(props.dateRangeType));
-    props.onSetEndDate(getEndDate(props.dateRangeType));
+    dispatch(setStartDate(getStartDateFromDateRangeType(dateRangeType)));
+    dispatch(setEndDate(getEndDateFromDateRangeType(dateRangeType)));
   }, []);
 
   const getFirstDayOfCurrentYear = (): string => {
@@ -51,10 +49,10 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
     return getISODateString(lastDayOfLastYear);
   };
 
-  const getStartDate = (dateRangeType: DateRangeType): string => {
+  const getStartDateFromDateRangeType = (dateRangeType: DateRangeType): string => {
     switch (dateRangeType) {
       case DateRangeType.All:
-        return props.minMaxTransactionDates.minDate;
+        return minMaxTransactionDates.minDate;
       case DateRangeType.YearToDate:
         return getFirstDayOfCurrentYear();
       case DateRangeType.LastYear:
@@ -62,54 +60,54 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
       case DateRangeType.SinceRetirement:
         return getRetirementDate();
       default:
-        return props.startDate;
+        return startDate;
     }
   }
 
-  const getEndDate = (dateRangeType: DateRangeType): string => {
+  const getEndDateFromDateRangeType = (dateRangeType: DateRangeType): string => {
     switch (dateRangeType) {
       case DateRangeType.All:
-        return props.minMaxTransactionDates.maxDate;
+        return minMaxTransactionDates.maxDate;
       case DateRangeType.YearToDate:
       case DateRangeType.SinceRetirement:
         return getCurrentDate();
       case DateRangeType.LastYear:
         return getLastDayOfLastYear();
       default:
-        return props.endDate;
+        return endDate;
     }
   }
 
   const handleDateOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newDateRangeType = event.target.value as DateRangeType;
-    props.onSetDateRangeType(newDateRangeType);
-    const newStartDate = getStartDate(newDateRangeType);
-    const newEndDate = getEndDate(newDateRangeType);
-    props.onSetStartDate(newStartDate);
-    props.onSetEndDate(newEndDate);
+    dispatch(setDateRangeType(newDateRangeType));
+    const newStartDate = getStartDateFromDateRangeType(newDateRangeType);
+    const newEndDate = getEndDateFromDateRangeType(newDateRangeType);
+    dispatch(setStartDate(newStartDate));
+    dispatch(setEndDate(newEndDate));
   }
 
   const handleSetStartDate = (dateDayJs: Dayjs | null) => {
     if (!isNil(dateDayJs)) {
       const date: Date = dateDayJs.toDate();
-      props.onSetStartDate(date.toISOString());
+      dispatch(setStartDate(date.toISOString()));
     }
   };
 
   const handleSetEndDate = (dateDayJs: Dayjs | null) => {
     if (!isNil(dateDayJs)) {
       const date: Date = dateDayJs.toDate();
-      props.onSetEndDate(date.toISOString());
+      dispatch(setEndDate(date.toISOString()));
     }
   };
 
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
-    props.onSetReportStatementId(event.target.value);
+    dispatch(setReportStatementId(event.target.value));
     const statementId = event.target.value;
-    const statement = props.creditCardStatements.find((statement: CreditCardStatement) => statement.id === statementId) || props.checkingAccountStatements.find((statement: CheckingAccountStatement) => statement.id === statementId); 
+    const statement = creditCardStatements.find((statement: CreditCardStatement) => statement.id === statementId) || checkingAccountStatements.find((statement: CheckingAccountStatement) => statement.id === statementId); 
     if (statement) {
-      props.onSetStartDate(statement.startDate);
-      props.onSetEndDate(statement.endDate);
+      dispatch(setStartDate(statement.startDate));
+      dispatch(setEndDate(statement.endDate));
     }
   };
 
@@ -121,9 +119,9 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
             <DemoContainer components={['DatePicker']}>
               <DatePicker
                 label="Start date"
-                value={dayjs(props.startDate)}
+                value={dayjs(startDate)}
                 onChange={(newValue) => handleSetStartDate(newValue)}
-                disabled={props.dateRangeType !== DateRangeType.DateRange}
+                disabled={dateRangeType !== DateRangeType.DateRange}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -140,9 +138,9 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
             <DemoContainer components={['DatePicker']}>
               <DatePicker
                 label="End date"
-                value={dayjs(props.endDate)}
+                value={dayjs(endDate)}
                 onChange={(newValue) => handleSetEndDate(newValue)}
-                disabled={props.dateRangeType !== DateRangeType.DateRange}
+                disabled={dateRangeType !== DateRangeType.DateRange}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -152,10 +150,10 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   };
 
   const renderStatementSelect = (): JSX.Element => {
-    if (props.dateRangeType !== DateRangeType.Statement) {
+    if (dateRangeType !== DateRangeType.Statement) {
       return <React.Fragment />;
     }
-    const combinedStatements = props.creditCardStatements.concat(props.checkingAccountStatements);
+    const combinedStatements = creditCardStatements.concat(checkingAccountStatements);
     const sortedStatements = combinedStatements.sort((a, b) => {
       const dateA = new Date(a.endDate);
       const dateB = new Date(b.endDate);
@@ -168,7 +166,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
         <Select
           labelId="statement-select-label"
           id="statement-select"
-          value={props.statementId}
+          value={statementId}
           onChange={handleStatementChange}
           label="Statement"
         >
@@ -186,7 +184,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
     <Box sx={{ width: '100%' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <FormControl component="fieldset">
-          <RadioGroup row value={props.dateRangeType} onChange={handleDateOptionChange}>
+          <RadioGroup row value={dateRangeType} onChange={handleDateOptionChange}>
             <FormControlLabel value={DateRangeType.SinceRetirement} control={<Radio />} label="Since Retirement" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
@@ -205,25 +203,4 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   );
 };
 
-function mapStateToProps(state: any) {
-  return {
-    dateRangeType: getDateRangeType(state),
-    startDate: getStartDate(state),
-    endDate: getEndDate(state),
-    statementId: getReportStatementId(state),
-    minMaxTransactionDates: getMinMaxTransactionDates(state),
-    creditCardStatements: getCreditCardStatements(state),
-    checkingAccountStatements: getCheckingAccountStatements(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onSetDateRangeType: setDateRangeType,
-    onSetStartDate: setStartDate,
-    onSetEndDate: setEndDate,
-    onSetReportStatementId: setReportStatementId,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DateRangeSpecifier);
+export default DateRangeSpecifier;

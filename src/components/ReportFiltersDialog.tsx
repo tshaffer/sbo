@@ -16,6 +16,8 @@ import { addCategoryIdToExclude, removeCategoryIdToExclude } from '../models';
 import { getCategories, getCategoryIdsToExclude } from '../selectors';
 import { Category, TrackerDispatch } from '../types';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 export interface ReportFiltersDialogPropsFromParent {
   open: boolean;
   onClose: () => void;
@@ -29,6 +31,8 @@ interface ReportFiltersDialogProps extends ReportFiltersDialogPropsFromParent {
 }
 
 const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
+
+  const dispatch = useDispatch();
 
   if (!props.open) {
     return null;

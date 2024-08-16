@@ -13,11 +13,15 @@ import AddCategoryDialog from './AddCategoryDialog';
 import CategoriesTable from './CategoriesTable';
 import { addCategory } from '../controllers';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 interface CategoriesContentProps {
   onAddCategory: (category: Category) => any;
 }
 
-const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesContentProps) => {
+const CategoriesContent: React.FC = () => {
+
+  const dispatch = useDispatch();
 
   const [showAddCategoryDialog, setShowAddCategoryDialog] = React.useState(false);
 
@@ -35,7 +39,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesCo
       transactionsRequired,
       disregardLevel: DisregardLevel.None,
     };
-    props.onAddCategory(category);
+    dispatch(addCategory(category));
   };
 
   const handleCloseAddCategoryDialog = () => {
@@ -68,15 +72,4 @@ const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesCo
   );
 };
 
-function mapStateToProps(state: any) {
-  return {
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onAddCategory: addCategory,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CategoriesContent);
+export default CategoriesContent;

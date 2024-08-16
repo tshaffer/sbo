@@ -8,6 +8,8 @@ import { CheckingAccountTransaction } from '../types';
 import { connect } from 'react-redux';
 import { getTransactionById } from '../selectors';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 interface SplitTransaction {
   amount: string;
   userDescription: string;
@@ -25,6 +27,8 @@ export interface SplitTransactionDialogProps extends SplitTransactionDialogProps
 }
 
 const SplitTransactionDialog: React.FC = (props: any) => {
+
+  const dispatch = useDispatch();
 
   const { open, onClose, transaction, onSave } = props;
 

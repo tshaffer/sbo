@@ -22,6 +22,8 @@ import { addCategoryAssignmentRuleServerAndRedux, updateTransaction } from '../c
 
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 interface SpendingReportTableProps {
   categories: Category[];
   categoryByCategoryNameLUT: StringToCategoryLUT;
@@ -37,6 +39,8 @@ interface SpendingReportTableProps {
 }
 
 const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: SpendingReportTableProps) => {
+
+  const dispatch = useDispatch();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [transactionId, setTransactionId] = React.useState('');

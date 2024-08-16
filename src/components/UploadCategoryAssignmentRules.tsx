@@ -8,11 +8,15 @@ import { TrackerDispatch } from '../types';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
 import { replaceCategoryAssignmentRules } from '../controllers';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 export interface DownloadCategoryAssignmentRulesProps {
   onReplaceCategoryAssignmentRules: (categoryAssignmentRules: CategoryAssignmentRule[]) => any;
 }
 
 const UploadCategoryAssignmentRules: React.FC<any> = (props: any) => {
+
+  const dispatch = useDispatch();
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

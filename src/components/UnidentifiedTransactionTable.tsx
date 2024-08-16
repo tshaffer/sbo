@@ -19,6 +19,8 @@ import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import EditCheckDialog from './EditCheckDialog';
 import EditTransactionDialog from './EditTransactionDialog';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 interface NotIdentifiedTransactionTableProps {
   startDate: string;
   endDate: string;
@@ -34,6 +36,8 @@ interface NotIdentifiedTransactionTableProps {
 }
 
 const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps> = (props: NotIdentifiedTransactionTableProps) => {
+
+  const dispatch = useDispatch();
 
   const [unidentifiedBankTransactionId, setUnidentifiedBankTransactionId] = React.useState('');
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);

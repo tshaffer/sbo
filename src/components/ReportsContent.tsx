@@ -22,27 +22,6 @@ export interface ReportsContentProps {
   activeTab: number;
 }
 
-/*
-interface ReportsContentProps extends ReportsContentPropsFromParent {
-  startDate: string,
-  endDate: string,
-  dateRangeType: DateRangeType,
-  reportStatement: Statement | null,
-  onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
-  onSetGeneratedReportStartDate: (date: string) => any;
-  onSetGeneratedReportEndDate: (date: string) => any;
-}
-
-function mapStateToProps(state: any) {
-  return {
-    startDate: getStartDate(state),
-    endDate: getEndDate(state),
-    dateRangeType: getDateRangeType(state),
-    reportStatement: getReportStatement(state, getReportStatementId(state)),
-  };
-}
-*/
-
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
 
   const dispatch = useDispatch();
@@ -147,23 +126,3 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
 };
 
 export default ReportsContent;
-/*
-function mapStateToProps(state: any) {
-  return {
-    startDate: getStartDate(state),
-    endDate: getEndDate(state),
-    dateRangeType: getDateRangeType(state),
-    reportStatement: getReportStatement(state, getReportStatementId(state)),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onLoadTransactions: loadTransactions,
-    onSetGeneratedReportStartDate: setGeneratedReportStartDate,
-    onSetGeneratedReportEndDate: setGeneratedReportEndDate,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReportsContent);
-*/

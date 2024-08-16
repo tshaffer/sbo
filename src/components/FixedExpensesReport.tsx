@@ -13,6 +13,8 @@ import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getFixe
 import { CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 interface FixedExpensesReportProps {
   categories: Category[];
   categoryByCategoryNameLUT: StringToCategoryLUT;
@@ -23,6 +25,8 @@ interface FixedExpensesReportProps {
 }
 
 const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExpensesReportProps) => {
+
+  const dispatch = useDispatch();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 

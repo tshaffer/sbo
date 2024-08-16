@@ -20,6 +20,7 @@ import { addCategoryAssignmentRuleServerAndRedux, splitTransaction, updateTransa
 import SplitTransactionDialog from './SplitTransactionDialog';
 import EditTransactionDialog from './EditTransactionDialog';
 import EditCheckFromStatementDialog from './EditCheckFromStatementDialog';
+import { useDispatch, useTypedSelector } from '../types';
 
 export interface CheckingAccountStatementPropsFromParent {
   checkingAccountTransaction: CheckingAccountTransaction;
@@ -37,6 +38,8 @@ export interface CheckingAccountStatementProps extends CheckingAccountStatementP
 }
 
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
+
+  const dispatch = useDispatch();
 
   const [transactionId, setTransactionId] = React.useState('');
   const [showSplitTransactionDialog, setShowSplitTransactionDialog] = React.useState(false);

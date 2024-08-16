@@ -7,12 +7,16 @@ import { Category, CategoryAssignmentRule, UploadedCategoryAssignmentRule } from
 import { TrackerDispatch } from '../types';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 export interface DownloadCategoryAssignmentRulesProps {
   categories: Category[];
   categoryAssignmentRules: CategoryAssignmentRule[];
 }
 
 const DownloadCategoryAssignmentRules: React.FC<any> = (props: any) => {
+
+  const dispatch = useDispatch();
 
   const categoryAssignmentRules: CategoryAssignmentRule[] = props.categoryAssignmentRules;
   const categories: Category[] = props.categories;

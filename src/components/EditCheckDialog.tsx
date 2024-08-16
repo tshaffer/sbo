@@ -15,6 +15,8 @@ import { formatCurrency, formatDate } from '../utilities';
 import { isNil } from 'lodash';
 import SelectCategory from './SelectCategory';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 export interface EditCheckDialogPropsFromParent {
   open: boolean;
   unidentifiedBankTransactionId: string;
@@ -28,6 +30,8 @@ interface EditCheckDialogProps extends EditCheckDialogPropsFromParent {
 }
 
 const EditCheckDialog = (props: EditCheckDialogProps) => {
+
+  const dispatch = useDispatch();
 
   const [payee, setPayee] = useState(props.check.payee);
   const [checkNumber, setCheckNumber] = useState(props.check.checkNumber);

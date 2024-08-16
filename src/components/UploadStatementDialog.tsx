@@ -11,6 +11,8 @@ import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements
 import { TrackerDispatch } from '../types';
 import { CheckingAccountStatement, CreditCardStatement } from '../types';
 
+import { useDispatch, useTypedSelector } from '../types';
+
 export interface UploadStatementDialogPropsFromParent {
   open: boolean;
   onClose: () => void;
@@ -28,6 +30,8 @@ export interface UploadStatementDialogProps extends UploadStatementDialogPropsFr
 }
 
 const UploadStatementDialog = (props: UploadStatementDialogProps) => {
+
+  const dispatch = useDispatch();
 
   const { open, onClose } = props;
 
