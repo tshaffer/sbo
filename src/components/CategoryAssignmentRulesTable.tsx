@@ -11,12 +11,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import '../styles/Tracker.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
-import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
 import { deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
+
+import { useDispatch, useTypedSelector } from '../types';
 
 interface CategoryAssignmentRuleTableRow {
   pattern: string;
@@ -25,14 +26,24 @@ interface CategoryAssignmentRuleTableRow {
   ruleId: string;
 }
 
+/*
+    categoryAssignmentRules: getCategoryAssignmentRules(state),
+    categories: getCategories(state),
+*/
+/*
 interface CategoryAssignmentRulesTableProps {
   categoryAssignmentRules: CategoryAssignmentRule[];
   categories: Category[];
   onUpdateCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => TrackerAnyPromiseThunkAction;
   onDeleteCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => TrackerAnyPromiseThunkAction;
 }
+*/
+const CategoryAssignmentRulesTable: React.FC = () => {
 
-const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> = (props: CategoryAssignmentRulesTableProps) => {
+  const dispatch = useDispatch();
+
+  const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
+  const categories: Category[] = useTypedSelector(state => getCategories(state));
 
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
@@ -44,7 +55,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
 
   const updateCategoryAssignmentRuleTableRows = (): void => {
     const localCategoryAssignmentRuleTableRows: CategoryAssignmentRuleTableRow[] = [];
-    for (const categoryAssignmentRule of props.categoryAssignmentRules) {
+    for (const categoryAssignmentRule of categoryAssignmentRules) {
       const category: Category = getCategory(categoryAssignmentRule.categoryId);
       localCategoryAssignmentRuleTableRows.push({
         pattern: categoryAssignmentRule.pattern,
@@ -60,7 +71,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
     const localSelectedCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: string } = {};
     const localCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = {};
-    for (const categoryAssignmentRule of props.categoryAssignmentRules) {
+    for (const categoryAssignmentRule of categoryAssignmentRules) {
       localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
       localSelectedCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule.pattern;
       localCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id] = categoryAssignmentRule.categoryId;
@@ -75,7 +86,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   React.useEffect(() => {
     console.log('useEffect');
     generateReactState();
-  }, [props.categoryAssignmentRules]);
+  }, [categoryAssignmentRules]);
 
   const updateCategoryAssignmentRuleFromInReactState = (categoryAssignmentRule: CategoryAssignmentRule): void => {
     const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = cloneDeep(categoryAssignmentRuleById);
@@ -108,14 +119,14 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   }
 
   const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
-    return props.categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === pattern && categoryAssignmentRule.categoryId === categoryId);
+    return categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === pattern && categoryAssignmentRule.categoryId === categoryId);
   }
 
   function handleSaveCategoryAssignmentRule(categoryAssignmentRuleId: string): void {
     console.log('handleSaveCategoryAssignmentRule');
 
     // original values
-    const originalCategoryAssignmentRule: CategoryAssignmentRule = props.categoryAssignmentRules.find((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.id === categoryAssignmentRuleId) as CategoryAssignmentRule;
+    const originalCategoryAssignmentRule: CategoryAssignmentRule = categoryAssignmentRules.find((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.id === categoryAssignmentRuleId) as CategoryAssignmentRule;
 
     const originalPattern = originalCategoryAssignmentRule.pattern;
     const originalCategoryId = originalCategoryAssignmentRule.categoryId;
@@ -144,7 +155,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
 
     if (updatedCategoryAssignmentRuleViaTextField.pattern !== originalPattern) {
       console.log('pattern changed');
-      const patternAlreadyExists: boolean = props.categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === updatedCategoryAssignmentRuleViaTextField.pattern);
+      const patternAlreadyExists: boolean = categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === updatedCategoryAssignmentRuleViaTextField.pattern);
 
       if (patternAlreadyExists) {
         // pattern has changed, but the updated one already exists
@@ -162,7 +173,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
 
           // pattern changed, new pattern already exists, combo of new pattern and category already exists. Delete this instance of categoryAssignmentRule
           deleteCategoryAssignmentRuleInReactState(categoryAssignmentRuleId);
-          props.onDeleteCategoryAssignmentRule(originalCategoryAssignmentRule);
+          dispatch(deleteCategoryAssignmentRule(originalCategoryAssignmentRule));
 
         }
       } else {
@@ -173,7 +184,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
         const updatedCategoryAssignmentRule: CategoryAssignmentRule = cloneDeep(updatedCategoryAssignmentRuleViaTextField);
         updatedCategoryAssignmentRule.categoryId = updatedCategoryId;
         updateCategoryAssignmentRuleFromInReactState(updatedCategoryAssignmentRule);
-        props.onUpdateCategoryAssignmentRule(updatedCategoryAssignmentRule);
+        dispatch(updateCategoryAssignmentRule(updatedCategoryAssignmentRule));
 
       }
     } else {
@@ -188,7 +199,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
         const updatedCategoryAssignmentRule: CategoryAssignmentRule = cloneDeep(updatedCategoryAssignmentRuleViaTextField);
         updatedCategoryAssignmentRule.categoryId = updatedCategoryId;
         updateCategoryAssignmentRuleFromInReactState(updatedCategoryAssignmentRule);
-        props.onUpdateCategoryAssignmentRule(updatedCategoryAssignmentRule);
+        dispatch(updateCategoryAssignmentRule(updatedCategoryAssignmentRule));
       }
     }
   }
@@ -196,11 +207,11 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   const handleDeleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): void => {
     const categoryAssignmentRule: CategoryAssignmentRule = categoryAssignmentRuleById[categoryAssignmentRuleId];
     deleteCategoryAssignmentRuleInReactState(categoryAssignmentRuleId);
-    props.onDeleteCategoryAssignmentRule(categoryAssignmentRule);
+    dispatch(deleteCategoryAssignmentRule(categoryAssignmentRule));
   }
 
   const getCategory = (categoryId: string): Category => {
-    return props.categories.find((category: Category) => category.id === categoryId) as Category;
+    return categories.find((category: Category) => category.id === categoryId) as Category;
   };
 
   const handleCategoryAssignmentRuleChange = (categoryAssignmentRule: CategoryAssignmentRule, pattern: string) => {
@@ -245,7 +256,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   };
 
 
-  if (props.categoryAssignmentRules.length === 0) {
+  if (categoryAssignmentRules.length === 0) {
     return (
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
@@ -315,18 +326,4 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   );
 }
 
-function mapStateToProps(state: any) {
-  return {
-    categoryAssignmentRules: getCategoryAssignmentRules(state),
-    categories: getCategories(state),
-  };
-}
-
-const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-    onUpdateCategoryAssignmentRule: updateCategoryAssignmentRule,
-    onDeleteCategoryAssignmentRule: deleteCategoryAssignmentRule,
-  }, dispatch);
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CategoryAssignmentRulesTable);
+export default CategoryAssignmentRulesTable;

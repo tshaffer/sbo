@@ -10,6 +10,7 @@ import Statements from './Statements';
 import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
 import CreditCardStatementTable from './CreditCardStatementTable';
+import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'category-assignment-rules',
-        element: <div>Category Assignment Rules</div>,
+        element: <CategoryAssignmentRulesTable />,
       },
       {
         path: 'reports',
