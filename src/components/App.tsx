@@ -17,10 +17,6 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: 'categories',
-        element: <CategoriesTable />,
-      },
-      {
         path: 'statements',
         element: <Statements />,
         children: [
@@ -37,6 +33,18 @@ const router = createBrowserRouter([
             element: <CheckingAccountStatementsTable />,
           },
         ],
+      },
+      {
+        path: 'categories',
+        element: <CategoriesTable />,
+      },
+      {
+        path: 'category-assignment-rules',
+        element: <div>Category Assignment Rules</div>,
+      },
+      {
+        path: 'reports',
+        element: <div>Reports</div>,
       },
     ],
   },
