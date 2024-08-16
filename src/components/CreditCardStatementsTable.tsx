@@ -29,7 +29,6 @@ const CreditCardStatementsTable: React.FC = () => {
     console.log('navigate to credit card statement', creditCardStatement.id);
     dispatch(loadTransactions(creditCardStatement.startDate, creditCardStatement.endDate, true, false))
       .then(() => {
-        // navigate(`/creditCardStatement/${creditCardStatement.id}`);
         navigate(`/statements/credit-card/${creditCardStatement.id}`);
       });
   }

@@ -12,6 +12,7 @@ import CreditCardStatementsTable from './CreditCardStatementsTable';
 import CreditCardStatementTable from './CreditCardStatementTable';
 import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
 import ReportsContent from './ReportsContent';
+import CheckingAccountStatementTable from './CheckingAccountStatementTable';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
           {
             path: 'checking-account',
             element: <CheckingAccountStatementsTable />,
+          },
+          {
+            path: 'checking-account/:id',
+            element: <CheckingAccountStatementTable />,
           },
         ],
       },

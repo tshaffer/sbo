@@ -31,7 +31,7 @@ const CheckingAccountStatementsTable: React.FC = () => {
     console.log('navigate to credit card statement', checkingAccountStatement.id);
     dispatch(loadTransactions(checkingAccountStatement.startDate, checkingAccountStatement.endDate, false, true))
       .then(() => {
-        navigate(`/checkingAccountStatement/${checkingAccountStatement.id}`);
+        navigate(`/statements/checking-account/${checkingAccountStatement.id}`);
       });
   }
 
@@ -80,10 +80,3 @@ const CheckingAccountStatementsTable: React.FC = () => {
 };
 
 export default CheckingAccountStatementsTable;
-
-export const CheckingAccountStatementTableWrapper = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  // return <CheckingAccountStatementTable checkingAccountStatementId={id as string} navigate={navigate} />;
-  return <CheckingAccountStatementTable />;
-};
