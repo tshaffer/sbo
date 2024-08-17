@@ -49,7 +49,6 @@ export interface CreditCardTransactionRowInStatementTableProperties {
   description: string;
   userDescription: string;
   category: string;
-
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string;
   categoryNameFromCategoryOverride: string;

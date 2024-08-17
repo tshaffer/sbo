@@ -1,9 +1,22 @@
-import { CheckingAccountStatement, TrackerState } from '../types';
+import { createSelector } from 'reselect';
+import { CheckingAccountStatement, CheckingAccountStatementState, TrackerState } from '../types';
 
-export const getCheckingAccountStatements = (state: TrackerState): CheckingAccountStatement[] => {
-  return state.checkingAccountStatementState.checkingAccountStatements;
-};
+// Input selector: extracts the CheckingAccountStatementState slice from the state
+const checkingAccountStatementState = (state: TrackerState): CheckingAccountStatementState => state.checkingAccountStatementState;
 
-export const getCheckingAccountStatementById = (state: TrackerState, checkingAccountStatementId: string): CheckingAccountStatement | null => {
-  return state.checkingAccountStatementState.checkingAccountStatements.find((checkingAccountStatement: CheckingAccountStatement) => checkingAccountStatement.id === checkingAccountStatementId) || null;
-}
+// Memoized selector: extracts the list of CheckingAccountStatements
+export const getCheckingAccountStatements = createSelector(
+  [checkingAccountStatementState],
+  (checkingAccountStatementState: CheckingAccountStatementState): CheckingAccountStatement[] =>
+    checkingAccountStatementState.checkingAccountStatements
+);
+
+// Selector to get a specific CheckingAccountStatement by ID
+export const getCheckingAccountStatementById = createSelector(
+  [getCheckingAccountStatements, (_, checkingAccountStatementId: string) => checkingAccountStatementId],
+  (checkingAccountStatements: CheckingAccountStatement[], checkingAccountStatementId: string): CheckingAccountStatement | null => {
+    return checkingAccountStatements.find(
+      (checkingAccountStatement: CheckingAccountStatement) => checkingAccountStatement.id === checkingAccountStatementId
+    ) || null;
+  }
+);

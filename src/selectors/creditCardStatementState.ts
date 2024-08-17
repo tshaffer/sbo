@@ -1,9 +1,19 @@
-import { CreditCardStatement, TrackerState } from '../types';
+import { createSelector } from 'reselect';
+import { CreditCardStatement, CreditCardStatementState, TrackerState } from '../types';
 
-export const getCreditCardStatements = (state: TrackerState): CreditCardStatement[] => {
-  return state.creditCardStatementState.creditCardStatements;
-};
+// Input selector: extracts the CreditCardStatementState slice from the state
+const creditCardStatementState = (state: TrackerState): CreditCardStatementState => state.creditCardStatementState;
 
-export const getCreditCardStatementById = (state: TrackerState, creditCardStatementId: string): CreditCardStatement | null => {
-  return state.creditCardStatementState.creditCardStatements.find((creditCardStatement: CreditCardStatement) => creditCardStatement.id === creditCardStatementId) || null;
-}
+// Memoized selector: extracts the list of CreditCardStatements
+export const getCreditCardStatements = createSelector(
+  [creditCardStatementState],
+  (creditCardStatementState: CreditCardStatementState): CreditCardStatement[] => creditCardStatementState.creditCardStatements
+);
+
+// Selector to get a specific CreditCardStatement by ID
+export const getCreditCardStatementById = createSelector(
+  [getCreditCardStatements, (_, creditCardStatementId: string) => creditCardStatementId],
+  (creditCardStatements: CreditCardStatement[], creditCardStatementId: string): CreditCardStatement | null => {
+    return creditCardStatements.find((creditCardStatement: CreditCardStatement) => creditCardStatement.id === creditCardStatementId) || null;
+  }
+);

@@ -1,6 +1,11 @@
-import { CategoryAssignmentRule, TrackerState } from '../types';
+import { createSelector } from 'reselect';
+import { CategoryAssignmentRule, CategoryAssignmentRulesState, TrackerState } from '../types';
 
-export const getCategoryAssignmentRules = (state: TrackerState): CategoryAssignmentRule[] => {
-  return state.categoryAssignmentRulesState.categoryAssignmentRules;
-};
+// Input selector: extracts the CategoryAssignmentRulesState slice from the state
+const categoryAssignmentRulesState = (state: TrackerState): CategoryAssignmentRulesState => state.categoryAssignmentRulesState;
 
+// Memoized selector: extracts the appInitialized property from appState
+export const getCategoryAssignmentRules = createSelector(
+  [categoryAssignmentRulesState],
+  (categoryAssignmentRulesState: CategoryAssignmentRulesState): CategoryAssignmentRule[] => categoryAssignmentRulesState.categoryAssignmentRules,
+);
