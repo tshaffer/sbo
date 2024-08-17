@@ -1,42 +1,65 @@
+import { createSelector } from 'reselect';
 import { isNil } from 'lodash';
-import { Category, StringToCategoryLUT, TrackerState, UploadedCategoryAssignmentRule } from '../types';
+import {
+  Category,
+  StringToCategoryLUT,
+  TrackerState,
+  UploadedCategoryAssignmentRule
+} from '../types';
 
-export const getCategories = (state: TrackerState): Category[] => {
-  return state.categoryState.categories;
-};
+// Input selector: extracts the categoryState slice from the state
+const getCategoryState = (state: TrackerState) => state.categoryState;
 
-export const getCategoryById = (state: TrackerState, id: string): Category | undefined => {
-  return state.categoryState.categories.find(category => category.id === id);
-}
+// Memoized selector: extracts the categories from categoryState
+export const getCategories = createSelector(
+  [getCategoryState],
+  (categoryState) => categoryState.categories
+);
 
-export const getCategoryByName = (state: TrackerState, name: string): Category | undefined => {
-  return state.categoryState.categories.find(category => category.name === name);
-}
+// Selector to get a category by its ID
+export const getCategoryById = createSelector(
+  [getCategories, (_: TrackerState, id: string) => id],
+  (categories: Category[], id: string): Category | undefined => categories.find(category => category.id === id)
+);
 
-export const getCategoryByCategoryNameLUT = (state: TrackerState): StringToCategoryLUT => {
-  const categoryLUT: StringToCategoryLUT = {};
-  for (const category of state.categoryState.categories) {
-    categoryLUT[category.name] = category;
+// Selector to get a category by its name
+export const getCategoryByName = createSelector(
+  [getCategories, (_: TrackerState, name: string) => name],
+  (categories: Category[], name: string): Category | undefined => categories.find(category => category.name === name)
+);
+
+// Selector to create a lookup table by category name
+export const getCategoryByCategoryNameLUT = createSelector(
+  [getCategories],
+  (categories: Category[]): StringToCategoryLUT => {
+    const categoryLUT: StringToCategoryLUT = {};
+    for (const category of categories) {
+      categoryLUT[category.name] = category;
+    }
+    return categoryLUT;
   }
-  return categoryLUT;
-}
+);
 
-export const getCategoryDisregardLevel = (state: TrackerState, id: string): number => {
-  const category = getCategoryById(state, id);
-  return category ? category.disregardLevel : 0;
-}
+// Selector to get the disregard level of a category by its ID
+export const getCategoryDisregardLevel = createSelector(
+  [getCategoryById],
+  (category: Category | undefined): number => category ? category.disregardLevel : 0
+);
 
-export const getMissingCategories = (state: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]): string[] => {
-  const missingCategoryNames: string[] = uploadedCategoryAssignmentRules.reduce(
-    (accumulator: string[], uploadedCategoryAssignmentRule: UploadedCategoryAssignmentRule) => {
-      const category: Category | undefined = getCategoryByName(state, uploadedCategoryAssignmentRule.categoryName);
-      if (isNil(category) && accumulator.indexOf(uploadedCategoryAssignmentRule.categoryName) === -1) {
-        accumulator.push(uploadedCategoryAssignmentRule.categoryName);
-      }
-      return accumulator;
-    },
-    [],
-  );
-  return missingCategoryNames;
-}
-
+// Selector to find missing categories based on uploaded category assignment rules
+export const getMissingCategories = createSelector(
+  [getCategories, (_: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]) => uploadedCategoryAssignmentRules],
+  (categories: Category[], uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]): string[] => {
+    const missingCategoryNames: string[] = uploadedCategoryAssignmentRules.reduce(
+      (accumulator: string[], uploadedCategoryAssignmentRule: UploadedCategoryAssignmentRule) => {
+        const category = categories.find(cat => cat.name === uploadedCategoryAssignmentRule.categoryName);
+        if (isNil(category) && !accumulator.includes(uploadedCategoryAssignmentRule.categoryName)) {
+          accumulator.push(uploadedCategoryAssignmentRule.categoryName);
+        }
+        return accumulator;
+      },
+      []
+    );
+    return missingCategoryNames;
+  }
+);
