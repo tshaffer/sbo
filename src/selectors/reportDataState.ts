@@ -1,77 +1,103 @@
+import { createSelector } from 'reselect';
 import { isNil } from "lodash";
-import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, Statement, TrackerState, CategorizedTransaction } from "../types";
+import {
+  BankTransaction,
+  DateRangeType,
+  MinMaxDates,
+  ReportDataState,
+  StringToTransactionsLUT,
+  Statement,
+  TrackerState,
+  CategorizedTransaction
+} from "../types";
 import { getCheckingAccountStatementById } from "./checkingAccountStatementState";
 import { getCreditCardStatementById } from "./creditCardStatementState";
 import { getUnidentifiedBankTransactions } from "./transactionsState";
 
-export const getReportDataState = (state: TrackerState): ReportDataState => {
-  return state.reportDataState;
-};
+// Input selectors
+const selectReportDataState = (state: TrackerState): ReportDataState => state.reportDataState;
 
-export const getStartDate = (state: TrackerState): string => {
-  return state.reportDataState.startDate;
-}
+// Memoized selectors
+export const getStartDate = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): string => reportDataState.startDate
+);
 
-export const getEndDate = (state: TrackerState): string => {
-  return state.reportDataState.endDate;
-}
+export const getEndDate = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): string => reportDataState.endDate
+);
 
-export const getGeneratedReportStartDate = (state: TrackerState): string => {
-  return state.reportDataState.generatedReportStartDate;
-}
+export const getGeneratedReportStartDate = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): string => reportDataState.generatedReportStartDate
+);
 
-export const getGeneratedReportEndDate = (state: TrackerState): string => {
-  return state.reportDataState.generatedReportEndDate;
-}
+export const getGeneratedReportEndDate = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): string => reportDataState.generatedReportEndDate
+);
 
-export const getTotal = (state: TrackerState): number => {
-  return state.reportDataState.total;
-}
+export const getTotal = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): number => reportDataState.total
+);
 
-export const getTransactionByIdFromReportDataState = (reportDataState: ReportDataState, transactionId: string): BankTransaction | null => {
-  const transactionsByCategory: StringToTransactionsLUT = reportDataState.transactionsByCategory;
-  const categorizedTransactions: CategorizedTransaction[] = Object.values(transactionsByCategory).flat();
-  const matchingCategorizedTransaction: CategorizedTransaction | null = categorizedTransactions.find((categorizedTransaction: CategorizedTransaction) => categorizedTransaction.bankTransaction.id === transactionId) || null;
-  if (!isNil(matchingCategorizedTransaction)) {
-    return matchingCategorizedTransaction.bankTransaction;
-  } else {
+export const getTransactionByIdFromReportDataState = createSelector(
+  [selectReportDataState, (_: TrackerState, transactionId: string) => transactionId],
+  (reportDataState: ReportDataState, transactionId: string): BankTransaction | null => {
+    const transactionsByCategory: StringToTransactionsLUT = reportDataState.transactionsByCategory;
+    const categorizedTransactions: CategorizedTransaction[] = Object.values(transactionsByCategory).flat();
+    const matchingCategorizedTransaction: CategorizedTransaction | null = categorizedTransactions.find(
+      (categorizedTransaction: CategorizedTransaction) => categorizedTransaction.bankTransaction.id === transactionId
+    ) || null;
+    return matchingCategorizedTransaction ? matchingCategorizedTransaction.bankTransaction : null;
+  }
+);
+
+export const getUnidentifiedBankTransactionById = createSelector(
+  [getUnidentifiedBankTransactions, (_: TrackerState, unidentifiedBankTransactionId: string) => unidentifiedBankTransactionId],
+  (unidentifiedBankTransactions: BankTransaction[], unidentifiedBankTransactionId: string): BankTransaction | null => {
+    return unidentifiedBankTransactions.find(
+      (unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId
+    ) || null;
+  }
+);
+
+export const getDateRangeType = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): DateRangeType => reportDataState.dateRangeType
+);
+
+export const getMinMaxTransactionDates = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): MinMaxDates => reportDataState.minMaxTransactionDates
+);
+
+export const getReportStatementId = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): string => reportDataState.reportStatementId
+);
+
+export const getReportStatement = createSelector(
+  [getCreditCardStatementById, getCheckingAccountStatementById],
+  (creditCardStatement, checkingAccountStatement): Statement | null => {
+    if (!isNil(creditCardStatement)) {
+      return creditCardStatement;
+    }
+    if (!isNil(checkingAccountStatement)) {
+      return checkingAccountStatement;
+    }
     return null;
   }
-}
+);
 
-export const getUnidentifiedBankTransactionById = (state: TrackerState, unidentifiedBankTransactionId: string): BankTransaction | null => {
-  const unidentifiedBankTransactions: BankTransaction[] = getUnidentifiedBankTransactions(state);
-  return unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) || null;
-};
+export const getCategoryIdsToExclude = createSelector(
+  [selectReportDataState],
+  (reportDataState: ReportDataState): string[] => reportDataState.categoryIdsToExclude
+);
 
-export const getDateRangeType = (state: TrackerState): DateRangeType => {
-  return state.reportDataState.dateRangeType;
-}
-
-export const getMinMaxTransactionDates = (state: TrackerState): MinMaxDates => {
-  return state.reportDataState.minMaxTransactionDates;
-}
-
-export const getReportStatementId = (state: TrackerState): string => {
-  return state.reportDataState.reportStatementId;
-}
-
-export const getReportStatement = (state: TrackerState, statementId: string): Statement | null => {
-  const creditCardStatement = getCreditCardStatementById(state, statementId);
-  if (!isNil(creditCardStatement)) {
-    return creditCardStatement;
-  }
-  const checkingAccountStatement = getCheckingAccountStatementById(state, statementId);
-  if (!isNil(checkingAccountStatement)) {
-    return checkingAccountStatement;
-  }
-  return null;
-}
-
-export const getCategoryIdsToExclude = (state: TrackerState): string[] => {
-  return state.reportDataState.categoryIdsToExclude;
-}
-
-export const isCategoryIdExcluded = (state: TrackerState, categoryId: string): boolean => {
-  return getCategoryIdsToExclude(state).includes(categoryId);
-}
+export const isCategoryIdExcluded = createSelector(
+  [getCategoryIdsToExclude, (_: TrackerState, categoryId: string) => categoryId],
+  (categoryIdsToExclude: string[], categoryId: string): boolean => categoryIdsToExclude.includes(categoryId)
+);
