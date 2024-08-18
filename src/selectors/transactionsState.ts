@@ -3,7 +3,8 @@ import { createSelector } from 'reselect';
 
 import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
 import { getCategories, getCategoryById, getCategoryByName } from './categoryState';
-import { getEndDate, getStartDate } from './reportDataState';
+// import { getEndDate, getStartDate } from './reportDataState';
+
 import { roundTo } from '../utilities';
 import { getCategoryAssignmentRules } from './categoryAssignmentRulesState';
 
@@ -17,10 +18,17 @@ export interface MatchingRuleAssignment {
   pattern: string;
 }
 
+console.log('transactionsState.ts');
+
 // Basic selectors
 const getTransactionIds = (state: TrackerState): string[] => state.transactionsState.allIds;
 
 const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
+const getStartDate = (state: TrackerState): string => state.reportDataState.startDate;
+const getEndDate = (state: TrackerState): string => state.reportDataState.endDate;
+
+console.log('getStartDate', getStartDate);
+console.log('getEndDate', getEndDate);
 
 // Memoized selectors
 export const getTransactions = createSelector(
@@ -203,138 +211,110 @@ export const findMatchingRule = (state: TrackerState, transaction: BankTransacti
   return null;
 }
 
-const getCategorizedStatementData = (state: TrackerState): CategorizedStatementData => {
+// Step 1: Create Basic Selectors
 
-  const allCategories: Category[] = getCategories(state);
-  const categories: Category[] = [];
-  for (const category of allCategories) {
-    if (category.disregardLevel === DisregardLevel.None) {
-      categories.push(category);
-    }
-  }
+// Basic Selectors
+const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
+const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
 
-  const ignoreCategory: Category = getCategoryByName(state, 'Ignore') as Category;
-  const categoryAssignmentRules = getCategoryAssignmentRules(state);
+// Step 2: Filter Categories by Disregard Level
+const getActiveCategories = createSelector(
+  [getAllCategories],
+  (allCategories: Category[]) => allCategories.filter(category => category.disregardLevel === DisregardLevel.None)
+);
 
-  const allTransactions: BankTransaction[] = getTransactions(state) as BankTransaction[];
-
-  const reviewedTransactionEntities: ReviewedTransactions = categorizeTransactions(allTransactions, categories, ignoreCategory, categoryAssignmentRules);
-
-  const categorizedTransactions: CategorizedTransaction[] = reviewedTransactionEntities.categorizedTransactions;
-  const unidentifiedBankTransactions: BankTransaction[] = reviewedTransactionEntities.uncategorizedTransactions;
-  const fixedExpenses: CategorizedTransaction[] = reviewedTransactionEntities.fixedExpenses
-
-  const transactions: CategorizedTransaction[] = [];
-  let sum = 0;
-
-  for (const categorizedTransaction of categorizedTransactions) {
-    const transaction: CategorizedTransaction = {
-      bankTransaction: categorizedTransaction.bankTransaction,
-      categoryId: categorizedTransaction.categoryId,
-    };
-    transactions.push(transaction);
-    sum += transaction.bankTransaction.amount;
-  }
-
-  sum = roundTo(-sum, 2)
-
-  const categorizedStatementData: CategorizedStatementData = {
-    startDate: getStartDate(state),
-    endDate: getEndDate(state),
-    transactions,
-    netDebits: sum,
-    unidentifiedBankTransactions,
-    fixedExpenses,
-  };
-
-  return categorizedStatementData;
-}
-
-const categorizeTransactions = (
-  transactions: BankTransaction[],
-  categories: Category[],
-  ignoreCategory: Category,
-  categoryAssignmentRules: CategoryAssignmentRule[]
-): ReviewedTransactions => {
-
-  const categorizedTransactions: CategorizedTransaction[] = [];
-  const uncategorizedTransactions: BankTransaction[] = [];
-  const ignoredTransactions: BankTransaction[] = [];
-  const fixedExpenses: CategorizedTransaction[] = [];
-
-  let sum: number = 0;
-
-  for (const transaction of transactions) {
-
-    if ((transaction as CheckingAccountTransaction).excludeFromReportCalculations) {
-      console.log('Excluding from report calculations');
-      console.log(transaction)
-      continue;
-    }
-    const category: Category | null = categorizeTransaction(transaction, categories, categoryAssignmentRules);
-    if (!isNil(category)) {
-      if (category.id === ignoreCategory.id) {
-        ignoredTransactions.push(transaction);
-      } else {
-        const categorizedTransaction: CategorizedTransaction = {
-          bankTransaction: transaction,
-          categoryId: category.id,
-        };
-        categorizedTransactions.push(categorizedTransaction);
-
-        if (category.transactionsRequired) {
-          fixedExpenses.push(categorizedTransaction);
-        }
-
-        sum += transaction.amount;
-      }
-    } else {
-      uncategorizedTransactions.push(transaction);
-    }
-  }
-
-  return {
-    categorizedTransactions,
-    uncategorizedTransactions,
-    ignoredTransactions,
-    fixedExpenses,
-  };
-};
-
+// Step 3: Memoize categorizeTransaction
 export const categorizeTransaction = (
   transaction: BankTransaction,
   categories: Category[],
-  categoryAssignmentRules: CategoryAssignmentRule[]): Category | null => {
+  categoryAssignmentRules: CategoryAssignmentRule[]
+): Category | null => {
 
   if (transaction.overrideCategory && transaction.overrideCategoryId !== '') {
-    for (const category of categories) {
-      if (category.id === transaction.overrideCategoryId) {
-        return category;
-      }
-    }
+    const category = categories.find(cat => cat.id === transaction.overrideCategoryId);
+    if (category) return category;
   }
 
   for (const categoryAssignmentRule of categoryAssignmentRules) {
     if (transaction.userDescription.includes(categoryAssignmentRule.pattern)) {
-      const categoryId = categoryAssignmentRule.categoryId;
-      for (const category of categories) {
-        if (category.id === categoryId) {
-          return category;
-        }
-      }
+      const category = categories.find(cat => cat.id === categoryAssignmentRule.categoryId);
+      if (category) return category;
     }
   }
 
   if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
-    if (!isNil((transaction as unknown as CreditCardTransaction).category)) {
-      for (const category of categories) {
-        if ((transaction as unknown as CreditCardTransaction).category === category.name) {
-          return category;
-        }
-      }
-    }
+    const creditCardTransaction = transaction as CreditCardTransaction;
+    const category = categories.find(cat => cat.name === creditCardTransaction.category);
+    if (category) return category;
   }
 
   return null;
 };
 
+// Step 4: Memoize categorizeTransactions
+const categorizeTransactions = createSelector(
+  [getTransactions, getActiveCategories, getIgnoreCategory, getCategoryAssignmentRules],
+  (transactions, categories, ignoreCategory, categoryAssignmentRules): ReviewedTransactions => {
+    const categorizedTransactions: CategorizedTransaction[] = [];
+    const uncategorizedTransactions: BankTransaction[] = [];
+    const ignoredTransactions: BankTransaction[] = [];
+    const fixedExpenses: CategorizedTransaction[] = [];
+
+    const bankTransactions: BankTransaction[] = transactions as BankTransaction[];
+    bankTransactions.forEach(transaction => {
+      if ((transaction as CheckingAccountTransaction).excludeFromReportCalculations) {
+        return;
+      }
+
+      const category = categorizeTransaction(transaction, categories, categoryAssignmentRules);
+      if (!isNil(category)) {
+        if (category.id === ignoreCategory?.id) {
+          ignoredTransactions.push(transaction);
+        } else {
+          const categorizedTransaction: CategorizedTransaction = {
+            bankTransaction: transaction,
+            categoryId: category.id,
+          };
+          categorizedTransactions.push(categorizedTransaction);
+
+          if (category.transactionsRequired) {
+            fixedExpenses.push(categorizedTransaction);
+          }
+        }
+      } else {
+        uncategorizedTransactions.push(transaction);
+      }
+    });
+
+    return {
+      categorizedTransactions,
+      uncategorizedTransactions,
+      ignoredTransactions,
+      fixedExpenses,
+    };
+  }
+);
+
+//Step 5: Create getCategorizedStatementData Selector
+export const getCategorizedStatementData = createSelector(
+  [categorizeTransactions, getStartDate, getEndDate],
+  (reviewedTransactions, startDate, endDate): CategorizedStatementData => {
+    const { categorizedTransactions, uncategorizedTransactions, fixedExpenses } = reviewedTransactions;
+
+    const transactions = categorizedTransactions.map(transaction => ({
+      bankTransaction: transaction.bankTransaction,
+      categoryId: transaction.categoryId,
+    }));
+
+    const netDebits = roundTo(-transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
+
+    return {
+      startDate,
+      endDate,
+      transactions,
+      netDebits,
+      unidentifiedBankTransactions: uncategorizedTransactions,
+      fixedExpenses,
+    };
+  }
+);
