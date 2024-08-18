@@ -1,10 +1,10 @@
 import React from 'react';
 import { Box, Collapse, IconButton } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { getAppInitialized, getCategories } from '../selectors';
+import { getAppInitialized, getCategories, getCategoryAssignmentRules, getCategoryByName } from '../selectors';
 import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
 import '../styles/Tracker.css';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isNil } from 'lodash';
 import { useDispatch, useTypedSelector } from '../types';
 
 const CategoriesTable: React.FC = () => {
@@ -13,12 +13,13 @@ const CategoriesTable: React.FC = () => {
 
   const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
   const categories: Category[] = useTypedSelector(state => getCategories(state));
-
+  const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
+  const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
+  
   const [openRows, setOpenRows] = React.useState<{ [key: string]: boolean }>({});
 
   const getRulesByCategory = (categoryId: string): CategoryAssignmentRule[] => {
-    return [];
-    // return categoryAssignmentRules.filter((rule: CategoryAssignmentRule) => rule.categoryId === categoryId);
+    return categoryAssignmentRules.filter((rule: CategoryAssignmentRule) => rule.categoryId === categoryId);
   };
 
   const getNumberOfRulesByCategory = (categoryId: string): number => {
@@ -33,9 +34,9 @@ const CategoriesTable: React.FC = () => {
   };
 
   let trimmedCategories = cloneDeep(categories);
-  // if (!isNil(ignoreCategory)) {
-  //   trimmedCategories = categories.filter(category => category.id !== ignoreCategory!.id)
-  // }
+  if (!isNil(ignoreCategory)) {
+    trimmedCategories = categories.filter(category => category.id !== ignoreCategory!.id)
+  }
   const sortedTrimmedCategories: Category[] = trimmedCategories.sort((a, b) => a.name.localeCompare(b.name));
 
   const renderPatternTable = (categoryMenuItem: CategoryMenuItem): JSX.Element | null => {
