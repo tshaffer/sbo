@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Box,
@@ -18,8 +18,6 @@ export interface EditTransactionMoreOptionsDialogProps {
 }
 
 const EditTransactionMoreOptionsDialog: React.FC<EditTransactionMoreOptionsDialogProps> = (props: EditTransactionMoreOptionsDialogProps) => {
-
-  const dispatch = useDispatch();
 
   const transaction: Transaction = useTypedSelector(state => getTransactionById(state, props.transactionId) as Transaction);
   const [overrideFixedExpense, setOverrideFixedExpense] = useState(transaction.overrideFixedExpense);

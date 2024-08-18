@@ -1,14 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
-import { getAppInitialized, getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
-import { bindActionCreators } from 'redux';
+import { getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
 import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
-import { TrackerDispatch } from '../types';
 import { CheckingAccountStatement, CreditCardStatement } from '../types';
 
 import { useDispatch, useTypedSelector } from '../types';
@@ -18,10 +15,8 @@ export interface UploadStatementDialogProps {
   onClose: () => void;
 }
 
-
 const UploadStatementDialog: React.FC<UploadStatementDialogProps> = (props: UploadStatementDialogProps) => {
 
-  const appInitialized: boolean = useTypedSelector(getAppInitialized);
   const checkingAccountStatementState: CheckingAccountStatement[] = useTypedSelector(getCheckingAccountStatements);
   const creditCardStatementState: CreditCardStatement[] = useTypedSelector(getCreditCardStatements);
 

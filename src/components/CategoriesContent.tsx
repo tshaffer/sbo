@@ -1,23 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import { Box, Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import { TrackerDispatch } from '../types';
 import { Category, DisregardLevel, SidebarMenuButton } from '../types';
 import AddCategoryDialog from './AddCategoryDialog';
 import CategoriesTable from './CategoriesTable';
 import { addCategory } from '../controllers';
 
-import { useDispatch, useTypedSelector } from '../types';
-
-interface CategoriesContentProps {
-  onAddCategory: (category: Category) => any;
-}
+import { useDispatch } from '../types';
 
 const CategoriesContent: React.FC = () => {
 

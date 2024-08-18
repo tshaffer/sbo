@@ -5,7 +5,6 @@ import { createBrowserRouter } from 'react-router-dom';
 import { store } from '../models';
 
 import Layout from './Layout';
-import CategoriesTable from './CategoriesTable';
 import Statements from './Statements';
 import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
@@ -13,6 +12,7 @@ import CreditCardStatementTable from './CreditCardStatementTable';
 import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
 import ReportsContent from './ReportsContent';
 import CheckingAccountStatementTable from './CheckingAccountStatementTable';
+import CategoriesContent from './CategoriesContent';
 
 const router = createBrowserRouter([
   {
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'categories',
-        element: <CategoriesTable />,
+        element: <CategoriesContent />,
       },
       {
         path: 'category-assignment-rules',

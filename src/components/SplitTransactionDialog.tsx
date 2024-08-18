@@ -5,10 +5,9 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CheckingAccountTransaction } from '../types';
-import { connect } from 'react-redux';
 import { getTransactionById } from '../selectors';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 
 interface SplitTransaction {
   amount: string;
@@ -22,13 +21,7 @@ interface SplitTransactionDialogProps {
   onSave: (splits: SplitTransaction[]) => any;
 }
 
-// export interface SplitTransactionDialogProps extends SplitTransactionDialogPropsFromParent {
-//   transaction: CheckingAccountTransaction;
-// }
-
 const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: SplitTransactionDialogProps) => {
-
-  const dispatch = useDispatch();
 
   const transaction = useTypedSelector(state => getTransactionById(state, props.transactionId)) as CheckingAccountTransaction;
 

@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-
 import { isNil } from 'lodash';
 
 import DialogTitle from '@mui/material/DialogTitle';
@@ -11,9 +10,9 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, Tooltip } from '@mui/material';
 
-import { Category, SidebarMenuButton, Transaction } from '../types';
+import { SidebarMenuButton, Transaction } from '../types';
 import SelectCategory from './SelectCategory';
-import { getAppInitialized, getCategories, getCategoryByTransactionId, getTransactionById } from '../selectors';
+import { getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { canAddCategoryAssignmentRule } from '../controllers';
 
 export interface AddCategoryAssignmentRuleDialogProps {
@@ -27,9 +26,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
 
   const dispatch = useDispatch();
 
-  const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
   const transaction: Transaction | undefined = useTypedSelector(state => getTransactionById(state, props.transactionId));
-  const categories: Category[] = useTypedSelector(state => getCategories(state));
   const initialCategoryId: string | null | undefined = useTypedSelector(state => getCategoryByTransactionId(state, props.transactionId)?.id);
   
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);

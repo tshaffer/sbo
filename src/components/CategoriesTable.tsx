@@ -5,11 +5,9 @@ import { getAppInitialized, getCategories, getCategoryAssignmentRules, getCatego
 import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
 import '../styles/Tracker.css';
 import { cloneDeep, isNil } from 'lodash';
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 
 const CategoriesTable: React.FC = () => {
-
-  const dispatch = useDispatch();
 
   const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
   const categories: Category[] = useTypedSelector(state => getCategories(state));
@@ -17,6 +15,10 @@ const CategoriesTable: React.FC = () => {
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
   
   const [openRows, setOpenRows] = React.useState<{ [key: string]: boolean }>({});
+
+  if (!appInitialized) {
+    return null;
+  }
 
   const getRulesByCategory = (categoryId: string): CategoryAssignmentRule[] => {
     return categoryAssignmentRules.filter((rule: CategoryAssignmentRule) => rule.categoryId === categoryId);

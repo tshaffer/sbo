@@ -1,7 +1,5 @@
 import React from 'react';
 import { Box, FormControl, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { setEndDate, setDateRangeType, setStartDate, setReportStatementId } from '../models';
 import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates, getCheckingAccountStatements, getCreditCardStatements, getReportStatementId } from '../selectors';
 import { CheckingAccountStatement, CreditCardStatement, DateRangeType, MinMaxDates, StatementType, TrackerDispatch } from '../types';

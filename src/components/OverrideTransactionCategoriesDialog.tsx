@@ -29,6 +29,7 @@ const OverrideTransactionCategoriesDialog = (props: OverrideTransactionCategorie
   function handleCategoryChange(categoryId: string): void {
     setSelectedCategoryId(categoryId)
   }
+  
   const handleClose = () => {
     onClose();
   };

@@ -2,17 +2,14 @@ import React from 'react';
 
 import '../styles/Tracker.css';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { cloneDeep, isEmpty } from 'lodash';
 
 import { CheckingAccountStatement } from '../types';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useTypedSelector } from '../types';
 
 import { getCheckingAccountStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import CheckingAccountStatementTable from './CheckingAccountStatementTable';
 import { loadTransactions } from '../controllers';
 
 const CheckingAccountStatementsTable: React.FC = () => {
@@ -28,7 +25,6 @@ const CheckingAccountStatementsTable: React.FC = () => {
   const navigate = useNavigate();
 
   const handleStatementClicked = (checkingAccountStatement: CheckingAccountStatement) => {
-    console.log('navigate to credit card statement', checkingAccountStatement.id);
     dispatch(loadTransactions(checkingAccountStatement.startDate, checkingAccountStatement.endDate, false, true))
       .then(() => {
         navigate(`/statements/checking-account/${checkingAccountStatement.id}`);

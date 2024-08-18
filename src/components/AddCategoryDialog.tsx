@@ -1,13 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
 
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, Checkbox, DialogActions, DialogContent, FormControl, FormControlLabel, InputLabel, ListItemText, Menu, MenuItem, Select, Tooltip } from '@mui/material';
-import { getAppInitialized, getCategories } from '../selectors';
-import { Category, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
+import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip } from '@mui/material';
 import SelectCategory from './SelectCategory';
 
 export interface AddCategoryDialogProps {

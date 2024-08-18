@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,11 +8,10 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import '../styles/Tracker.css';
 
-import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, DateRangeType, Statement, Transaction } from '../types';
+import { BankTransaction, BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, Transaction } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
-import { addCategoryAssignmentRuleServerAndRedux, addCategory, updateCheckTransaction, updateTransaction } from '../controllers';
-import { TrackerDispatch } from '../types';
-import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
+import { addCategoryAssignmentRuleServerAndRedux, updateCheckTransaction, updateTransaction } from '../controllers';
+import { getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import EditCheckDialog from './EditCheckDialog';
 import EditTransactionDialog from './EditTransactionDialog';
@@ -23,10 +20,6 @@ import { useDispatch, useTypedSelector } from '../types';
 
 const UnIdentifiedTransactionTable: React.FC = () => {
 
-  const startDate: string = useTypedSelector(getStartDate);
-  const endDate: string = useTypedSelector(getEndDate);
-  const dateRangeType: DateRangeType = useTypedSelector(getDateRangeType);
-  const reportStatement: Statement | null = useTypedSelector(state => getReportStatement(state, getReportStatementId(state)));
   const generatedReportStartDate: string = useTypedSelector(getGeneratedReportStartDate);
   const generatedReportEndDate: string = useTypedSelector(getGeneratedReportEndDate);
   const unidentifiedBankTransactions: BankTransaction[] = useTypedSelector(getUnidentifiedBankTransactions);

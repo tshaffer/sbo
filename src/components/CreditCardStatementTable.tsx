@@ -12,7 +12,6 @@ import CreditCardStatementTransactionRow from './CreditCardStatementTransactionR
 
 const CreditCardStatementTable: React.FC = () => {
 
-  console.log('CreditCardStatementTable');
   const { id } = useParams<{ id: string }>();
 
   if (isNil(id)) {

@@ -1,7 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 
@@ -13,7 +10,7 @@ import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
 import UnIdentifiedTransactionTable from './UnidentifiedTransactionTable';
 import FixedExpensesReport from './FixedExpensesReport';
-import { DateRangeType, ReportTypes, SidebarMenuButton, Statement, StatementType } from '../types';
+import { DateRangeType, ReportTypes, SidebarMenuButton, StatementType } from '../types';
 import { isNil } from 'lodash';
 import ReportFiltersDialog from './ReportFiltersDialog';
 import { useDispatch, useTypedSelector } from '../types';

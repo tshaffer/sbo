@@ -1,19 +1,12 @@
 import React from 'react';
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
 import { Category, CategoryAssignmentRule, UploadedCategoryAssignmentRule } from '../types';
-import { TrackerDispatch } from '../types';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 
 const DownloadCategoryAssignmentRules: React.FC = () => {
 
-  const dispatch = useDispatch();
-
-  // const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
   const categories: Category[] = useTypedSelector(getCategories);
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(getCategoryAssignmentRules);
 

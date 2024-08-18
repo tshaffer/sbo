@@ -7,7 +7,6 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { TrackerDispatch } from '../types';
 import { formatDate, formatCurrency, expensesPerMonth, roundTo, formatPercentage } from '../utilities';
 import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getFixedExpensesByCategory, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
 import { CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
@@ -15,18 +14,7 @@ import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { useDispatch, useTypedSelector } from '../types';
 
-// interface FixedExpensesReportProps {
-//   categories: Category[];
-//   categoryByCategoryNameLUT: StringToCategoryLUT;
-//   generatedReportStartDate: string;
-//   generatedReportEndDate: string;
-//   fixedExpensesByCategoryId: StringToTransactionsLUT;
-//   ignoreCategory: Category | undefined;
-// }
-
 const FixedExpensesReport: React.FC = () => {
-
-  const dispatch = useDispatch();
 
   const categories: Category[] = useTypedSelector(getCategories);
   const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);

@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from 'react';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box,
@@ -10,7 +10,6 @@ import {
 import { Category, Transaction } from '../types';
 import { getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import { addCategoryRedux } from '../models';
 import SelectCategory from './SelectCategory';
 import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog';
 
@@ -20,12 +19,6 @@ export interface EditTransactionDialogProps {
   onClose: () => void;
   onSave: (updatedTransaction: Transaction) => void;
 }
-
-// interface EditTransactionDialogProps extends EditTransactionDialogPropsFromParent {
-//   transaction: Transaction;
-//   inferredCategory: Category | null | undefined;
-//   onAddCategory: (category: Category) => any;
-// }
 
 const EditTransactionDialog = (props: EditTransactionDialogProps) => {
 

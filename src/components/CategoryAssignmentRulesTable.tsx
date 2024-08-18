@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { cloneDeep, isEmpty } from 'lodash';
 
@@ -26,18 +24,6 @@ interface CategoryAssignmentRuleTableRow {
   ruleId: string;
 }
 
-/*
-    categoryAssignmentRules: getCategoryAssignmentRules(state),
-    categories: getCategories(state),
-*/
-/*
-interface CategoryAssignmentRulesTableProps {
-  categoryAssignmentRules: CategoryAssignmentRule[];
-  categories: Category[];
-  onUpdateCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => TrackerAnyPromiseThunkAction;
-  onDeleteCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => TrackerAnyPromiseThunkAction;
-}
-*/
 const CategoryAssignmentRulesTable: React.FC = () => {
 
   const dispatch = useDispatch();

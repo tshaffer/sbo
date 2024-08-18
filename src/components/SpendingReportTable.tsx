@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,11 +8,10 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import '../styles/Tracker.css';
-import { BankTransaction, CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { TrackerDispatch } from '../types';
-import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
-import { cloneDeep, isEmpty, isNil } from 'lodash';
+import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
+import { cloneDeep, isEmpty } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import EditTransactionDialog from './EditTransactionDialog';
@@ -28,8 +25,6 @@ const SpendingReportTable: React.FC = () => {
 
   const categories: Category[] = useTypedSelector(getCategories);
   const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);
-  const startDate: string = useTypedSelector(getStartDate);
-  const endDate: string = useTypedSelector(getEndDate);
   const generatedReportStartDate: string = useTypedSelector(getGeneratedReportStartDate);
   const generatedReportEndDate: string = useTypedSelector(getGeneratedReportEndDate);
   const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategory);

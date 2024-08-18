@@ -1,32 +1,24 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import '../styles/Grid.css';
 
-import { Button } from '@mui/material';
-
 import { isNil } from 'lodash';
 
-import { CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties } from '../types';
-import { getCheckingAccountTransactionRowInStatementTableProperties, getTransactionsByStatementId } from '../selectors';
+import { CheckingAccountTransactionRowInStatementTableProperties } from '../types';
+import { getCheckingAccountTransactionRowInStatementTableProperties } from '../selectors';
 
 import CheckingAccountStatementTransactionRow from './CheckingAccountStatementTransactionRow';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 
 const CheckingAccountStatementTable: React.FC = () => {
 
-  console.log('CreditCardStatementTable');
   const { id } = useParams<{ id: string }>();
 
   const checkingAccountStatementId: string = id!;
 
-  const dispatch = useDispatch();
-
   const checkingAccountTransactionRows = useTypedSelector(state => getCheckingAccountTransactionRowInStatementTableProperties(state, checkingAccountStatementId));
-  // const checkingAccountTransactionRows: any[] = [];
 
   const [sortColumn, setSortColumn] = useState<string>('transactionDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -61,10 +53,6 @@ if (isNil(checkingAccountStatementId)) {
     if (sortColumn !== column) return null;
     return sortOrder === 'asc' ? ' ▲' : ' ▼';
   };
-
-  const navigate = useNavigate();
-
-  console.log('render CheckingAccountStatementTable', checkingAccountStatementId);
 
   return (
     <React.Fragment>

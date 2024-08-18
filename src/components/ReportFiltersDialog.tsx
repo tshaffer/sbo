@@ -1,7 +1,4 @@
-import React, { useState } from 'react';
-
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import React from 'react';
 
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
@@ -14,7 +11,7 @@ import {
 } from '@mui/material';
 import { addCategoryIdToExclude, removeCategoryIdToExclude } from '../models';
 import { getCategories, getCategoryIdsToExclude } from '../selectors';
-import { Category, TrackerDispatch } from '../types';
+import { Category } from '../types';
 
 import { useDispatch, useTypedSelector } from '../types';
 
