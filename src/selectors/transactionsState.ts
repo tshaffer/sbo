@@ -1,4 +1,6 @@
 import { isNil } from 'lodash';
+import { createSelector } from 'reselect';
+
 import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
 import { getCategories, getCategoryById, getCategoryByName } from './categoryState';
 import { getEndDate, getStartDate } from './reportDataState';
@@ -9,28 +11,54 @@ export interface MatchingRuleAssignment {
   category: Category;
   pattern: string;
 }
-export const getTransactionIds = (state: TrackerState): string[] => {
-  return state.transactionsState.allIds;
-};
 
-export const getTransactions = (state: TrackerState): Transaction[] => {
-  const transactions: Transaction[] = getTransactionIds(state).map((id) => state.transactionsState.byId[id]);
-  return transactions.filter((transaction) => (transaction.bankTransactionType === BankTransactionType.CreditCard || !(transaction as CheckingAccountTransaction).isSplit))
+export interface MatchingRuleAssignment {
+  category: Category;
+  pattern: string;
 }
 
-export const getTransactionById = (state: TrackerState, id: string): Transaction | undefined => {
-  const transactionById: Transaction | undefined = state.transactionsState.byId[id];
-  if (!isNil(transactionById) && (transactionById.bankTransactionType === BankTransactionType.CreditCard || !(transactionById as CheckingAccountTransaction).isSplit)) {
-    return transactionById;
+// Basic selectors
+const getTransactionIds = (state: TrackerState): string[] => state.transactionsState.allIds;
+
+const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
+
+// Memoized selectors
+export const getTransactions = createSelector(
+  [getTransactionIds, getTransactionsById],
+  (transactionIds, transactionsById): Transaction[] => {
+    return transactionIds
+      .map(id => transactionsById[id])
+      .filter(
+        (transaction): transaction is Transaction =>
+          transaction.bankTransactionType === BankTransactionType.CreditCard ||
+          !(transaction as CheckingAccountTransaction).isSplit
+      );
   }
-  return undefined;
-};
+);
 
-export const getTransactionsByStatementId = (state: TrackerState, statementId: string): Transaction[] => {
-  const transactions: Transaction[] = getTransactionIds(state).map((id) => state.transactionsState.byId[id]);
-  return transactions.filter((transaction) => (transaction.bankTransactionType === BankTransactionType.CreditCard || !(transaction as CheckingAccountTransaction).isSplit))
-}
+export const getTransactionById = createSelector(
+  [getTransactionsById, (_: TrackerState, id: string) => id],
+  (transactionsById, id): Transaction | undefined => {
+    const transaction = transactionsById[id];
+    if (
+      !isNil(transaction) &&
+      (transaction.bankTransactionType === BankTransactionType.CreditCard ||
+        !(transaction as CheckingAccountTransaction).isSplit)
+    ) {
+      return transaction;
+    }
+    return undefined;
+  }
+);
 
+export const getTransactionsByStatementId = createSelector(
+  [getTransactions, (_: TrackerState, statementId: string) => statementId],
+  (transactions, statementId): Transaction[] => {
+    return transactions.filter(transaction => transaction.statementId === statementId);
+  }
+);
+
+// Non Memoized selectors
 export const getCreditCardTransactionRowInStatementTableProperties = (state: TrackerState, statementId: string): CreditCardTransactionRowInStatementTableProperties[] => {
   const creditCardTransactions: CreditCardTransaction[] = getTransactionsByStatementId(state, statementId) as CreditCardTransaction[];
   return creditCardTransactions.map((creditCardTransaction: CreditCardTransaction) => {
@@ -74,10 +102,9 @@ export const getCheckingAccountTransactionRowInStatementTableProperties = (state
   });
 }
 
-
 export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
 
-  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
+  const categorizedStatementData: CategorizedStatementData = getCategorizedStatementData(state);
   const { transactions } = categorizedStatementData;
 
   const transactionsByCategoryId: StringToTransactionsLUT = {};
@@ -93,14 +120,14 @@ export const getTransactionsByCategory = (state: TrackerState): StringToTransact
 }
 
 export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
-  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
+  const categorizedStatementData: CategorizedStatementData = getCategorizedStatementData(state);
   const { unidentifiedBankTransactions } = categorizedStatementData;
   return unidentifiedBankTransactions;
 }
 
 export const getFixedExpensesByCategory = (state: TrackerState): StringToTransactionsLUT => {
 
-  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
+  const categorizedStatementData: CategorizedStatementData = getCategorizedStatementData(state);
   const { fixedExpenses } = categorizedStatementData;
 
   const fixedExpensesByCategoryId: StringToTransactionsLUT = {};
@@ -115,7 +142,68 @@ export const getFixedExpensesByCategory = (state: TrackerState): StringToTransac
   return fixedExpensesByCategoryId;
 }
 
-export const doGetTransactionsByCategory = (state: TrackerState): CategorizedStatementData => {
+
+
+
+export const getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
+
+  const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
+
+  for (const categoryId in transactionsByCategory) {
+    if (Object.prototype.hasOwnProperty.call(transactionsByCategory, categoryId)) {
+      const categorizedTransaction = transactionsByCategory[categoryId].find(transaction => transaction.bankTransaction.id === transactionId);
+      if (categorizedTransaction) {
+        return getCategoryById(state, categoryId);
+      }
+    }
+  }
+  return null;
+};
+
+export const getOverrideCategory = (state: TrackerState, transactionId: string): boolean => {
+  const transaction = getTransactionById(state, transactionId);
+  return transaction?.overrideCategory ?? false;
+}
+
+export const getOverrideCategoryId = (state: TrackerState, transactionId: string): string => {
+  const transaction = getTransactionById(state, transactionId);
+  if (!isNil(transaction)) {
+    if (transaction.overrideCategory) {
+      return transaction.overrideCategoryId;
+    }
+  }
+  return '';
+}
+
+export const getOverrideFixedExpense = (state: TrackerState, transactionId: string): boolean => {
+  const transaction = getTransactionById(state, transactionId);
+  return transaction?.overrideFixedExpense ?? false;
+}
+
+export const getOverriddenFixedExpense = (state: TrackerState, transactionId: string): boolean => {
+  const transaction = getTransactionById(state, transactionId);
+  return transaction?.overriddenFixedExpense ?? false;
+}
+
+export const findMatchingRule = (state: TrackerState, transaction: BankTransaction): MatchingRuleAssignment | null => {
+
+  const categories: Category[] = getCategories(state);
+  const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(state);
+
+  const categoryAssignmentRule = categoryAssignmentRules.find(rule => transaction.userDescription.includes(rule.pattern));
+  if (categoryAssignmentRule) {
+    const category: Category | null = categories.find(category => category.id === categoryAssignmentRule.categoryId) || null;
+    if (!isNil(category)) {
+      return {
+        category,
+        pattern: categoryAssignmentRule.pattern,
+      };
+    }
+  }
+  return null;
+}
+
+const getCategorizedStatementData = (state: TrackerState): CategorizedStatementData => {
 
   const allCategories: Category[] = getCategories(state);
   const categories: Category[] = [];
@@ -213,24 +301,6 @@ const categorizeTransactions = (
   };
 };
 
-export const findMatchingRule = (state: TrackerState, transaction: BankTransaction): MatchingRuleAssignment | null => {
-
-  const categories: Category[] = getCategories(state);
-  const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(state);
-
-  const categoryAssignmentRule = categoryAssignmentRules.find(rule => transaction.userDescription.includes(rule.pattern));
-  if (categoryAssignmentRule) {
-    const category: Category | null = categories.find(category => category.id === categoryAssignmentRule.categoryId) || null;
-    if (!isNil(category)) {
-      return {
-        category,
-        pattern: categoryAssignmentRule.pattern,
-      };
-    }
-  }
-  return null;
-}
-
 export const categorizeTransaction = (
   transaction: BankTransaction,
   categories: Category[],
@@ -267,44 +337,4 @@ export const categorizeTransaction = (
 
   return null;
 };
-
-export const getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
-
-  const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
-
-  for (const categoryId in transactionsByCategory) {
-    if (Object.prototype.hasOwnProperty.call(transactionsByCategory, categoryId)) {
-      const categorizedTransaction = transactionsByCategory[categoryId].find(transaction => transaction.bankTransaction.id === transactionId);
-      if (categorizedTransaction) {
-        return getCategoryById(state, categoryId);
-      }
-    }
-  }
-  return null;
-};
-
-export const getOverrideCategory = (state: TrackerState, transactionId: string): boolean => {
-  const transaction = getTransactionById(state, transactionId);
-  return transaction?.overrideCategory ?? false;
-}
-
-export const getOverrideCategoryId = (state: TrackerState, transactionId: string): string => {
-  const transaction = getTransactionById(state, transactionId);
-  if (!isNil(transaction)) {
-    if (transaction.overrideCategory) {
-      return transaction.overrideCategoryId;
-    }
-  }
-  return '';
-}
-
-export const getOverrideFixedExpense = (state: TrackerState, transactionId: string): boolean => {
-  const transaction = getTransactionById(state, transactionId);
-  return transaction?.overrideFixedExpense ?? false;
-}
-
-export const getOverriddenFixedExpense = (state: TrackerState, transactionId: string): boolean => {
-  const transaction = getTransactionById(state, transactionId);
-  return transaction?.overriddenFixedExpense ?? false;
-}
 
