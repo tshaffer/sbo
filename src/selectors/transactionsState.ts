@@ -13,16 +13,10 @@ export interface MatchingRuleAssignment {
   pattern: string;
 }
 
-export interface MatchingRuleAssignment {
-  category: Category;
-  pattern: string;
-}
-
-console.log('transactionsState.ts');
-
 // Basic selectors
 const getTransactionIds = (state: TrackerState): string[] => state.transactionsState.allIds;
-
+const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
+const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
 const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
 const getStartDate = (state: TrackerState): string => state.reportDataState.startDate;
 const getEndDate = (state: TrackerState): string => state.reportDataState.endDate;
@@ -66,19 +60,11 @@ export const getTransactionsByStatementId = createSelector(
   }
 );
 
-// Step 1: Create Basic Selectors
-
-// Basic Selectors
-const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
-const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
-
-// Step 2: Filter Categories by Disregard Level
 const getActiveCategories = createSelector(
   [getAllCategories],
   (allCategories: Category[]) => allCategories.filter(category => category.disregardLevel === DisregardLevel.None)
 );
 
-// Step 3: Memoize categorizeTransaction
 export const categorizeTransaction = (
   transaction: BankTransaction,
   categories: Category[],
@@ -106,7 +92,6 @@ export const categorizeTransaction = (
   return null;
 };
 
-// Step 4: Memoize categorizeTransactions
 const categorizeTransactions = createSelector(
   [getTransactions, getActiveCategories, getIgnoreCategory, getCategoryAssignmentRules],
   (transactions, categories, ignoreCategory, categoryAssignmentRules): ReviewedTransactions => {
@@ -150,7 +135,6 @@ const categorizeTransactions = createSelector(
   }
 );
 
-//Step 5: Create getCategorizedStatementData Selector
 export const getCategorizedStatementData = createSelector(
   [categorizeTransactions, getStartDate, getEndDate],
   (reviewedTransactions, startDate, endDate): CategorizedStatementData => {
@@ -237,6 +221,24 @@ export const getUnidentifiedBankTransactions = createSelector(
   (categorizedStatementData) => categorizedStatementData.unidentifiedBankTransactions
 );
 
+export const getFixedExpensesByCategory = createSelector(
+  [getCategorizedStatementData],
+  (categorizedStatementData) => {
+    const { fixedExpenses } = categorizedStatementData;
+
+    const fixedExpensesByCategoryId: StringToTransactionsLUT = {};
+    fixedExpenses.forEach((fixedExpenseTransaction: CategorizedTransaction) => {
+      const categoryId: string = fixedExpenseTransaction.categoryId;
+      if (!fixedExpensesByCategoryId[categoryId]) {
+        fixedExpensesByCategoryId[categoryId] = [];
+      }
+      fixedExpensesByCategoryId[categoryId].push(fixedExpenseTransaction);
+    });
+
+    return fixedExpensesByCategoryId;
+  }
+);
+
 // Non Memoized selectors
 export const getCreditCardTransactionRowInStatementTableProperties = (state: TrackerState, statementId: string): CreditCardTransactionRowInStatementTableProperties[] => {
   const creditCardTransactions: CreditCardTransaction[] = getTransactionsByStatementId(state, statementId) as CreditCardTransaction[];
@@ -279,23 +281,6 @@ export const getCheckingAccountTransactionRowInStatementTableProperties = (state
       checkingAccountTransaction,
     };
   });
-}
-
-export const getFixedExpensesByCategory = (state: TrackerState): StringToTransactionsLUT => {
-
-  const categorizedStatementData: CategorizedStatementData = getCategorizedStatementData(state);
-  const { fixedExpenses } = categorizedStatementData;
-
-  const fixedExpensesByCategoryId: StringToTransactionsLUT = {};
-  fixedExpenses.forEach((fixedExpenseTransaction: CategorizedTransaction) => {
-    const categoryId: string = fixedExpenseTransaction.categoryId;
-    if (!fixedExpensesByCategoryId[categoryId]) {
-      fixedExpensesByCategoryId[categoryId] = [];
-    }
-    fixedExpensesByCategoryId[categoryId].push(fixedExpenseTransaction);
-  });
-
-  return fixedExpensesByCategoryId;
 }
 
 export const findMatchingRule = (state: TrackerState, transaction: BankTransaction): MatchingRuleAssignment | null => {
