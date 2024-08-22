@@ -73,7 +73,6 @@ const CategoriesTable: React.FC = () => {
           </IconButton>
         </td>
         <td className="chatgpt-category-table-cell">{categoryMenuItem.name}</td>
-        <td className="chatgpt-category-table-cell">{categoryMenuItem.transactionsRequired.toString()}</td>
         <td className="chatgpt-category-table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
       </tr>
       <tr className="chatgpt-category-table-row">
@@ -118,7 +117,6 @@ const CategoriesTable: React.FC = () => {
           <tr className="chatgpt-category-table-row">
             <th className="chatgpt-category-table-cell"></th>
             <th className="chatgpt-category-table-cell">Category Name</th>
-            <th className="chatgpt-category-table-cell">Transactions Required?</th>
             <th className="chatgpt-category-table-cell">Number of Rules</th>
           </tr>
         </thead>

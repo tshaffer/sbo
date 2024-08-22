@@ -106,14 +106,12 @@ const SelectCategory = (props: SelectCategoryProps) => {
     categoryLabel: string,
     isSubCategory: boolean,
     parentId: string,
-    transactionsRequired: boolean,
   ): void => {
     const id: string = uuidv4();
     const category: Category = {
       id,
       name: categoryLabel,
       parentId,
-      transactionsRequired,
       disregardLevel: DisregardLevel.None,
     };
     dispatch(addCategoryRedux(category));

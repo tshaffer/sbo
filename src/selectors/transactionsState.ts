@@ -98,7 +98,6 @@ const categorizeTransactions = createSelector(
     const categorizedTransactions: CategorizedTransaction[] = [];
     const uncategorizedTransactions: BankTransaction[] = [];
     const ignoredTransactions: BankTransaction[] = [];
-    const fixedExpenses: CategorizedTransaction[] = [];
 
     const bankTransactions: BankTransaction[] = transactions as BankTransaction[];
     bankTransactions.forEach(transaction => {
@@ -117,9 +116,6 @@ const categorizeTransactions = createSelector(
           };
           categorizedTransactions.push(categorizedTransaction);
 
-          if (category.transactionsRequired) {
-            fixedExpenses.push(categorizedTransaction);
-          }
         }
       } else {
         uncategorizedTransactions.push(transaction);
@@ -130,7 +126,6 @@ const categorizeTransactions = createSelector(
       categorizedTransactions,
       uncategorizedTransactions,
       ignoredTransactions,
-      fixedExpenses,
     };
   }
 );
@@ -138,7 +133,7 @@ const categorizeTransactions = createSelector(
 const getCategorizedStatementData = createSelector(
   [categorizeTransactions, getStartDate, getEndDate],
   (reviewedTransactions, startDate, endDate): CategorizedStatementData => {
-    const { categorizedTransactions, uncategorizedTransactions, fixedExpenses } = reviewedTransactions;
+    const { categorizedTransactions } = reviewedTransactions;
 
     const transactions = categorizedTransactions.map(transaction => ({
       bankTransaction: transaction.bankTransaction,
@@ -152,19 +147,8 @@ const getCategorizedStatementData = createSelector(
       endDate,
       transactions,
       netDebits,
-      fixedExpenses,
     };
   }
-);
-
-export const getOverrideFixedExpense = createSelector(
-  [getTransactionById],
-  (transaction) => transaction?.overrideFixedExpense ?? false
-);
-
-export const getOverriddenFixedExpense = createSelector(
-  [getTransactionById],
-  (transaction) => transaction?.overriddenFixedExpense ?? false
 );
 
 export const getOverrideCategory = createSelector(
@@ -212,24 +196,6 @@ export const getCategoryByTransactionId = createSelector(
       }
     }
     return null;
-  }
-);
-
-export const getFixedExpensesByCategory = createSelector(
-  [getCategorizedStatementData],
-  (categorizedStatementData) => {
-    const { fixedExpenses } = categorizedStatementData;
-
-    const fixedExpensesByCategoryId: StringToTransactionsLUT = {};
-    fixedExpenses.forEach((fixedExpenseTransaction: CategorizedTransaction) => {
-      const categoryId: string = fixedExpenseTransaction.categoryId;
-      if (!fixedExpensesByCategoryId[categoryId]) {
-        fixedExpensesByCategoryId[categoryId] = [];
-      }
-      fixedExpensesByCategoryId[categoryId].push(fixedExpenseTransaction);
-    });
-
-    return fixedExpensesByCategoryId;
   }
 );
 

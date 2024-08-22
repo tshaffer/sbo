@@ -32,8 +32,6 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   const [userDescription, setUserDescription] = useState(transaction.userDescription);
   const [overrideCategory, setOverrideCategory] = React.useState(transaction.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(transaction.overrideCategoryId);
-  const [overrideFixedExpense, setOverrideFixedExpense] = useState(transaction.overrideFixedExpense);
-  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(transaction.overriddenFixedExpense);
   const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(transaction.excludeFromReportCalculations);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
@@ -42,8 +40,6 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   };
 
   const handleSaveTransactionMoreOptions = (transaction: Transaction) => {
-    setOverriddenFixedExpense(transaction.overriddenFixedExpense);
-    setOverrideFixedExpense(transaction.overrideFixedExpense);
     setExcludeFromReportCalculations(transaction.excludeFromReportCalculations);
     console.log('handleSaveTransactionMoreOptions');
     console.log(transaction);
@@ -59,8 +55,6 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
       userDescription,
       overrideCategory,
       overrideCategoryId,
-      overrideFixedExpense,
-      overriddenFixedExpense,
       excludeFromReportCalculations,
     };
     console.log('handleSave');

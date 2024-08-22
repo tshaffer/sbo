@@ -56,24 +56,6 @@ const transactionsSlice = createSlice({
         state.byId[transactionId].overrideCategoryId = overrideCategoryId;
       }
     },
-    setOverrideFixedExpense: (
-      state,
-      action: PayloadAction<{ transactionId: string; overrideFixedExpense: boolean }>
-    ) => {
-      const { transactionId, overrideFixedExpense } = action.payload;
-      if (state.byId[transactionId]) {
-        state.byId[transactionId].overrideFixedExpense = overrideFixedExpense;
-      }
-    },
-    setOverriddenFixedExpense: (
-      state,
-      action: PayloadAction<{ transactionId: string; overriddenFixedExpense: boolean }>
-    ) => {
-      const { transactionId, overriddenFixedExpense } = action.payload;
-      if (state.byId[transactionId]) {
-        state.byId[transactionId].overriddenFixedExpense = overriddenFixedExpense;
-      }
-    },
     splitTransactionRedux: (
       state,
       action: PayloadAction<{ parentTransactionId: string; splitTransactions: SplitTransaction[] }>
@@ -104,8 +86,6 @@ export const {
   updateCategoryInTransactionsRedux,
   setOverrideCategory,
   setOverrideCategoryId,
-  setOverrideFixedExpense,
-  setOverriddenFixedExpense,
   splitTransactionRedux,
 } = transactionsSlice.actions;
 

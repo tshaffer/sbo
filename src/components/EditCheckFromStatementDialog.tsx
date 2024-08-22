@@ -35,8 +35,6 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [overrideCategory, setOverrideCategory] = React.useState(check.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(check.overrideCategoryId);
-  const [overrideFixedExpense, setOverrideFixedExpense] = useState(check.overrideFixedExpense);
-  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(check.overriddenFixedExpense);
   const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(check.excludeFromReportCalculations);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
@@ -55,8 +53,6 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
   };
 
   const handleSaveTransactionMoreOptions = (transaction: Transaction) => {
-    setOverriddenFixedExpense(transaction.overriddenFixedExpense);
-    setOverrideFixedExpense(transaction.overrideFixedExpense);
     setExcludeFromReportCalculations(transaction.excludeFromReportCalculations);
     console.log('handleSaveTransactionMoreOptions');
     console.log(transaction);
@@ -78,8 +74,6 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
       userDescription,
       overrideCategory,
       overrideCategoryId,
-      overrideFixedExpense,
-      overriddenFixedExpense,
       excludeFromReportCalculations,
     };
     props.onSave(updatedCheck);

@@ -4,7 +4,6 @@ export interface CategorizedStatementData {
   startDate: string;
   endDate: string;
   transactions: CategorizedTransaction[];
-  fixedExpenses: CategorizedTransaction[];
   netDebits: number;
 }
 
@@ -22,8 +21,6 @@ export interface Transaction {
   userDescription: string;
   overrideCategory: boolean;
   overrideCategoryId: string;
-  overrideFixedExpense: boolean;
-  overriddenFixedExpense: boolean;
   excludeFromReportCalculations: boolean;
 }
 
@@ -120,7 +117,6 @@ export interface ReviewedTransactions {
   categorizedTransactions: CategorizedTransaction[];
   ignoredTransactions: BankTransaction[];
   uncategorizedTransactions: BankTransaction[];
-  fixedExpenses: CategorizedTransaction[];
 }
 
 export interface MinMaxDates {
@@ -132,7 +128,6 @@ export interface Category {
   id: string;
   name: string;
   parentId: string;
-  transactionsRequired: boolean;
   disregardLevel: DisregardLevel;
 }
 

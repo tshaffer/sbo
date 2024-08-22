@@ -13,7 +13,6 @@ export interface AddCategoryDialogProps {
     categoryLabel: string,
     isSubCategory: boolean,
     parentCategoryId: string,
-    transactionsRequired: boolean,
   ) => void;
   onClose: () => void;
 }
@@ -23,7 +22,6 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   const { open, onClose } = props;
 
   const [categoryLabel, setCategoryLabel] = React.useState('');
-  const [areTransactionsRequired, setAreTransactionsRequired] = React.useState(false);
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
 
@@ -53,7 +51,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
 
   const handleAddCategory = (): void => {
     if (categoryLabel !== '') {
-      props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, areTransactionsRequired);
+      props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId);
       props.onClose();
     }
   };
@@ -63,10 +61,6 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
       event.preventDefault(); // Prevent form submission
       handleAddCategory();
     }
-  };
-
-  const handleTransactionsRequiredChanged = (event: any) => {
-    setAreTransactionsRequired(event.target.checked);
   };
 
   const handleIsSubCategoryChanged = (event: any) => {
@@ -99,10 +93,6 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               fullWidth
             />
           </div>
-          <FormControlLabel
-            control={<Checkbox checked={areTransactionsRequired} onChange={handleTransactionsRequiredChanged} />}
-            label="Are all transactions in this category mandatory?"
-          />
           <FormControlLabel
             control={<Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
             label="Is this a subcategory?"

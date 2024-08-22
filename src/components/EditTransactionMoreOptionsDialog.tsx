@@ -20,8 +20,6 @@ export interface EditTransactionMoreOptionsDialogProps {
 const EditTransactionMoreOptionsDialog: React.FC<EditTransactionMoreOptionsDialogProps> = (props: EditTransactionMoreOptionsDialogProps) => {
 
   const transaction: Transaction = useTypedSelector(state => getTransactionById(state, props.transactionId) as Transaction);
-  const [overrideFixedExpense, setOverrideFixedExpense] = useState(transaction.overrideFixedExpense);
-  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(transaction.overriddenFixedExpense);
   const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(transaction.excludeFromReportCalculations);
 
   if (!props.open) {
@@ -31,8 +29,6 @@ const EditTransactionMoreOptionsDialog: React.FC<EditTransactionMoreOptionsDialo
   const handleSave = () => {
     const updatedTransaction = {
       ...transaction,
-      overrideFixedExpense,
-      overriddenFixedExpense,
       excludeFromReportCalculations,
     };
     props.onSave(updatedTransaction);
@@ -49,29 +45,6 @@ const EditTransactionMoreOptionsDialog: React.FC<EditTransactionMoreOptionsDialo
         <DialogTitle>More Options</DialogTitle>
         <DialogContent>
           <Box display="flex" flexDirection="column">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={overrideFixedExpense}
-                  onChange={handleCheckboxChange(setOverrideFixedExpense)}
-                  name="overrideFixedExpense"
-                  color="primary"
-                />
-              }
-              label="Override 'Fixed Expense'?"
-            />
-            {overrideFixedExpense && (
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    sx={{ ml: 2 }}
-                    checked={overriddenFixedExpense}
-                    onChange={handleCheckboxChange(setOverriddenFixedExpense)}
-                  />
-                }
-                label="Fixed Expense?"
-              />
-            )}
             <FormControlLabel
               control={
                 <Checkbox

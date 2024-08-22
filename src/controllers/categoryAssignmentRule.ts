@@ -86,7 +86,6 @@ const addMissingCategories = (state: TrackerState, uploadedCategoryAssignmentRul
           id: uuidv4(),
           name: categoryName,
           parentId: '',
-          transactionsRequired: false,
           disregardLevel: DisregardLevel.None,
         };
         return category;
