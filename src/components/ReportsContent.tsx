@@ -8,8 +8,6 @@ import { loadTransactions } from '../controllers';
 
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
-import UnIdentifiedTransactionTable from './UnidentifiedTransactionTable';
-import FixedExpensesReport from './FixedExpensesReport';
 import { DateRangeType, ReportTypes, SidebarMenuButton, StatementType } from '../types';
 import { isNil } from 'lodash';
 import ReportFiltersDialog from './ReportFiltersDialog';
@@ -89,10 +87,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
       case 0:
       default:
         return <SpendingReportTable />;
-      case 1:
-        return <FixedExpensesReport />;
-      case 2:
-        return <UnIdentifiedTransactionTable />;
     }
   }
 
@@ -106,8 +100,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
         <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
         <Tabs value={tabIndex} onChange={handleTabChange}>
           <Tab label={ReportTypes.Spending} />
-          <Tab label={ReportTypes.FixedExpenses} />
-          <Tab label={ReportTypes.UnidentifiedTransactions} />
         </Tabs>
         <Box sx={{ padding: '20px' }}>
           <Box>
