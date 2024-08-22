@@ -135,7 +135,7 @@ const categorizeTransactions = createSelector(
   }
 );
 
-export const getCategorizedStatementData = createSelector(
+const getCategorizedStatementData = createSelector(
   [categorizeTransactions, getStartDate, getEndDate],
   (reviewedTransactions, startDate, endDate): CategorizedStatementData => {
     const { categorizedTransactions, uncategorizedTransactions, fixedExpenses } = reviewedTransactions;
