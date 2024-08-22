@@ -36,6 +36,5 @@ export enum SidebarMenuButton {
 
 export enum ReportTypes {
   Spending = 'Spending',
-  UnidentifiedTransactions = 'Unidentified Transactions',
   FixedExpenses = 'Fixed Expenses',
 }

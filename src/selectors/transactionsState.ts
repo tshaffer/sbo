@@ -152,7 +152,6 @@ const getCategorizedStatementData = createSelector(
       endDate,
       transactions,
       netDebits,
-      unidentifiedBankTransactions: uncategorizedTransactions,
       fixedExpenses,
     };
   }
@@ -214,11 +213,6 @@ export const getCategoryByTransactionId = createSelector(
     }
     return null;
   }
-);
-
-export const getUnidentifiedBankTransactions = createSelector(
-  [getCategorizedStatementData],
-  (categorizedStatementData) => categorizedStatementData.unidentifiedBankTransactions
 );
 
 export const getFixedExpensesByCategory = createSelector(

@@ -4,7 +4,6 @@ export interface CategorizedStatementData {
   startDate: string;
   endDate: string;
   transactions: CategorizedTransaction[];
-  unidentifiedBankTransactions: BankTransaction[];
   fixedExpenses: CategorizedTransaction[];
   netDebits: number;
 }

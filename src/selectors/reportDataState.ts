@@ -12,7 +12,6 @@ import {
 } from "../types";
 import { getCheckingAccountStatementById } from "./checkingAccountStatementState";
 import { getCreditCardStatementById } from "./creditCardStatementState";
-import { getUnidentifiedBankTransactions } from "./transactionsState";
 
 // Input selectors
 const selectReportDataState = (state: TrackerState): ReportDataState => state.reportDataState;
@@ -52,15 +51,6 @@ export const getTransactionByIdFromReportDataState = createSelector(
       (categorizedTransaction: CategorizedTransaction) => categorizedTransaction.bankTransaction.id === transactionId
     ) || null;
     return matchingCategorizedTransaction ? matchingCategorizedTransaction.bankTransaction : null;
-  }
-);
-
-export const getUnidentifiedBankTransactionById = createSelector(
-  [getUnidentifiedBankTransactions, (_: TrackerState, unidentifiedBankTransactionId: string) => unidentifiedBankTransactionId],
-  (unidentifiedBankTransactions: BankTransaction[], unidentifiedBankTransactionId: string): BankTransaction | null => {
-    return unidentifiedBankTransactions.find(
-      (unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId
-    ) || null;
   }
 );
 

@@ -16,7 +16,6 @@ const initialState: ReportDataState = {
   generatedReportStartDate: new Date().toISOString().split('T')[0],
   generatedReportEndDate: new Date().toISOString().split('T')[0],
   transactionsByCategory: {},
-  unidentifiedBankTransactions: [],
   total: 0,
   minMaxTransactionDates: { minDate: '', maxDate: '' },
   reportStatementId: '',
@@ -40,12 +39,6 @@ const reportDataSlice = createSlice({
       action: PayloadAction<StringToTransactionsLUT>
     ) => {
       state.transactionsByCategory = action.payload;
-    },
-    setUnidentifiedBankTransactions: (
-      state,
-      action: PayloadAction<BankTransaction[]>
-    ) => {
-      state.unidentifiedBankTransactions = action.payload;
     },
     setDateRangeType: (state, action: PayloadAction<DateRangeType>) => {
       state.dateRangeType = action.payload;
@@ -71,11 +64,6 @@ const reportDataSlice = createSlice({
     setReportStatementId: (state, action: PayloadAction<string>) => {
       state.reportStatementId = action.payload;
     },
-    updateCheckTransaction: (state, action: PayloadAction<CheckTransaction>) => {
-      state.unidentifiedBankTransactions = state.unidentifiedBankTransactions.map(
-        ((transaction: any) => (transaction.id === action.payload.id ? action.payload : transaction)
-      ));
-    },
     addCategoryIdToExclude: (state, action: PayloadAction<string>) => {
       if (!state.categoryIdsToExclude.includes(action.payload)) {
         state.categoryIdsToExclude.push(action.payload);
@@ -90,7 +78,6 @@ const reportDataSlice = createSlice({
 export const {
   setStatementData,
   setTransactionsByCategory,
-  setUnidentifiedBankTransactions,
   setDateRangeType,
   setStartDate,
   setEndDate,
@@ -98,7 +85,6 @@ export const {
   setGeneratedReportEndDate,
   setMinMaxTransactionDates,
   setReportStatementId,
-  updateCheckTransaction,
   addCategoryIdToExclude,
   removeCategoryIdToExclude,
 } = reportDataSlice.actions;

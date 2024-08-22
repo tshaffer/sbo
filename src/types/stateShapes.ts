@@ -31,7 +31,6 @@ export interface ReportDataState {
   generatedReportStartDate: string;
   generatedReportEndDate: string;
   transactionsByCategory: StringToTransactionsLUT;
-  unidentifiedBankTransactions: BankTransaction[];
   total: number;
   minMaxTransactionDates: MinMaxDates;
   reportStatementId: string;

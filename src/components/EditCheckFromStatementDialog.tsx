@@ -1,18 +1,19 @@
 import React, { ChangeEvent, useState } from 'react';
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box,
+  Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControl, InputLabel, Select, MenuItem, Box,
   FormControlLabel,
   Checkbox
 } from '@mui/material';
-import { BankTransaction, CheckTransaction, Transaction } from '../types';
-import { getUnidentifiedBankTransactionById, getTransactionById } from '../selectors';
+import { BankTransaction, Category, CheckTransaction, CheckingAccountTransaction, Transaction } from '../types';
+import { TrackerDispatch } from '../types';
+import { getCategories, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 import { isNil } from 'lodash';
 import SelectCategory from './SelectCategory';
 import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog';
 
-import { useTypedSelector } from '../types';
+import { useDispatch, useTypedSelector } from '../types';
 
 export interface EditCheckFromStatementDialogProps {
   transactionId: string;
@@ -24,8 +25,8 @@ export interface EditCheckFromStatementDialogProps {
 const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> = (props: EditCheckFromStatementDialogProps) => {
 
   const checkingAccountTransaction: Transaction | undefined = useTypedSelector(state => getTransactionById(state, props.transactionId));
-  const checkX: BankTransaction | null = useTypedSelector(state => getUnidentifiedBankTransactionById(state, props.transactionId));
-  const check: CheckTransaction = !isNil(checkingAccountTransaction) ? checkingAccountTransaction as CheckTransaction : checkX as CheckTransaction;
+
+  const check: CheckTransaction = checkingAccountTransaction as CheckTransaction;
 
   const [payee, setPayee] = useState(check.payee);
   const [checkNumber, setCheckNumber] = useState(check.checkNumber);

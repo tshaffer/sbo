@@ -50,10 +50,6 @@
   /* Adjust the width of the first column */
 }
 
-.unidentified-table-cell:first-child {
-  flex: 0 0 80px;
-  /* Adjust the width of the first column */
-}
 
 .table-cell:last-child {
   text-align: right;
@@ -95,14 +91,6 @@
   display: flex;
   flex-direction: column;
   max-height: 46vh;
-  overflow-y: auto;
-  /* Add vertical scrollbar */
-}
-
-.unidentified-report-table-body {
-  display: flex;
-  flex-direction: column;
-  max-height: 58vh;
   overflow-y: auto;
   /* Add vertical scrollbar */
 }
