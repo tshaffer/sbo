@@ -14,10 +14,7 @@ import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedRep
 import { cloneDeep, isEmpty } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import EditTransactionDialog from './EditTransactionDialog';
 import { addCategoryAssignmentRuleServerAndRedux, updateTransaction } from '../controllers';
-
-import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 
 import { useDispatch, useTypedSelector } from '../types';
 
@@ -35,8 +32,6 @@ const SpendingReportTable: React.FC = () => {
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [transactionId, setTransactionId] = React.useState('');
-  const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
-  const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
   if (isEmpty(transactionsByCategoryId)) {
     return null;
@@ -46,22 +41,8 @@ const SpendingReportTable: React.FC = () => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
 
-  const handleEditTransaction = (transaction: Transaction) => {
-    setTransactionId(transaction.id);
-    setShowEditTransactionDialog(true);
-  };
-
   const handleSaveTransaction = (transaction: Transaction) => {
     dispatch(updateTransaction(transaction));
-  };
-
-  const handleCloseEditTransactionDialog = () => {
-    setShowEditTransactionDialog(false);
-  }
-
-  const handleAssignCategory = (transaction: Transaction) => {
-    setTransactionId(transaction.id);
-    setShowAddCategoryAssignmentRuleDialog(true);
   };
 
   const handleSaveRule = (pattern: string, categoryId: string): void => {
@@ -74,10 +55,6 @@ const SpendingReportTable: React.FC = () => {
     console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
     dispatch(addCategoryAssignmentRuleServerAndRedux(categoryAssignmentRule));
   }
-
-  const handleCloseAddRuleDialog = () => {
-    setShowAddCategoryAssignmentRuleDialog(false);
-  };
 
   const buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
     const map: StringToCategoryMenuItemLUT = {};
@@ -223,18 +200,6 @@ const SpendingReportTable: React.FC = () => {
 
   return (
     <React.Fragment>
-      <AddCategoryAssignmentRuleDialog
-        open={showAddCategoryAssignmentRuleDialog}
-        onSaveRule={handleSaveRule}
-        onClose={handleCloseAddRuleDialog}
-        transactionId={transactionId}
-      />
-      <EditTransactionDialog
-        open={showEditTransactionDialog}
-        transactionId={transactionId}
-        onClose={handleCloseEditTransactionDialog}
-        onSave={handleSaveTransaction}
-      />
       <h4>Date Range {formatDate(generatedReportStartDate)} - {formatDate(generatedReportEndDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
       <h4>Per Month: {expensesPerMonth(totalAmount, generatedReportStartDate, generatedReportEndDate)}</h4>
@@ -275,17 +240,7 @@ const SpendingReportTable: React.FC = () => {
                   <div className="table-body">
                     {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
                       <div className="table-row" key={transaction.bankTransaction.id}>
-                        <div className="table-cell">
-                          <IconButton onClick={() => handleAssignCategory(transaction.bankTransaction)}>
-                            <AssignmentIcon />
-                          </IconButton>
-
-                          <Tooltip title="Edit transaction">
-                            <IconButton onClick={() => handleEditTransaction(transaction.bankTransaction)}>
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </div>
+                        <div className="table-cell"></div>
                         <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
                         <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
                         <div className="table-cell">{transaction.bankTransaction.userDescription}</div>
