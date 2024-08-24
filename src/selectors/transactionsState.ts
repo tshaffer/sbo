@@ -131,8 +131,8 @@ const categorizeTransactions = createSelector(
 );
 
 const getCategorizedStatementData = createSelector(
-  [categorizeTransactions, getStartDate, getEndDate],
-  (reviewedTransactions, startDate, endDate): CategorizedStatementData => {
+  [categorizeTransactions],
+  (reviewedTransactions): CategorizedStatementData => {
     const { categorizedTransactions } = reviewedTransactions;
 
     const transactions = categorizedTransactions.map(transaction => ({
@@ -143,8 +143,6 @@ const getCategorizedStatementData = createSelector(
     const netDebits = roundTo(-transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
 
     return {
-      startDate,
-      endDate,
       transactions,
       netDebits,
     };

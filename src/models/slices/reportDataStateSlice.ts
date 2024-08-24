@@ -1,11 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  BankTransaction,
-  CheckTransaction,
   DateRangeType,
   MinMaxDates,
   ReportDataState,
-  StringToTransactionsLUT,
 } from '../../types';
 import { getCurrentDate, getRetirementDate } from '../../utilities';
 
@@ -26,20 +23,6 @@ const reportDataSlice = createSlice({
   name: 'reportData',
   initialState,
   reducers: {
-    setStatementData: (
-      state,
-      action: PayloadAction<{ startDate: string; endDate: string; total: number }>
-    ) => {
-      state.startDate = action.payload.startDate;
-      state.endDate = action.payload.endDate;
-      state.total = action.payload.total;
-    },
-    setTransactionsByCategory: (
-      state,
-      action: PayloadAction<StringToTransactionsLUT>
-    ) => {
-      state.transactionsByCategory = action.payload;
-    },
     setDateRangeType: (state, action: PayloadAction<DateRangeType>) => {
       state.dateRangeType = action.payload;
     },
@@ -76,8 +59,6 @@ const reportDataSlice = createSlice({
 });
 
 export const {
-  setStatementData,
-  setTransactionsByCategory,
   setDateRangeType,
   setStartDate,
   setEndDate,
