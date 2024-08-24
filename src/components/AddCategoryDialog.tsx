@@ -4,7 +4,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip } from '@mui/material';
+import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Slider, Tooltip, Typography } from '@mui/material';
 import SelectCategory from './SelectCategory';
 
 export interface AddCategoryDialogProps {
@@ -25,6 +25,14 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
 
+  const [discretionarinessValue, setDiscretionarinessValue] = React.useState(5);
+  const [consensusNecessityValue, setConsensusNecessityValue] = React.useState(5);
+  const [consensusUtilityValue, setConsensusUtilityValue] = React.useState(5);
+  const [loriNecessityValue, setLoriNecessityValue] = React.useState(5);
+  const [loriUtilityValue, setLoriUtilityValue] = React.useState(5);
+  const [tedUtilityValue, setTedUtilityValue] = React.useState(5);
+  const [tedNecessityValue, setTedNecessityValue] = React.useState(5);
+
   const textFieldRef = useRef(null);
 
   useEffect(() => {
@@ -44,6 +52,21 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   if (!open) {
     return null;
   }
+
+  const marks = [
+    {
+      value: 0,
+      label: 'Low',
+    },
+    {
+      value: 5,
+      label: 'Medium',
+    },
+    {
+      value: 10,
+      label: 'High',
+    },
+  ];
 
   const handleClose = () => {
     onClose();
@@ -74,6 +97,10 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     setParentCategoryId(categoryId);
   }
 
+  const handleSliderChange = (setter: any, newValue: number | number[]) => {
+    setter(newValue as number);
+  };
+  
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Add Category</DialogTitle>
@@ -98,11 +125,31 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
             label="Is this a subcategory?"
           />
           {isSubCategory && (
-              <SelectCategory
-                selectedCategoryId={parentCategoryId}
-                onSetCategoryId={handleCategoryChange}
-              />
+            <SelectCategory
+              selectedCategoryId={parentCategoryId}
+              onSetCategoryId={handleCategoryChange}
+            />
           )}
+          <Typography id="input-slider" gutterBottom>
+            Discretionariness
+          </Typography>
+          <Slider
+            value={typeof discretionarinessValue === 'number' ? discretionarinessValue : 0}
+            onChange={(_, newValue: number | number[]) => handleSliderChange(setDiscretionarinessValue, newValue)}
+            min={0}
+            max={10}
+            marks={marks}
+            />
+          <Typography id="input-slider" gutterBottom>
+            Consensus Necessity
+          </Typography>
+          <Slider
+            value={typeof consensusNecessityValue === 'number' ? consensusNecessityValue : 0}
+            onChange={(_, newValue: number | number[]) => handleSliderChange(setConsensusNecessityValue, newValue)}
+            min={0}
+            max={10}
+            marks={marks}
+            />
         </Box>
       </DialogContent>
       <DialogActions>
