@@ -2,8 +2,7 @@ import { isNil } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
-import { getCategories, getCategoryById, getCategoryByName } from './categoryState';
-// import { getEndDate, getStartDate } from './reportDataState';
+import { getCategories, getCategoryById } from './categoryState';
 
 import { roundTo } from '../utilities';
 import { getCategoryAssignmentRules } from './categoryAssignmentRulesState';
@@ -18,11 +17,6 @@ const getTransactionIds = (state: TrackerState): string[] => state.transactionsS
 const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
 const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
 const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
-const getStartDate = (state: TrackerState): string => state.reportDataState.startDate;
-const getEndDate = (state: TrackerState): string => state.reportDataState.endDate;
-
-console.log('getStartDate', getStartDate);
-console.log('getEndDate', getEndDate);
 
 // Memoized selectors
 export const getTransactions = createSelector(
