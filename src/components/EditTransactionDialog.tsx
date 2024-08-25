@@ -1,11 +1,8 @@
 import React, { ChangeEvent, useState } from 'react';
-
 import { useTypedSelector } from '../types';
-
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box,
-  Checkbox,
-  FormControlLabel
+  Checkbox, FormControlLabel, RadioGroup, Radio, FormControl, FormLabel, Slider, Typography
 } from '@mui/material';
 import { Category, Transaction } from '../types';
 import { getCategoryByTransactionId, getTransactionById } from '../selectors';
@@ -20,7 +17,7 @@ export interface EditTransactionDialogProps {
   onSave: (updatedTransaction: Transaction) => void;
 }
 
-const EditTransactionDialog = (props: EditTransactionDialogProps) => {
+const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: EditTransactionDialogProps) => {
 
   if (!props.open) {
     return null;
@@ -33,6 +30,11 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   const [overrideCategory, setOverrideCategory] = React.useState(transaction.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(transaction.overrideCategoryId);
   const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(transaction.excludeFromReportCalculations);
+  const [enableDiscretionariness, setEnableDiscretionariness] = useState(false);
+  const [discretionarinessOption, setDiscretionarinessOption] = useState<'consensus' | 'individual'>('individual');
+  const [consensusDiscretionariness, setConsensusDiscretionariness] = useState<number>(5);
+  const [loriDiscretionariness, setLoriDiscretionariness] = useState<number>(5);
+  const [tedDiscretionariness, setTedDiscretionariness] = useState<number>(5);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
   const handleEditTransactionMoreOptions = () => {
@@ -63,13 +65,21 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     props.onClose();
   };
 
-  function handleSetOverrideCategory(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+  const handleSetOverrideCategory = (event: ChangeEvent<HTMLInputElement>, checked: boolean): void => {
     setOverrideCategory(event.target.checked);
   }
 
-  function handleSetOverrideCategoryId(categoryId: string): void {
+  const handleSetOverrideCategoryId = (categoryId: string): void => {
     setOverrideCategoryId(categoryId);
   }
+
+  const handleEnableDiscretionarinessChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean): void => {
+    setEnableDiscretionariness(checked);
+  };
+
+  const handleDiscretionarinessOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setDiscretionarinessOption(event.target.value as 'consensus' | 'individual');
+  };
 
   return (
     <React.Fragment>
@@ -123,6 +133,66 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
                 selectedCategoryId={overrideCategoryId}
                 onSetCategoryId={handleSetOverrideCategoryId}
               />
+            )}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={enableDiscretionariness}
+                  onChange={handleEnableDiscretionarinessChange}
+                />
+              }
+              label="Set Discretionariness"
+            />
+            {enableDiscretionariness && (
+              <Box sx={{ mt: 2 }}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Discretionariness Option</FormLabel>
+                  <RadioGroup
+                    row
+                    aria-label="discretionariness-option"
+                    name="discretionariness-option"
+                    value={discretionarinessOption}
+                    onChange={handleDiscretionarinessOptionChange}
+                  >
+                    <FormControlLabel value="consensus" control={<Radio />} label="Consensus" />
+                    <FormControlLabel value="individual" control={<Radio />} label="Individual" />
+                  </RadioGroup>
+                </FormControl>
+                {discretionarinessOption === 'consensus' ? (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography>Consensus Discretionariness</Typography>
+                    <Slider
+                      value={consensusDiscretionariness}
+                      onChange={(event, newValue) => setConsensusDiscretionariness(newValue as number)}
+                      min={0}
+                      max={10}
+                      step={1}
+                      valueLabelDisplay="auto"
+                    />
+                  </Box>
+                ) : (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography>Lori's Discretionariness</Typography>
+                    <Slider
+                      value={loriDiscretionariness}
+                      onChange={(event, newValue) => setLoriDiscretionariness(newValue as number)}
+                      min={0}
+                      max={10}
+                      step={1}
+                      valueLabelDisplay="auto"
+                    />
+                    <Typography sx={{ mt: 2 }}>Ted's Discretionariness</Typography>
+                    <Slider
+                      value={tedDiscretionariness}
+                      onChange={(event, newValue) => setTedDiscretionariness(newValue as number)}
+                      min={0}
+                      max={10}
+                      step={1}
+                      valueLabelDisplay="auto"
+                    />
+                  </Box>
+                )}
+              </Box>
             )}
             <Button onClick={handleEditTransactionMoreOptions}>More options</Button>
           </Box>
