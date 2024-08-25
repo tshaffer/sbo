@@ -60,20 +60,18 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   };
 
   const handleAddCategory = (): void => {
-    if (categoryLabel !== '') {
-      if (discretionarinessType === 'consensus' && consensusDiscretionariness === undefined) {
-        setError('You must specify a value for Consensus Discretionariness.');
-        return;
-      }
-      if (discretionarinessType === 'individual' && loriDiscretionariness === undefined && tedDiscretionariness === undefined) {
-        setError('You must specify at least one value for Lori or Ted Discretionariness.');
-        return;
-      }
-
-      // If validation passes, add the category
-      props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, consensusDiscretionariness, loriDiscretionariness, tedDiscretionariness);
-      props.onClose();
+    if (categoryLabel === '') {
+      setError('Category Label cannot be empty.');
+      return;
     }
+    if (isSubCategory && parentCategoryId === '') {
+      setError('Parent Category cannot be empty for a subcategory.');
+      return;
+    }
+
+    // If validation passes, add the category
+    props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, consensusDiscretionariness, loriDiscretionariness, tedDiscretionariness);
+    props.onClose();
   };
 
   const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
@@ -102,13 +100,12 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
       <DialogTitle>Add Category</DialogTitle>
-      <DialogContent style={{ paddingBottom: '0px', height: 'auto', minHeight: '400px' }}>
+      <DialogContent style={{ paddingBottom: '0px' }}>
         <Box
           component="form"
           noValidate
           autoComplete="off"
           onKeyDown={handleKeyDown}
-          sx={{ minHeight: '400px' }}  // Adjust the height to ensure no scrollbar
         >
           <div style={{ paddingBottom: '8px' }}>
             <TextField
