@@ -2,8 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip } from '@mui/material';
+import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip, RadioGroup, FormControl, FormLabel, Radio, Slider, Typography, TextField } from '@mui/material';
 import SelectCategory from './SelectCategory';
 
 export interface AddCategoryDialogProps {
@@ -28,6 +27,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(undefined);
   const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(undefined);
   const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(undefined);
+  const [discretionarinessType, setDiscretionarinessType] = React.useState<'consensus' | 'individual'>('consensus');
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
@@ -60,14 +60,12 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
 
   const handleAddCategory = (): void => {
     if (categoryLabel !== '') {
-      // Validation
-      if (consensusDiscretionariness !== undefined) {
-        if (loriDiscretionariness !== undefined || tedDiscretionariness !== undefined) {
-          setError('You cannot specify Lori or Ted Discretionariness if Consensus Discretionariness is set.');
-          return;
-        }
-      } else if (loriDiscretionariness === undefined && tedDiscretionariness === undefined) {
-        setError('You must specify at least one of Lori or Ted Discretionariness.');
+      if (discretionarinessType === 'consensus' && consensusDiscretionariness === undefined) {
+        setError('You must specify a value for Consensus Discretionariness.');
+        return;
+      }
+      if (discretionarinessType === 'individual' && loriDiscretionariness === undefined && tedDiscretionariness === undefined) {
+        setError('You must specify at least one value for Lori or Ted Discretionariness.');
         return;
       }
 
@@ -94,6 +92,11 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   function handleCategoryChange(categoryId: string): void {
     setParentCategoryId(categoryId);
   }
+
+  const handleDiscretionarinessTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDiscretionarinessType(event.target.value as 'consensus' | 'individual');
+    setError(null);
+  };
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
@@ -124,37 +127,54 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               onSetCategoryId={handleCategoryChange}
             />
           )}
-          <div style={{ paddingTop: '16px' }}>
-            <TextField
-              margin="normal"
-              label="Consensus Discretionariness"
-              type="number"
-              value={consensusDiscretionariness !== undefined ? consensusDiscretionariness : ''}
-              onChange={(event) => setConsensusDiscretionariness(event.target.value ? parseFloat(event.target.value) : undefined)}
-              fullWidth
-              InputProps={{ inputProps: { min: 0, max: 10 } }}
-            />
-            <TextField
-              margin="normal"
-              label="Lori Discretionariness"
-              type="number"
-              value={loriDiscretionariness !== undefined ? loriDiscretionariness : ''}
-              onChange={(event) => setLoriDiscretionariness(event.target.value ? parseFloat(event.target.value) : undefined)}
-              fullWidth
-              InputProps={{ inputProps: { min: 0, max: 10 } }}
-              disabled={consensusDiscretionariness !== undefined}
-            />
-            <TextField
-              margin="normal"
-              label="Ted Discretionariness"
-              type="number"
-              value={tedDiscretionariness !== undefined ? tedDiscretionariness : ''}
-              onChange={(event) => setTedDiscretionariness(event.target.value ? parseFloat(event.target.value) : undefined)}
-              fullWidth
-              InputProps={{ inputProps: { min: 0, max: 10 } }}
-              disabled={consensusDiscretionariness !== undefined}
-            />
-          </div>
+          <FormControl component="fieldset" style={{ marginTop: '16px' }}>
+            <FormLabel component="legend">Discretionariness Type</FormLabel>
+            <RadioGroup
+              value={discretionarinessType}
+              onChange={handleDiscretionarinessTypeChange}
+            >
+              <FormControlLabel value="consensus" control={<Radio />} label="Consensus Discretionariness" />
+              <FormControlLabel value="individual" control={<Radio />} label="Individual Discretionariness" />
+            </RadioGroup>
+          </FormControl>
+          {discretionarinessType === 'consensus' && (
+            <Box style={{ marginTop: '16px' }}>
+              <Typography gutterBottom>Consensus Discretionariness</Typography>
+              <Slider
+                value={consensusDiscretionariness !== undefined ? consensusDiscretionariness : 0}
+                onChange={(event, newValue) => setConsensusDiscretionariness(newValue as number)}
+                min={0}
+                max={10}
+                step={1}
+                marks
+                valueLabelDisplay="auto"
+              />
+            </Box>
+          )}
+          {discretionarinessType === 'individual' && (
+            <Box style={{ marginTop: '16px' }}>
+              <Typography gutterBottom>Lori Discretionariness</Typography>
+              <Slider
+                value={loriDiscretionariness !== undefined ? loriDiscretionariness : 0}
+                onChange={(event, newValue) => setLoriDiscretionariness(newValue as number)}
+                min={0}
+                max={10}
+                step={1}
+                marks
+                valueLabelDisplay="auto"
+              />
+              <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Discretionariness</Typography>
+              <Slider
+                value={tedDiscretionariness !== undefined ? tedDiscretionariness : 0}
+                onChange={(event, newValue) => setTedDiscretionariness(newValue as number)}
+                min={0}
+                max={10}
+                step={1}
+                marks
+                valueLabelDisplay="auto"
+              />
+            </Box>
+          )}
           {error && <div style={{ color: 'red', marginTop: '10px', wordWrap: 'break-word' }}>{error}</div>}
         </Box>
       </DialogContent>
