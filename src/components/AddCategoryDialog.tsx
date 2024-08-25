@@ -25,21 +25,13 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   const [categoryLabel, setCategoryLabel] = React.useState('');
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
-  const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(5);
-  const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(5);
-  const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(5);
+  const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(6);
+  const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(6);
+  const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(6);
   const [discretionarinessType, setDiscretionarinessType] = React.useState<'consensus' | 'individual'>('consensus');
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
-
-  useEffect(() => {
-    setCategoryLabel('');
-    setConsensusDiscretionariness(5);
-    setLoriDiscretionariness(5);
-    setTedDiscretionariness(5);
-    setError(null);
-  }, [props.open]);
 
   useEffect(() => {
     if (open) {
@@ -55,6 +47,24 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     return null;
   }
 
+  const marks = [
+    {
+      value: 0,
+      label: 'None',
+    },
+    {
+      value: 1,
+      label: 'Min',
+    },
+    {
+      value: 6,
+      label: 'Medium',
+    },
+    {
+      value: 10,
+      label: 'Max',
+    },
+  ];
   const handleClose = () => {
     onClose();
   };
@@ -146,7 +156,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
                 min={0}
                 max={10}
                 step={1}
-                marks
+                marks={marks}
                 valueLabelDisplay="auto"
               />
             </Box>
@@ -160,7 +170,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
                 min={0}
                 max={10}
                 step={1}
-                marks
+                marks={marks}
                 valueLabelDisplay="auto"
               />
               <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Discretionariness</Typography>
@@ -170,7 +180,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
                 min={0}
                 max={10}
                 step={1}
-                marks
+                marks={marks}
                 valueLabelDisplay="auto"
               />
             </Box>
