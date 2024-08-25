@@ -25,9 +25,9 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   const [categoryLabel, setCategoryLabel] = React.useState('');
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
-  const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(undefined);
-  const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(undefined);
-  const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(undefined);
+  const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(5);
+  const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(5);
+  const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(5);
   const [discretionarinessType, setDiscretionarinessType] = React.useState<'consensus' | 'individual'>('consensus');
   const [error, setError] = React.useState<string | null>(null);
 
@@ -35,9 +35,9 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
 
   useEffect(() => {
     setCategoryLabel('');
-    setConsensusDiscretionariness(undefined);
-    setLoriDiscretionariness(undefined);
-    setTedDiscretionariness(undefined);
+    setConsensusDiscretionariness(5);
+    setLoriDiscretionariness(5);
+    setTedDiscretionariness(5);
     setError(null);
   }, [props.open]);
 
@@ -102,12 +102,13 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
       <DialogTitle>Add Category</DialogTitle>
-      <DialogContent style={{ paddingBottom: '0px' }}>
+      <DialogContent style={{ paddingBottom: '0px', height: 'auto', minHeight: '400px' }}>
         <Box
           component="form"
           noValidate
           autoComplete="off"
           onKeyDown={handleKeyDown}
+          sx={{ minHeight: '400px' }}  // Adjust the height to ensure no scrollbar
         >
           <div style={{ paddingBottom: '8px' }}>
             <TextField
@@ -143,7 +144,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
             <Box style={{ marginTop: '16px' }}>
               <Typography gutterBottom>Consensus Discretionariness</Typography>
               <Slider
-                value={consensusDiscretionariness !== undefined ? consensusDiscretionariness : 0}
+                value={consensusDiscretionariness}
                 onChange={(event, newValue) => setConsensusDiscretionariness(newValue as number)}
                 min={0}
                 max={10}
@@ -157,7 +158,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
             <Box style={{ marginTop: '16px' }}>
               <Typography gutterBottom>Lori Discretionariness</Typography>
               <Slider
-                value={loriDiscretionariness !== undefined ? loriDiscretionariness : 0}
+                value={loriDiscretionariness}
                 onChange={(event, newValue) => setLoriDiscretionariness(newValue as number)}
                 min={0}
                 max={10}
@@ -167,7 +168,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               />
               <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Discretionariness</Typography>
               <Slider
-                value={tedDiscretionariness !== undefined ? tedDiscretionariness : 0}
+                value={tedDiscretionariness}
                 onChange={(event, newValue) => setTedDiscretionariness(newValue as number)}
                 min={0}
                 max={10}
