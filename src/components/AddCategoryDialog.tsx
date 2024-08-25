@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
@@ -127,11 +128,12 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               onSetCategoryId={handleCategoryChange}
             />
           )}
-          <FormControl component="fieldset" style={{ marginTop: '16px' }}>
+          <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
             <FormLabel component="legend">Discretionariness Type</FormLabel>
             <RadioGroup
               value={discretionarinessType}
               onChange={handleDiscretionarinessTypeChange}
+              style={{ flexDirection: 'row' }}
             >
               <FormControlLabel value="consensus" control={<Radio />} label="Consensus Discretionariness" />
               <FormControlLabel value="individual" control={<Radio />} label="Individual Discretionariness" />
