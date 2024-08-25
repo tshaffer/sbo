@@ -20,13 +20,9 @@ export interface Transaction {
   overrideCategory: boolean;
   overrideCategoryId: string;
   excludeFromReportCalculations: boolean;
-  discretionariness?: number;
-  consensusNecessity?: number;
-  loriNecessity?: number;
-  tedNecessity?: number;
-  consensusUtility?: number;
-  loriUtility?: number;
-  tedUtility?: number;
+  consensusDiscretionariness?: number;
+  loriDiscretionariness?: number;
+  tedDiscretionariness?: number;
 }
 
 export interface SplitTransaction {
@@ -134,13 +130,9 @@ export interface Category {
   name: string;
   parentId: string;
   disregardLevel: DisregardLevel;
-  discretionariness?: number;
-  consensusNecessity?: number;
-  loriNecessity?: number;
-  tedNecessity?: number;
-  consensusUtility?: number;
-  loriUtility?: number;
-  tedUtility?: number;
+  consensusDiscretionariness?: number;
+  loriDiscretionariness?: number;
+  tedDiscretionariness?: number;
 }
 
 export interface CategoryAssignmentRule {
