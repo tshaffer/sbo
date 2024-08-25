@@ -96,10 +96,9 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   }
 
   return (
-    <Dialog onClose={handleClose} open={open} >
-      <DialogTitle>Add Category </DialogTitle>
-      < DialogContent style={{ paddingBottom: '0px' }
-      }>
+    <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
+      <DialogTitle>Add Category</DialogTitle>
+      <DialogContent style={{ paddingBottom: '0px' }}>
         <Box
           component="form"
           noValidate
@@ -115,8 +114,8 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               fullWidth
             />
           </div>
-          < FormControlLabel
-            control={< Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
+          <FormControlLabel
+            control={<Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
             label="Is this a subcategory?"
           />
           {isSubCategory && (
@@ -135,7 +134,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               fullWidth
               InputProps={{ inputProps: { min: 0, max: 10 } }}
             />
-            < TextField
+            <TextField
               margin="normal"
               label="Lori Discretionariness"
               type="number"
@@ -145,7 +144,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               InputProps={{ inputProps: { min: 0, max: 10 } }}
               disabled={consensusDiscretionariness !== undefined}
             />
-            < TextField
+            <TextField
               margin="normal"
               label="Ted Discretionariness"
               type="number"
@@ -156,12 +155,12 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               disabled={consensusDiscretionariness !== undefined}
             />
           </div>
-          {error && <div style={{ color: 'red', marginTop: '10px' }}> {error} </div>}
+          {error && <div style={{ color: 'red', marginTop: '10px', wordWrap: 'break-word' }}>{error}</div>}
         </Box>
       </DialogContent>
-      < DialogActions >
-        <Button onClick={handleClose}> Cancel </Button>
-        < Tooltip title="Press Enter to add the category" arrow >
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Tooltip title="Press Enter to add the category" arrow>
           <Button
             onClick={handleAddCategory}
             autoFocus
