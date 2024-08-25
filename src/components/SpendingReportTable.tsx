@@ -5,15 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import '../styles/Tracker.css';
 import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
 import { cloneDeep, isEmpty } from 'lodash';
-import { Tooltip } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import { addCategoryAssignmentRuleServerAndRedux, updateTransaction } from '../controllers';
 
 import { useDispatch, useTypedSelector } from '../types';
@@ -31,7 +28,6 @@ const SpendingReportTable: React.FC = () => {
   const dispatch = useDispatch();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const [transactionId, setTransactionId] = React.useState('');
 
   if (isEmpty(transactionsByCategoryId)) {
     return null;
@@ -40,21 +36,6 @@ const SpendingReportTable: React.FC = () => {
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
-
-  const handleSaveTransaction = (transaction: Transaction) => {
-    dispatch(updateTransaction(transaction));
-  };
-
-  const handleSaveRule = (pattern: string, categoryId: string): void => {
-    const id: string = uuidv4();
-    const categoryAssignmentRule: CategoryAssignmentRule = {
-      id,
-      pattern,
-      categoryId
-    };
-    console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    dispatch(addCategoryAssignmentRuleServerAndRedux(categoryAssignmentRule));
-  }
 
   const buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
     const map: StringToCategoryMenuItemLUT = {};

@@ -6,7 +6,7 @@ import { useDispatch, useTypedSelector } from '../types';
 import { CreditCardTransactionRowInStatementTableProperties } from '../types';
 import { isNil } from 'lodash';
 import { updateCategoryInTransactionsRedux } from '../models/slices/transactionsSlice';
-import { getCreditCardTransactionRowInStatementTableProperties, getTransactionsByStatementId } from '../selectors';
+import { getCreditCardTransactionRowInStatementTableProperties } from '../selectors';
 import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 

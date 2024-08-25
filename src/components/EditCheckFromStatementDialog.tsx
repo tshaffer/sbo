@@ -7,15 +7,13 @@ import {
   Slider,
   Typography
 } from '@mui/material';
-import { BankTransaction, Category, CheckTransaction, CheckingAccountTransaction, Transaction } from '../types';
-import { TrackerDispatch } from '../types';
-import { getCategories, getTransactionById } from '../selectors';
+import { CheckTransaction, Transaction } from '../types';
+import { getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import { isNil } from 'lodash';
 import SelectCategory from './SelectCategory';
 import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 
 export interface EditCheckFromStatementDialogProps {
   transactionId: string;
