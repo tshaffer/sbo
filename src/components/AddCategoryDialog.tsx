@@ -1,10 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Slider, Tooltip, Typography } from '@mui/material';
+import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip } from '@mui/material';
 import SelectCategory from './SelectCategory';
 
 export interface AddCategoryDialogProps {
@@ -13,30 +12,32 @@ export interface AddCategoryDialogProps {
     categoryLabel: string,
     isSubCategory: boolean,
     parentCategoryId: string,
+    consensusDiscretionariness?: number,
+    loriDiscretionariness?: number,
+    tedDiscretionariness?: number,
   ) => void;
   onClose: () => void;
 }
 
 const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryDialogProps) => {
-
   const { open, onClose } = props;
 
   const [categoryLabel, setCategoryLabel] = React.useState('');
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
-
-  const [discretionarinessValue, setDiscretionarinessValue] = React.useState(5);
-  const [consensusNecessityValue, setConsensusNecessityValue] = React.useState(5);
-  const [consensusUtilityValue, setConsensusUtilityValue] = React.useState(5);
-  const [loriNecessityValue, setLoriNecessityValue] = React.useState(5);
-  const [loriUtilityValue, setLoriUtilityValue] = React.useState(5);
-  const [tedUtilityValue, setTedUtilityValue] = React.useState(5);
-  const [tedNecessityValue, setTedNecessityValue] = React.useState(5);
+  const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(undefined);
+  const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(undefined);
+  const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(undefined);
+  const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
 
   useEffect(() => {
     setCategoryLabel('');
+    setConsensusDiscretionariness(undefined);
+    setLoriDiscretionariness(undefined);
+    setTedDiscretionariness(undefined);
+    setError(null);
   }, [props.open]);
 
   useEffect(() => {
@@ -53,28 +54,25 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     return null;
   }
 
-  const marks = [
-    {
-      value: 0,
-      label: 'Low',
-    },
-    {
-      value: 5,
-      label: 'Medium',
-    },
-    {
-      value: 10,
-      label: 'High',
-    },
-  ];
-
   const handleClose = () => {
     onClose();
   };
 
   const handleAddCategory = (): void => {
     if (categoryLabel !== '') {
-      props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId);
+      // Validation
+      if (consensusDiscretionariness !== undefined) {
+        if (loriDiscretionariness !== undefined || tedDiscretionariness !== undefined) {
+          setError('You cannot specify Lori or Ted Discretionariness if Consensus Discretionariness is set.');
+          return;
+        }
+      } else if (loriDiscretionariness === undefined && tedDiscretionariness === undefined) {
+        setError('You must specify at least one of Lori or Ted Discretionariness.');
+        return;
+      }
+
+      // If validation passes, add the category
+      props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, consensusDiscretionariness, loriDiscretionariness, tedDiscretionariness);
       props.onClose();
     }
   };
@@ -97,14 +95,11 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     setParentCategoryId(categoryId);
   }
 
-  const handleSliderChange = (setter: any, newValue: number | number[]) => {
-    setter(newValue as number);
-  };
-  
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Add Category</DialogTitle>
-      <DialogContent style={{ paddingBottom: '0px' }}>
+    <Dialog onClose={handleClose} open={open} >
+      <DialogTitle>Add Category </DialogTitle>
+      < DialogContent style={{ paddingBottom: '0px' }
+      }>
         <Box
           component="form"
           noValidate
@@ -120,8 +115,8 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               fullWidth
             />
           </div>
-          <FormControlLabel
-            control={<Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
+          < FormControlLabel
+            control={< Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
             label="Is this a subcategory?"
           />
           {isSubCategory && (
@@ -130,37 +125,48 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               onSetCategoryId={handleCategoryChange}
             />
           )}
-          <Typography id="input-slider" gutterBottom>
-            Discretionariness
-          </Typography>
-          <Slider
-            value={typeof discretionarinessValue === 'number' ? discretionarinessValue : 0}
-            onChange={(_, newValue: number | number[]) => handleSliderChange(setDiscretionarinessValue, newValue)}
-            min={0}
-            max={10}
-            marks={marks}
+          <div style={{ paddingTop: '16px' }}>
+            <TextField
+              margin="normal"
+              label="Consensus Discretionariness"
+              type="number"
+              value={consensusDiscretionariness !== undefined ? consensusDiscretionariness : ''}
+              onChange={(event) => setConsensusDiscretionariness(event.target.value ? parseFloat(event.target.value) : undefined)}
+              fullWidth
+              InputProps={{ inputProps: { min: 0, max: 10 } }}
             />
-          <Typography id="input-slider" gutterBottom>
-            Consensus Necessity
-          </Typography>
-          <Slider
-            value={typeof consensusNecessityValue === 'number' ? consensusNecessityValue : 0}
-            onChange={(_, newValue: number | number[]) => handleSliderChange(setConsensusNecessityValue, newValue)}
-            min={0}
-            max={10}
-            marks={marks}
+            < TextField
+              margin="normal"
+              label="Lori Discretionariness"
+              type="number"
+              value={loriDiscretionariness !== undefined ? loriDiscretionariness : ''}
+              onChange={(event) => setLoriDiscretionariness(event.target.value ? parseFloat(event.target.value) : undefined)}
+              fullWidth
+              InputProps={{ inputProps: { min: 0, max: 10 } }}
+              disabled={consensusDiscretionariness !== undefined}
             />
+            < TextField
+              margin="normal"
+              label="Ted Discretionariness"
+              type="number"
+              value={tedDiscretionariness !== undefined ? tedDiscretionariness : ''}
+              onChange={(event) => setTedDiscretionariness(event.target.value ? parseFloat(event.target.value) : undefined)}
+              fullWidth
+              InputProps={{ inputProps: { min: 0, max: 10 } }}
+              disabled={consensusDiscretionariness !== undefined}
+            />
+          </div>
+          {error && <div style={{ color: 'red', marginTop: '10px' }}> {error} </div>}
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Tooltip title="Press Enter to add the category" arrow>
+      < DialogActions >
+        <Button onClick={handleClose}> Cancel </Button>
+        < Tooltip title="Press Enter to add the category" arrow >
           <Button
             onClick={handleAddCategory}
             autoFocus
             variant="contained"
             color="primary"
-          // disabled={!categoryLabel || (isSubCategory && !parentCategoryId)}
           >
             Add
           </Button>
@@ -171,6 +177,3 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
 };
 
 export default AddCategoryDialog;
-
-
-
