@@ -30,11 +30,49 @@ const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: Edit
   const [overrideCategory, setOverrideCategory] = React.useState(transaction.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(transaction.overrideCategoryId);
   const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(transaction.excludeFromReportCalculations);
-  const [enableDiscretionariness, setEnableDiscretionariness] = useState(false);
-  const [discretionarinessOption, setDiscretionarinessOption] = useState<'consensus' | 'individual'>('individual');
-  const [consensusDiscretionariness, setConsensusDiscretionariness] = useState<number>(5);
-  const [loriDiscretionariness, setLoriDiscretionariness] = useState<number>(5);
-  const [tedDiscretionariness, setTedDiscretionariness] = useState<number>(5);
+
+  interface DiscretionarinessParameters {
+    enableDiscretionariness: boolean;
+    discretionarinessOption: 'consensus' | 'individual';
+    consensusDiscretionariness: number | undefined;
+    loriDiscretionariness: number | undefined;
+    tedDiscretionariness: number | undefined;
+  }
+
+  const getDiscretionarinessParameters = (): DiscretionarinessParameters => {
+    if (transaction.consensusDiscretionariness !== undefined) {
+      return {
+        enableDiscretionariness: true,
+        discretionarinessOption: 'consensus',
+        consensusDiscretionariness: transaction.consensusDiscretionariness,
+        loriDiscretionariness: undefined,
+        tedDiscretionariness: undefined,
+      };
+    } else if (transaction.loriDiscretionariness !== undefined || transaction.tedDiscretionariness !== undefined) {
+      return {
+        enableDiscretionariness: true,
+        discretionarinessOption: 'individual',
+        consensusDiscretionariness: undefined,
+        loriDiscretionariness: transaction.loriDiscretionariness,
+        tedDiscretionariness: transaction.tedDiscretionariness || 5,
+      };
+    } else {
+      return {
+        enableDiscretionariness: false,
+        discretionarinessOption: 'consensus',
+        consensusDiscretionariness: undefined,
+        loriDiscretionariness: undefined,
+        tedDiscretionariness: undefined,
+      };
+    }
+  }
+
+  const discretionarinessParameters : DiscretionarinessParameters = getDiscretionarinessParameters();
+  const [enableDiscretionariness, setEnableDiscretionariness] = useState(discretionarinessParameters.enableDiscretionariness);
+  const [discretionarinessOption, setDiscretionarinessOption] = useState<'consensus' | 'individual'>(discretionarinessParameters.discretionarinessOption);
+  const [consensusDiscretionariness, setConsensusDiscretionariness] = useState<number | undefined>(discretionarinessParameters.consensusDiscretionariness);
+  const [loriDiscretionariness, setLoriDiscretionariness] = useState<number | undefined>(discretionarinessParameters.loriDiscretionariness);
+  const [tedDiscretionariness, setTedDiscretionariness] = useState<number | undefined>(discretionarinessParameters.tedDiscretionariness);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
   const marks = [
