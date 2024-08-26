@@ -65,6 +65,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
       label: 'Max',
     },
   ];
+  
   const handleClose = () => {
     onClose();
   };

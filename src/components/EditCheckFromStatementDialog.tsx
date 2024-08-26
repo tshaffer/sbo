@@ -53,6 +53,25 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
     return null;
   }
 
+  const marks = [
+    {
+      value: 0,
+      label: 'None',
+    },
+    {
+      value: 1,
+      label: 'Min',
+    },
+    {
+      value: 6,
+      label: 'Medium',
+    },
+    {
+      value: 10,
+      label: 'Max',
+    },
+  ];
+  
   const handleEditTransactionMoreOptions = () => {
     setShowEditTransactionMoreOptionsDialog(true);
   };
@@ -81,6 +100,23 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
       overrideCategoryId,
       excludeFromReportCalculations,
     };
+    if (enableDiscretionariness) {
+      if (discretionarinessOption === 'consensus') {
+        updatedCheck.consensusDiscretionariness = consensusDiscretionariness;
+        updatedCheck.loriDiscretionariness = undefined;
+        updatedCheck.tedDiscretionariness = undefined;
+      } else {
+        updatedCheck.consensusDiscretionariness = undefined;
+        updatedCheck.loriDiscretionariness = loriDiscretionariness;
+        updatedCheck.tedDiscretionariness = tedDiscretionariness;
+      }
+    } else {
+      updatedCheck.consensusDiscretionariness = undefined;
+      updatedCheck.loriDiscretionariness = undefined;
+      updatedCheck.tedDiscretionariness = undefined;
+    }
+    console.log('handleSave');
+    console.log(updatedCheck);
     props.onSave(updatedCheck);
     props.onClose();
   };
@@ -218,6 +254,7 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
                       min={0}
                       max={10}
                       step={1}
+                      marks={marks}
                       valueLabelDisplay="auto"
                     />
                   </Box>
@@ -230,6 +267,7 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
                       min={0}
                       max={10}
                       step={1}
+                      marks={marks}
                       valueLabelDisplay="auto"
                     />
                     <Typography sx={{ mt: 2 }}>Ted's Discretionariness</Typography>
@@ -239,6 +277,7 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
                       min={0}
                       max={10}
                       step={1}
+                      marks={marks}
                       valueLabelDisplay="auto"
                     />
                   </Box>

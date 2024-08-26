@@ -37,6 +37,25 @@ const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: Edit
   const [tedDiscretionariness, setTedDiscretionariness] = useState<number>(5);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
+  const marks = [
+    {
+      value: 0,
+      label: 'None',
+    },
+    {
+      value: 1,
+      label: 'Min',
+    },
+    {
+      value: 6,
+      label: 'Medium',
+    },
+    {
+      value: 10,
+      label: 'Max',
+    },
+  ];
+  
   const handleEditTransactionMoreOptions = () => {
     setShowEditTransactionMoreOptionsDialog(true);
   };
@@ -59,6 +78,21 @@ const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: Edit
       overrideCategoryId,
       excludeFromReportCalculations,
     };
+    if (enableDiscretionariness) {
+      if (discretionarinessOption === 'consensus') {
+        updatedTransaction.consensusDiscretionariness = consensusDiscretionariness;
+        updatedTransaction.loriDiscretionariness = undefined;
+        updatedTransaction.tedDiscretionariness = undefined;
+      } else {
+        updatedTransaction.consensusDiscretionariness = undefined;
+        updatedTransaction.loriDiscretionariness = loriDiscretionariness;
+        updatedTransaction.tedDiscretionariness = tedDiscretionariness;
+      }
+    } else {
+      updatedTransaction.consensusDiscretionariness = undefined;
+      updatedTransaction.loriDiscretionariness = undefined;
+      updatedTransaction.tedDiscretionariness = undefined;
+    }
     console.log('handleSave');
     console.log(updatedTransaction);
     props.onSave(updatedTransaction);
@@ -167,6 +201,7 @@ const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: Edit
                       min={0}
                       max={10}
                       step={1}
+                      marks={marks}
                       valueLabelDisplay="auto"
                     />
                   </Box>
@@ -179,6 +214,7 @@ const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: Edit
                       min={0}
                       max={10}
                       step={1}
+                      marks={marks}
                       valueLabelDisplay="auto"
                     />
                     <Typography sx={{ mt: 2 }}>Ted's Discretionariness</Typography>
@@ -188,6 +224,7 @@ const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: Edit
                       min={0}
                       max={10}
                       step={1}
+                      marks={marks}
                       valueLabelDisplay="auto"
                     />
                   </Box>
