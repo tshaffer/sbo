@@ -14,7 +14,8 @@ import '../styles/Grid.css';
 import { Tooltip, IconButton, Checkbox } from '@mui/material';
 import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleRedux, updateTransactionRedux } from '../models';
+import { addCategoryAssignmentRuleRedux } from '../models';
+import { updateTransaction } from '../controllers';
 
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
@@ -45,7 +46,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   };
 
   const handleSaveTransaction = (transaction: Transaction) => {
-    dispatch(updateTransactionRedux(transaction));
+    dispatch(updateTransaction(transaction));
   };
 
   const handleCloseEditTransactionDialog = () => {
