@@ -37,7 +37,7 @@ export const canAddCategoryAssignmentRule = (pattern: string): TrackerAnyPromise
   };
 };
 
-export const addCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
+export const addCategoryAssignmentRule = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 

@@ -11,7 +11,7 @@ import { Button, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, 
 import { Category, CategoryMenuItem, DisregardLevel, StringToCategoryMenuItemLUT } from '../types';
 import { getCategories } from '../selectors';
 import AddCategoryDialog from './AddCategoryDialog';
-import { addCategoryRedux } from '../models';
+import { addCategory } from '../controllers';
 
 export interface SelectCategoryProps {
   selectedCategoryId: string;
@@ -114,7 +114,7 @@ const SelectCategory = (props: SelectCategoryProps) => {
       parentId,
       disregardLevel: DisregardLevel.None,
     };
-    dispatch(addCategoryRedux(category));
+    dispatch(addCategory(category));
     handleSetSelectedCategoryId(category.id);
   };
 

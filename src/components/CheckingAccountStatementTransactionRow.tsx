@@ -13,7 +13,7 @@ import { formatCurrency, formatDate } from '../utilities';
 import '../styles/Grid.css';
 import { Tooltip, IconButton } from '@mui/material';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleServerAndRedux, splitTransaction, updateTransaction } from '../controllers';
+import { addCategoryAssignmentRule, splitTransaction, updateTransaction } from '../controllers';
 import SplitTransactionDialog from './SplitTransactionDialog';
 import EditTransactionDialog from './EditTransactionDialog';
 import EditCheckFromStatementDialog from './EditCheckFromStatementDialog';
@@ -33,7 +33,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     ? categoryById!.name
     : '';
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(props.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
-  
+
   const dispatch = useDispatch();
 
   const [transactionId, setTransactionId] = React.useState('');
@@ -84,7 +84,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       categoryId
     };
     console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    dispatch(addCategoryAssignmentRuleServerAndRedux(categoryAssignmentRule));
+    dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
   }
 
   const handleCloseAddRuleDialog = () => {

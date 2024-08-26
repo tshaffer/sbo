@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 
-import { v4 as uuidv4 } from 'uuid';
 
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
 import { cloneDeep, isEmpty } from 'lodash';
-import { addCategoryAssignmentRuleServerAndRedux, updateTransaction } from '../controllers';
 
 import { useDispatch, useTypedSelector } from '../types';
 
