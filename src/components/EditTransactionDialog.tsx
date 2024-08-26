@@ -123,10 +123,10 @@ const EditTransactionDialog: React.FC<EditTransactionDialogProps> = (props: Edit
         onClose={handleCloseEditTransactionMoreOptionsDialog}
         onSave={handleSaveTransactionMoreOptions}
       />
-      <Dialog open={props.open} onClose={props.onClose}>
+      <Dialog open={props.open} onClose={props.onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Transaction</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
               label="Transaction Date"
               value={formatDate(transaction.transactionDate)}

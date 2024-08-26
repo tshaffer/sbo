@@ -165,7 +165,7 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
         onClose={handleCloseEditTransactionMoreOptionsDialog}
         onSave={handleSaveTransactionMoreOptions}
       />
-      <Dialog open={props.open} onClose={props.onClose}>
+      <Dialog open={props.open} onClose={props.onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Check</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
