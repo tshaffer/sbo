@@ -1,11 +1,13 @@
 import React from 'react';
-import { Box, Collapse, IconButton } from '@mui/material';
+import { Box, Collapse, IconButton, Tooltip } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
 import { getAppInitialized, getCategories, getCategoryAssignmentRules, getCategoryByName } from '../selectors';
-import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
+import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT, useDispatch } from '../types';
 import '../styles/Tracker.css';
 import { cloneDeep, isNil } from 'lodash';
 import { useTypedSelector } from '../types';
+import EditCategoryDialog from './EditCategoryDialog';
 
 const CategoriesTable: React.FC = () => {
 
@@ -13,8 +15,12 @@ const CategoriesTable: React.FC = () => {
   const categories: Category[] = useTypedSelector(state => getCategories(state));
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
-  
+  const [selectedCategory, setSelectedCategory] = React.useState<Category | null>(null);
+  const [showEditCategoryDialog, setShowEditCategoryDialog] = React.useState(false);
+
   const [openRows, setOpenRows] = React.useState<{ [key: string]: boolean }>({});
+
+  const dispatch = useDispatch();
 
   if (!appInitialized) {
     return null;
@@ -34,6 +40,20 @@ const CategoriesTable: React.FC = () => {
       [id]: !prevOpenRows[id],
     }));
   };
+
+  function handleEditCategory(category: Category): void {
+    setSelectedCategory(category);
+    setShowEditCategoryDialog(true);
+  }
+
+  const handleSaveCategory = (category: Category) => {
+    console.log('Saving category', category);
+    // dispatch(updateCategory(category));
+  };
+
+  const handleCloseEditCategoryDialog = () => {
+    setShowEditCategoryDialog(false);
+  }
 
   let trimmedCategories = cloneDeep(categories);
   if (!isNil(ignoreCategory)) {
@@ -72,6 +92,13 @@ const CategoriesTable: React.FC = () => {
             {openRows[categoryMenuItem.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </td>
+        <td className="chatgpt-category-table-cell">
+          <Tooltip title="Edit transaction">
+            <IconButton onClick={() => handleEditCategory(categoryMenuItem)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+        </td>
         <td className="chatgpt-category-table-cell">{categoryMenuItem.name}</td>
         <td className="chatgpt-category-table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
       </tr>
@@ -96,7 +123,7 @@ const CategoriesTable: React.FC = () => {
     const map: StringToCategoryMenuItemLUT = {};
     const roots: CategoryMenuItem[] = [];
     sortedTrimmedCategories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: 0};
+      map[category.id] = { ...category, children: [], level: 0 };
     });
     sortedTrimmedCategories.forEach(category => {
       if (category.parentId === '') {
@@ -108,23 +135,42 @@ const CategoriesTable: React.FC = () => {
     return roots;
   };
 
+  const getEditCategoryDialog = (): JSX.Element | null => {
+    if (!showEditCategoryDialog || isNil(selectedCategory)) {
+      return null;
+    } else {
+      return (
+        <EditCategoryDialog
+          open={showEditCategoryDialog}
+          categoryId={selectedCategory!.id}
+          onClose={handleCloseEditCategoryDialog}
+          onSave={handleSaveCategory}
+        />
+      );
+    }
+  }
+
   const categoryTree = buildCategoryTree();
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <table className="chatgpt-category-table-container">
-        <thead className="chatgpt-category-table-header">
-          <tr className="chatgpt-category-table-row">
-            <th className="chatgpt-category-table-cell"></th>
-            <th className="chatgpt-category-table-cell">Category Name</th>
-            <th className="chatgpt-category-table-cell">Number of Rules</th>
-          </tr>
-        </thead>
-        <tbody className="chatgpt-category-table-body">
-          {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
-        </tbody>
-      </table>
-    </Box>
+    <React.Fragment>
+      {getEditCategoryDialog()}
+      <Box sx={{ width: '100%' }}>
+        <table className="chatgpt-category-table-container">
+          <thead className="chatgpt-category-table-header">
+            <tr className="chatgpt-category-table-row">
+              <th className="chatgpt-category-table-cell"></th>
+              <th className="chatgpt-category-table-cell"></th>
+              <th className="chatgpt-category-table-cell">Category Name</th>
+              <th className="chatgpt-category-table-cell">Number of Rules</th>
+            </tr>
+          </thead>
+          <tbody className="chatgpt-category-table-body">
+            {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
+          </tbody>
+        </table>
+      </Box>
+    </React.Fragment>
   );
 };
 
