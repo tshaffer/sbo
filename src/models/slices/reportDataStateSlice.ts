@@ -17,6 +17,13 @@ const initialState: ReportDataState = {
   minMaxTransactionDates: { minDate: '', maxDate: '' },
   reportStatementId: '',
   categoryIdsToExclude: [],
+  consensusDiscretionary: true,
+  loriDiscretionary: false,
+  tedDiscretionary: false,
+  consensusValue: 0,
+  loriValue: 0,
+  tedValue: 0,
+  matchLowerDiscretionary: false,
 };
 
 const reportDataSlice = createSlice({

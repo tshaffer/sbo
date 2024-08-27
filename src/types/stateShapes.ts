@@ -35,6 +35,13 @@ export interface ReportDataState {
   minMaxTransactionDates: MinMaxDates;
   reportStatementId: string;
   categoryIdsToExclude: string[];
+  consensusDiscretionary: boolean;
+  loriDiscretionary: boolean;
+  tedDiscretionary: boolean;
+  consensusValue: number;
+  loriValue: number;
+  tedValue: number;
+  matchLowerDiscretionary: boolean;
 }
 
 export interface CategoryState {

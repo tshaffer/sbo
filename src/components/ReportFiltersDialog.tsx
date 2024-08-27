@@ -29,6 +29,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   const [consensusValue, setConsensusValue] = useState(5);
   const [loriValue, setLoriValue] = useState(5);
   const [tedValue, setTedValue] = useState(5);
+  const [matchLowerDiscretionary, setMatchLowerDiscretionary] = useState(false);
 
   if (!props.open) {
     return null;
@@ -74,6 +75,10 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   const handleTedChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTedChecked(event.target.checked);
   };
+
+  const handleMatchLowerDiscretionary = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMatchLowerDiscretionary(event.target.checked);
+  }
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -163,6 +168,12 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               max={10}
               step={1}
               valueLabelDisplay="auto"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox checked={matchLowerDiscretionary} onChange={handleMatchLowerDiscretionary} />
+              }
+              label="Match lower discretionary"
             />
           </Box>
         )}
