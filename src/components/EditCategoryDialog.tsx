@@ -11,12 +11,6 @@ export interface EditCategoryDialogProps {
   open: boolean;
   categoryId: string;
   onSave: (category: Category) => void;
-  // onEditCategory: (
-  //   categoryLabel: string,
-  //   consensusDiscretionariness?: number,
-  //   loriDiscretionariness?: number,
-  //   tedDiscretionariness?: number,
-  // ) => void;
   onClose: () => void;
 }
 
@@ -32,7 +26,7 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
   const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(category ? category.consensusDiscretionariness : 5);
   const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(category ? category.loriDiscretionariness : 6);
   const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(category ? category.tedDiscretionariness : 6);
-  const [discretionarinessType, setDiscretionarinessType] = React.useState<'consensus' | 'individual'>(category?.consensusDiscretionariness ? 'consensus' : 'individual');
+  const [discretionarinessType, setDiscretionarinessType] = React.useState<'consensus' | 'individual'>(category?.consensusDiscretionariness !== undefined ? 'consensus' : 'individual');
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
@@ -84,7 +78,7 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
       loriDiscretionariness: discretionarinessType === 'individual' ? loriDiscretionariness : undefined,
       tedDiscretionariness: discretionarinessType === 'individual' ? tedDiscretionariness : undefined,
     }
-    props.onSave(updatedCategory!);
+    props.onSave(updatedCategory);
     props.onClose();
   
   };

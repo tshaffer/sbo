@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Category, serverUrl, apiUrlFragment, TrackerAnyPromiseThunkAction, TrackerDispatch } from "../types";
-import { addCategoriesRedux, addCategoryRedux, replaceCategoriesRedux } from "../models";
+import { addCategoriesRedux, addCategoryRedux, replaceCategoriesRedux, updateCategoryRedux } from "../models";
 
 export const loadCategories = (): TrackerAnyPromiseThunkAction => {
 
@@ -37,6 +37,31 @@ export const addCategory = (category: Category): TrackerAnyPromiseThunkAction =>
       console.log(response);
       console.log(response.data);
       dispatch(addCategoryRedux(category));
+      return Promise.resolve(response.data as Category);
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+};
+
+export const updateCategory = (category: Category): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'updateCategory';
+
+    const updateCategoryBody = category;
+
+    return axios.post(
+      path,
+      updateCategoryBody
+    ).then((response) => {
+      console.log('updateCategory');
+      console.log(response);
+      console.log(response.data);
+      dispatch(updateCategoryRedux(category));
       return Promise.resolve(response.data as Category);
     }).catch((error) => {
       console.log('error');

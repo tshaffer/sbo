@@ -8,6 +8,7 @@ import '../styles/Tracker.css';
 import { cloneDeep, isNil } from 'lodash';
 import { useTypedSelector } from '../types';
 import EditCategoryDialog from './EditCategoryDialog';
+import { updateCategory } from '../controllers';
 
 const CategoriesTable: React.FC = () => {
 
@@ -48,7 +49,7 @@ const CategoriesTable: React.FC = () => {
 
   const handleSaveCategory = (category: Category) => {
     console.log('Saving category', category);
-    // dispatch(updateCategory(category));
+    dispatch(updateCategory(category));
   };
 
   const handleCloseEditCategoryDialog = () => {
