@@ -8,8 +8,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import '../styles/Tracker.css';
 import { CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
-import { cloneDeep, isEmpty } from 'lodash';
+import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState } from '../selectors';
+import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { useDispatch, useTypedSelector } from '../types';
 
@@ -22,6 +22,7 @@ const SpendingReportTable: React.FC = () => {
   const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategory);
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
   const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
+  const reportDataState = useTypedSelector(selectReportDataState);
 
   const dispatch = useDispatch();
 
@@ -160,10 +161,54 @@ const SpendingReportTable: React.FC = () => {
     return sortedCategorizedTransactions;
   }
 
-  let trimmedCategories = cloneDeep(categories);
+  const matches = (matchLowerDiscretionary: boolean, categoryDiscretionarinessValue: number, reportSpecDiscretionarinessValue: number): boolean => {
+    if (matchLowerDiscretionary && categoryDiscretionarinessValue <= reportSpecDiscretionarinessValue) {
+      return true;
+    }
+    if (!matchLowerDiscretionary && categoryDiscretionarinessValue >= reportSpecDiscretionarinessValue) {
+      return true;
+    }
+    return false;
+  }
+
+  const trimCategoriesPerDiscretionariness = (categories: Category[]): Category[] => {
+
+    console.log('reportDataState', reportDataState);
+
+    const {
+      consensusDiscretionary: reportSpecConsensusDiscretionary,
+      loriDiscretionary: reportSpecLoriDiscretionary,
+      tedDiscretionary: reportSpecTedDiscretionary,
+      consensusValue: reportSpecConsensusValue,
+      loriValue: reportSpecLoriValue,
+      tedValue: reportSpecTedValue,
+      matchLowerDiscretionary: reportSpecMatchLowerDiscretionary
+    } = reportDataState;
+
+    const trimmedCategories: Category[] = [];
+    for (const category of categories) {
+      if (!isNil(category.consensusDiscretionariness) && reportSpecConsensusDiscretionary && category.consensusDiscretionariness >= reportSpecConsensusValue) {
+        if (matches(reportSpecMatchLowerDiscretionary, category.consensusDiscretionariness, reportSpecConsensusValue!)) {
+          trimmedCategories.push(category);
+        }
+      } else if (!isNil(category.loriDiscretionariness) && reportSpecLoriDiscretionary && category.loriDiscretionariness >= reportSpecLoriValue) {
+        if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
+          trimmedCategories.push(category);
+        }
+      } else if (!isNil(category.tedDiscretionariness) && reportSpecTedDiscretionary && category.tedDiscretionariness >= reportSpecTedValue) {
+        if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
+          trimmedCategories.push(category);
+        }
+      }
+    }
+    return trimmedCategories;
+  }
+
+  let trimmedCategories: Category[] = cloneDeep(categories);
   trimmedCategories = categories.filter(category =>
     !categoryIdsToExclude.includes(category.id) && category.id !== ignoreCategory?.id
   );
+  trimmedCategories = trimCategoriesPerDiscretionariness(trimmedCategories);
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
 

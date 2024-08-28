@@ -14,7 +14,7 @@ import { getCheckingAccountStatementById } from "./checkingAccountStatementState
 import { getCreditCardStatementById } from "./creditCardStatementState";
 
 // Input selectors
-const selectReportDataState = (state: TrackerState): ReportDataState => state.reportDataState;
+export const selectReportDataState = (state: TrackerState): ReportDataState => state.reportDataState;
 
 // Memoized selectors
 export const getStartDate = createSelector(

@@ -124,6 +124,10 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
         )}
         {tabIndex === 1 && (
           <Box>
+            <Typography variant="body1" gutterBottom>
+              For each choice (consensus, Lori, and Ted), include the categories where the discretionariness is specified for that choice
+              and the value matches (less than or greater than) the value specified here.
+            </Typography>
             <FormControlLabel
               control={
                 <Checkbox checked={consensusChecked} onChange={handleConsensusChecked} />
