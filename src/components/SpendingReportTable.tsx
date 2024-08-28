@@ -162,7 +162,7 @@ const SpendingReportTable: React.FC = () => {
   }
 
   const matches = (matchLowerDiscretionary: boolean, categoryDiscretionarinessValue: number, reportSpecDiscretionarinessValue: number): boolean => {
-    if (matchLowerDiscretionary && categoryDiscretionarinessValue <= reportSpecDiscretionarinessValue) {
+    if (matchLowerDiscretionary && categoryDiscretionarinessValue < reportSpecDiscretionarinessValue) {
       return true;
     }
     if (!matchLowerDiscretionary && categoryDiscretionarinessValue >= reportSpecDiscretionarinessValue) {
@@ -187,15 +187,15 @@ const SpendingReportTable: React.FC = () => {
 
     const trimmedCategories: Category[] = [];
     for (const category of categories) {
-      if (!isNil(category.consensusDiscretionariness) && reportSpecConsensusDiscretionary && category.consensusDiscretionariness >= reportSpecConsensusValue) {
+      if (!isNil(category.consensusDiscretionariness) && reportSpecConsensusDiscretionary) {
         if (matches(reportSpecMatchLowerDiscretionary, category.consensusDiscretionariness, reportSpecConsensusValue!)) {
           trimmedCategories.push(category);
         }
-      } else if (!isNil(category.loriDiscretionariness) && reportSpecLoriDiscretionary && category.loriDiscretionariness >= reportSpecLoriValue) {
+      } else if (!isNil(category.loriDiscretionariness) && reportSpecLoriDiscretionary) {
         if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
           trimmedCategories.push(category);
         }
-      } else if (!isNil(category.tedDiscretionariness) && reportSpecTedDiscretionary && category.tedDiscretionariness >= reportSpecTedValue) {
+      } else if (!isNil(category.tedDiscretionariness) && reportSpecTedDiscretionary) {
         if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
           trimmedCategories.push(category);
         }
