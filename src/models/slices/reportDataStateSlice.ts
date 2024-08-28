@@ -62,6 +62,29 @@ const reportDataSlice = createSlice({
     removeCategoryIdToExclude: (state, action: PayloadAction<string>) => {
       state.categoryIdsToExclude = state.categoryIdsToExclude.filter(item => item !== action.payload);
     },
+    setConsensusDiscretionary: (state, action: PayloadAction<boolean>) => {
+      state.consensusDiscretionary = action.payload;
+    },
+    setLoriDiscretionary: (state, action: PayloadAction<boolean>) => {
+      state.loriDiscretionary = action.payload;
+    },
+    setTedDiscretionary: (state, action: PayloadAction<boolean>) => {
+      state.tedDiscretionary = action.payload;
+    },
+    setConsensusValue: (state, action: PayloadAction<number>) => {
+      console.log('setConsensusValue', action.payload);
+      state.consensusValue = action.payload;
+    },
+    setLoriValue: (state, action: PayloadAction<number>) => {
+      state.loriValue = action.payload;
+    },
+    setTedValue: (state, action: PayloadAction<number>) => {
+      state.tedValue = action.payload;
+    },
+    setMatchLowerDiscretionary: (state, action: PayloadAction<boolean>) => {
+      state.matchLowerDiscretionary = action.payload;
+    },
+
   },
 });
 
@@ -75,6 +98,13 @@ export const {
   setReportStatementId,
   addCategoryIdToExclude,
   removeCategoryIdToExclude,
+  setConsensusDiscretionary,
+  setLoriDiscretionary,
+  setTedDiscretionary,
+  setConsensusValue,
+  setLoriValue,
+  setTedValue,
+  setMatchLowerDiscretionary,
 } = reportDataSlice.actions;
 
 export default reportDataSlice.reducer;

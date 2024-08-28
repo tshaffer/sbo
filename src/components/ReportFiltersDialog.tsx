@@ -4,7 +4,7 @@ import {
   Checkbox, List, ListItem, ListItemText, Typography, Box,
   Tab, Tabs, Slider, FormControlLabel
 } from '@mui/material';
-import { addCategoryIdToExclude, removeCategoryIdToExclude } from '../models';
+import { addCategoryIdToExclude, removeCategoryIdToExclude, setConsensusDiscretionary, setConsensusValue, setLoriDiscretionary, setLoriValue, setMatchLowerDiscretionary, setTedDiscretionary, setTedValue } from '../models';
 import { getCategories, getCategoryIdsToExclude } from '../selectors';
 import { Category } from '../types';
 
@@ -22,14 +22,15 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   const categories: Category[] = useTypedSelector(getCategories);
   const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
 
+  const consensusDiscretionary: boolean = useTypedSelector(state => state.reportDataState.consensusDiscretionary);
+  const loriDiscretionary: boolean = useTypedSelector(state => state.reportDataState.loriDiscretionary);
+  const tedDiscretionary: boolean = useTypedSelector(state => state.reportDataState.tedDiscretionary);
+  const consensusValue: number = useTypedSelector(state => state.reportDataState.consensusValue);
+  const loriValue: number = useTypedSelector(state => state.reportDataState.loriValue);
+  const tedValue: number = useTypedSelector(state => state.reportDataState.tedValue);
+  const matchLowerDiscretionary: boolean = useTypedSelector(state => state.reportDataState.matchLowerDiscretionary);
+
   const [tabIndex, setTabIndex] = useState(0);
-  const [consensusChecked, setConsensusChecked] = useState(false);
-  const [loriChecked, setLoriChecked] = useState(false);
-  const [tedChecked, setTedChecked] = useState(false);
-  const [consensusValue, setConsensusValue] = useState(5);
-  const [loriValue, setLoriValue] = useState(5);
-  const [tedValue, setTedValue] = useState(5);
-  const [matchLowerDiscretionary, setMatchLowerDiscretionary] = useState(false);
 
   if (!props.open) {
     return null;
@@ -65,19 +66,19 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   };
 
   const handleConsensusChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setConsensusChecked(event.target.checked);
+    dispatch(setConsensusDiscretionary(event.target.checked));
   };
 
   const handleLoriChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLoriChecked(event.target.checked);
+    dispatch(setLoriDiscretionary(event.target.checked));
   };
 
   const handleTedChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTedChecked(event.target.checked);
+    dispatch(setTedDiscretionary(event.target.checked));
   };
 
   const handleMatchLowerDiscretionary = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMatchLowerDiscretionary(event.target.checked);
+    dispatch(setMatchLowerDiscretionary(event.target.checked));
   }
 
   return (
@@ -130,14 +131,14 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
             </Typography>
             <FormControlLabel
               control={
-                <Checkbox checked={consensusChecked} onChange={handleConsensusChecked} />
+                <Checkbox checked={consensusDiscretionary} onChange={handleConsensusChecked} />
               }
               label="Consensus"
             />
             <Slider
               value={consensusValue}
-              onChange={(e, newValue) => setConsensusValue(newValue as number)}
-              disabled={!consensusChecked}
+              onChange={(e, newValue) => dispatch(setConsensusValue(newValue as number))}
+              disabled={!consensusDiscretionary}
               min={0}
               max={10}
               step={1}
@@ -145,14 +146,14 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
             />
             <FormControlLabel
               control={
-                <Checkbox checked={loriChecked} onChange={handleLoriChecked} />
+                <Checkbox checked={loriDiscretionary} onChange={handleLoriChecked} />
               }
               label="Lori"
             />
             <Slider
               value={loriValue}
-              onChange={(e, newValue) => setLoriValue(newValue as number)}
-              disabled={!loriChecked}
+              onChange={(e, newValue) => dispatch(setLoriValue(newValue as number))}
+              disabled={!loriDiscretionary}
               min={0}
               max={10}
               step={1}
@@ -160,14 +161,14 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
             />
             <FormControlLabel
               control={
-                <Checkbox checked={tedChecked} onChange={handleTedChecked} />
+                <Checkbox checked={tedDiscretionary} onChange={handleTedChecked} />
               }
               label="Ted"
             />
             <Slider
               value={tedValue}
-              onChange={(e, newValue) => setTedValue(newValue as number)}
-              disabled={!tedChecked}
+              onChange={(e, newValue) => dispatch(setTedValue(newValue as number))}
+              disabled={!tedDiscretionary}
               min={0}
               max={10}
               step={1}
