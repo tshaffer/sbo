@@ -172,9 +172,6 @@ const SpendingReportTable: React.FC = () => {
   }
 
   const trimCategoriesPerDiscretionariness = (categories: Category[]): Category[] => {
-
-    console.log('reportDataState', reportDataState);
-
     const {
       consensusDiscretionary: reportSpecConsensusDiscretionary,
       loriDiscretionary: reportSpecLoriDiscretionary,
@@ -182,65 +179,40 @@ const SpendingReportTable: React.FC = () => {
       consensusValue: reportSpecConsensusValue,
       loriValue: reportSpecLoriValue,
       tedValue: reportSpecTedValue,
-      matchLowerDiscretionary: reportSpecMatchLowerDiscretionary,
+      matchLowerDiscretionary: reportSpecMatchLowerDiscretionariness,
       individualDiscretionaryPriority: reportSpecIndividualDiscretionaryPriority,
     } = reportDataState;
-
+  
     if (!reportSpecConsensusDiscretionary && !reportSpecLoriDiscretionary && !reportSpecTedDiscretionary) {
       return categories;
     }
-
-    const trimmedCategories: Category[] = [];
-    for (const category of categories) {
-      // if (category.name === 'Garden') {
-      //   debugger
-      // }
-      if (!isNil(category.consensusDiscretionariness) && reportSpecConsensusDiscretionary) {
-        if (matches(reportSpecMatchLowerDiscretionary, category.consensusDiscretionariness, reportSpecConsensusValue!)) {
-          trimmedCategories.push(category);
-        }
-      } else if (reportSpecLoriDiscretionary && reportSpecTedDiscretionary) {
-        if (!isNil(category.loriDiscretionariness) && !isNil(category.tedDiscretionariness)) {
-          if (reportSpecIndividualDiscretionaryPriority === 'ted') {
-            if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
-              trimmedCategories.push(category);
-            }
-          } else {
-            if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
-              trimmedCategories.push(category);
-            }
-          }
-        } else if (!isNil(category.loriDiscretionariness) && reportSpecLoriDiscretionary) {
-          if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
-            trimmedCategories.push(category);
-          }
-        } else if (!isNil(category.tedDiscretionariness) && reportSpecTedDiscretionary) {
-          if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
-            trimmedCategories.push(category);
-          }
-        }
-      } else if (!isNil(category.loriDiscretionariness) && !isNil(category.tedDiscretionariness)) {
-        if (reportSpecIndividualDiscretionaryPriority === 'ted') {
-          if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
-            trimmedCategories.push(category);
-          }
-        } else {
-          if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
-            trimmedCategories.push(category);
-          }
-        }
-      } else if (!isNil(category.loriDiscretionariness) && reportSpecLoriDiscretionary) {
-        if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
-          trimmedCategories.push(category);
-        }
-      } else if (!isNil(category.tedDiscretionariness) && reportSpecTedDiscretionary) {
-        if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
-          trimmedCategories.push(category);
+  
+    return categories.filter((category) => {
+      const { consensusDiscretionariness, loriDiscretionariness, tedDiscretionariness } = category;
+  
+      if (reportSpecConsensusDiscretionary && !isNil(consensusDiscretionariness)) {
+        return matches(reportSpecMatchLowerDiscretionariness, consensusDiscretionariness, reportSpecConsensusValue!);
+      }
+  
+      if (reportSpecLoriDiscretionary && reportSpecTedDiscretionary) {
+        const prioritizedDiscretionary = reportSpecIndividualDiscretionaryPriority === 'ted' ? tedDiscretionariness : loriDiscretionariness;
+        const prioritizedValue = reportSpecIndividualDiscretionaryPriority === 'ted' ? reportSpecTedValue! : reportSpecLoriValue!;
+        if (!isNil(prioritizedDiscretionary)) {
+          return matches(reportSpecMatchLowerDiscretionariness, prioritizedDiscretionary, prioritizedValue);
         }
       }
-    }
-    return trimmedCategories;
-  }
+  
+      if (reportSpecLoriDiscretionary && !isNil(loriDiscretionariness)) {
+        return matches(reportSpecMatchLowerDiscretionariness, loriDiscretionariness, reportSpecLoriValue!);
+      }
+  
+      if (reportSpecTedDiscretionary && !isNil(tedDiscretionariness)) {
+        return matches(reportSpecMatchLowerDiscretionariness, tedDiscretionariness, reportSpecTedValue!);
+      }
+  
+      return false;
+    });
+  };
 
   let trimmedCategories: Category[] = cloneDeep(categories);
   trimmedCategories = categories.filter(category =>
