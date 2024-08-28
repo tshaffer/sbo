@@ -182,7 +182,8 @@ const SpendingReportTable: React.FC = () => {
       consensusValue: reportSpecConsensusValue,
       loriValue: reportSpecLoriValue,
       tedValue: reportSpecTedValue,
-      matchLowerDiscretionary: reportSpecMatchLowerDiscretionary
+      matchLowerDiscretionary: reportSpecMatchLowerDiscretionary,
+      individualDiscretionaryPriority: reportSpecIndividualDiscretionaryPriority,
     } = reportDataState;
 
     if (!reportSpecConsensusDiscretionary && !reportSpecLoriDiscretionary && !reportSpecTedDiscretionary) {
@@ -191,12 +192,42 @@ const SpendingReportTable: React.FC = () => {
 
     const trimmedCategories: Category[] = [];
     for (const category of categories) {
-      if (category.name === 'Garden') {
-        debugger
-      }
+      // if (category.name === 'Garden') {
+      //   debugger
+      // }
       if (!isNil(category.consensusDiscretionariness) && reportSpecConsensusDiscretionary) {
         if (matches(reportSpecMatchLowerDiscretionary, category.consensusDiscretionariness, reportSpecConsensusValue!)) {
           trimmedCategories.push(category);
+        }
+      } else if (reportSpecLoriDiscretionary && reportSpecTedDiscretionary) {
+        if (!isNil(category.loriDiscretionariness) && !isNil(category.tedDiscretionariness)) {
+          if (reportSpecIndividualDiscretionaryPriority === 'ted') {
+            if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
+              trimmedCategories.push(category);
+            }
+          } else {
+            if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
+              trimmedCategories.push(category);
+            }
+          }
+        } else if (!isNil(category.loriDiscretionariness) && reportSpecLoriDiscretionary) {
+          if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
+            trimmedCategories.push(category);
+          }
+        } else if (!isNil(category.tedDiscretionariness) && reportSpecTedDiscretionary) {
+          if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
+            trimmedCategories.push(category);
+          }
+        }
+      } else if (!isNil(category.loriDiscretionariness) && !isNil(category.tedDiscretionariness)) {
+        if (reportSpecIndividualDiscretionaryPriority === 'ted') {
+          if (matches(reportSpecMatchLowerDiscretionary, category.tedDiscretionariness, reportSpecTedValue!)) {
+            trimmedCategories.push(category);
+          }
+        } else {
+          if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {
+            trimmedCategories.push(category);
+          }
         }
       } else if (!isNil(category.loriDiscretionariness) && reportSpecLoriDiscretionary) {
         if (matches(reportSpecMatchLowerDiscretionary, category.loriDiscretionariness, reportSpecLoriValue!)) {

@@ -88,6 +88,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
 
   const handleIndividualDiscretionaryPriorityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log('handleIndividualDiscretionaryPriorityChange', event.target.value);
+    dispatch(setIndividualDiscretionaryPriority(event.target.value));
   };
 
 
