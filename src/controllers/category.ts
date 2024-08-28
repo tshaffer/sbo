@@ -62,7 +62,7 @@ export const updateCategory = (category: Category): TrackerAnyPromiseThunkAction
       console.log(response);
       console.log(response.data);
       dispatch(updateCategoryRedux(category));
-      return Promise.resolve(response.data as Category);
+      return Promise.resolve();
     }).catch((error) => {
       console.log('error');
       console.log(error);

@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
   Checkbox, List, ListItem, ListItemText, Typography, Box,
-  Tab, Tabs, Slider, FormControlLabel
+  Tab, Tabs, Slider, FormControlLabel,
+  FormControl,
+  FormLabel,
+  Radio,
+  RadioGroup
 } from '@mui/material';
-import { addCategoryIdToExclude, removeCategoryIdToExclude, setConsensusDiscretionary, setConsensusValue, setLoriDiscretionary, setLoriValue, setMatchLowerDiscretionary, setTedDiscretionary, setTedValue } from '../models';
+import { addCategoryIdToExclude, removeCategoryIdToExclude, setConsensusDiscretionary, setConsensusValue, setLoriDiscretionary, setLoriValue, setMatchLowerDiscretionary, setTedDiscretionary, setTedValue, setIndividualDiscretionaryPriority } from '../models';
 import { getCategories, getCategoryIdsToExclude } from '../selectors';
 import { Category } from '../types';
 
@@ -29,6 +33,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   const loriValue: number = useTypedSelector(state => state.reportDataState.loriValue);
   const tedValue: number = useTypedSelector(state => state.reportDataState.tedValue);
   const matchLowerDiscretionary: boolean = useTypedSelector(state => state.reportDataState.matchLowerDiscretionary);
+  const individualDiscretionaryPriority: string = useTypedSelector(state => state.reportDataState.individualDiscretionaryPriority);
 
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -80,6 +85,11 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   const handleMatchLowerDiscretionary = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setMatchLowerDiscretionary(event.target.checked));
   }
+
+  const handleIndividualDiscretionaryPriorityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleIndividualDiscretionaryPriorityChange', event.target.value);
+  };
+
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -180,6 +190,17 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               }
               label="Match lower discretionary"
             />
+          <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
+            <FormLabel component="legend">Priority when there are conflicting discretionary choices</FormLabel>
+            <RadioGroup
+              value={individualDiscretionaryPriority}
+              onChange={handleIndividualDiscretionaryPriorityChange}
+              style={{ flexDirection: 'row' }}
+            >
+              <FormControlLabel value="lori" control={<Radio />} label="Lori" />
+              <FormControlLabel value="ted" control={<Radio />} label="Ted" />
+            </RadioGroup>
+          </FormControl>
           </Box>
         )}
       </DialogContent>

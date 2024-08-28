@@ -24,6 +24,7 @@ const initialState: ReportDataState = {
   loriValue: 0,
   tedValue: 0,
   matchLowerDiscretionary: false,
+  individualDiscretionaryPriority: 'ted',
 };
 
 const reportDataSlice = createSlice({
@@ -84,7 +85,9 @@ const reportDataSlice = createSlice({
     setMatchLowerDiscretionary: (state, action: PayloadAction<boolean>) => {
       state.matchLowerDiscretionary = action.payload;
     },
-
+    setIndividualDiscretionaryPriority: (state, action: PayloadAction<string>) => {
+      state.individualDiscretionaryPriority = action.payload;
+    },
   },
 });
 
@@ -105,6 +108,7 @@ export const {
   setLoriValue,
   setTedValue,
   setMatchLowerDiscretionary,
+  setIndividualDiscretionaryPriority
 } = reportDataSlice.actions;
 
 export default reportDataSlice.reducer;

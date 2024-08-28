@@ -97,7 +97,7 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
-      <DialogTitle>Add Category</DialogTitle>
+      <DialogTitle>Edit Category</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
         <Box
           component="form"

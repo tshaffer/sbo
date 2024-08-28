@@ -185,8 +185,15 @@ const SpendingReportTable: React.FC = () => {
       matchLowerDiscretionary: reportSpecMatchLowerDiscretionary
     } = reportDataState;
 
+    if (!reportSpecConsensusDiscretionary && !reportSpecLoriDiscretionary && !reportSpecTedDiscretionary) {
+      return categories;
+    }
+
     const trimmedCategories: Category[] = [];
     for (const category of categories) {
+      if (category.name === 'Garden') {
+        debugger
+      }
       if (!isNil(category.consensusDiscretionariness) && reportSpecConsensusDiscretionary) {
         if (matches(reportSpecMatchLowerDiscretionary, category.consensusDiscretionariness, reportSpecConsensusValue!)) {
           trimmedCategories.push(category);
