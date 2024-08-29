@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Slider, Typography } from '@mui/material';
 
-interface SetImportanceDialogProps {
+interface SetImportanceProps {
   initialConsensusImportance?: number;
   initialLoriImportance?: number;
   initialTedImportance?: number;
@@ -13,7 +13,7 @@ interface SetImportanceDialogProps {
   onError: (error: string | null) => void;
 }
 
-const SetImportanceDialog: React.FC<SetImportanceDialogProps> = ({
+const SetImportance: React.FC<SetImportanceProps> = ({
   initialConsensusImportance,
   initialLoriImportance,
   initialTedImportance,
@@ -39,8 +39,15 @@ const SetImportanceDialog: React.FC<SetImportanceDialogProps> = ({
     if (importanceType === 'consensus' && consensusImportance !== undefined) {
       onImportanceChange({ consensusImportance });
       onError(null);
-    } else if (importanceType === 'individual' && (loriImportance !== undefined || tedImportance !== undefined)) {
-      onImportanceChange({ loriImportance, tedImportance });
+    } else if (importanceType === 'individual') {
+      const defaultImportance = 5; // Default value to use when switching to individual
+      const currentLoriImportance = loriImportance ?? defaultImportance;
+      const currentTedImportance = tedImportance ?? defaultImportance;
+
+      setLoriImportance(currentLoriImportance);
+      setTedImportance(currentTedImportance);
+      
+      onImportanceChange({ loriImportance: currentLoriImportance, tedImportance: currentTedImportance });
       onError(null);
     } else {
       onError('Please specify the required Importance values correctly.');
@@ -48,7 +55,20 @@ const SetImportanceDialog: React.FC<SetImportanceDialogProps> = ({
   }, [importanceType, consensusImportance, loriImportance, tedImportance, onImportanceChange, onError]);
 
   const handleImportanceTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImportanceType(event.target.value as 'consensus' | 'individual');
+    const newType = event.target.value as 'consensus' | 'individual';
+    setImportanceType(newType);
+
+    // Assign default values if switching to individual type
+    if (newType === 'individual') {
+      const defaultImportance = 5;
+      if (loriImportance === undefined) {
+        setLoriImportance(defaultImportance);
+      }
+      if (tedImportance === undefined) {
+        setTedImportance(defaultImportance);
+      }
+    }
+    
     onError(null); // Reset error on type change
   };
 
@@ -109,4 +129,4 @@ const SetImportanceDialog: React.FC<SetImportanceDialogProps> = ({
   );
 };
 
-export default SetImportanceDialog;
+export default SetImportance;
