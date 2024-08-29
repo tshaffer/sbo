@@ -5,6 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip, RadioGroup, FormControl, FormLabel, Radio, Slider, Typography, TextField } from '@mui/material';
 import SelectCategory from './SelectCategory';
+import SetImportance from './SetImportance';
 
 export interface AddCategoryDialogProps {
   open: boolean;
@@ -28,7 +29,6 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(6);
   const [loriImportance, setLoriImportance] = React.useState<number | undefined>(6);
   const [tedImportance, setTedImportance] = React.useState<number | undefined>(6);
-  const [importanceType, setImportanceType] = React.useState<'consensus' | 'individual'>('consensus');
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
@@ -46,25 +46,6 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   if (!open) {
     return null;
   }
-
-  const marks = [
-    {
-      value: 0,
-      label: 'None',
-    },
-    {
-      value: 1,
-      label: 'Min',
-    },
-    {
-      value: 6,
-      label: 'Medium',
-    },
-    {
-      value: 10,
-      label: 'Max',
-    },
-  ];
 
   const handleClose = () => {
     onClose();
@@ -103,9 +84,31 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     setParentCategoryId(categoryId);
   }
 
-  const handleImportanceTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImportanceType(event.target.value as 'consensus' | 'individual');
-    setError(null);
+  const handleImportanceChange = (newImportanceValues: { consensusImportance?: number; loriImportance?: number; tedImportance?: number }) => {
+
+    // Check for and update consensus importance
+    if (newImportanceValues.consensusImportance !== undefined) {
+      setConsensusImportance(newImportanceValues.consensusImportance);
+      // Reset individual importances if switching to consensus
+      setLoriImportance(undefined);
+      setTedImportance(undefined);
+    }
+
+    // Check for and update Lori and Ted importances
+    if (newImportanceValues.loriImportance !== undefined || newImportanceValues.tedImportance !== undefined) {
+      if (newImportanceValues.loriImportance !== undefined) {
+        setLoriImportance(newImportanceValues.loriImportance);
+      }
+      if (newImportanceValues.tedImportance !== undefined) {
+        setTedImportance(newImportanceValues.tedImportance);
+      }
+      // Reset consensus importance if switching to individual
+      setConsensusImportance(undefined);
+    }
+  };
+
+  const handleError = (error: string | null) => {
+    setError(error);
   };
 
   return (
@@ -137,55 +140,13 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               onSetCategoryId={handleCategoryChange}
             />
           )}
-          <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
-            <FormLabel component="legend">Importance Type</FormLabel>
-            <RadioGroup
-              value={importanceType}
-              onChange={handleImportanceTypeChange}
-              style={{ flexDirection: 'row' }}
-            >
-              <FormControlLabel value="consensus" control={<Radio />} label="Consensus Importance" />
-              <FormControlLabel value="individual" control={<Radio />} label="Individual Importance" />
-            </RadioGroup>
-          </FormControl>
-          {importanceType === 'consensus' && (
-            <Box style={{ marginTop: '16px' }}>
-              <Typography gutterBottom>Consensus Importance</Typography>
-              <Slider
-                value={consensusImportance}
-                onChange={(event, newValue) => setConsensusImportance(newValue as number)}
-                min={0}
-                max={10}
-                step={1}
-                marks={marks}
-                valueLabelDisplay="auto"
-              />
-            </Box>
-          )}
-          {importanceType === 'individual' && (
-            <Box style={{ marginTop: '16px' }}>
-              <Typography gutterBottom>Lori Importance</Typography>
-              <Slider
-                value={loriImportance}
-                onChange={(event, newValue) => setLoriImportance(newValue as number)}
-                min={0}
-                max={10}
-                step={1}
-                marks={marks}
-                valueLabelDisplay="auto"
-              />
-              <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Importance</Typography>
-              <Slider
-                value={tedImportance}
-                onChange={(event, newValue) => setTedImportance(newValue as number)}
-                min={0}
-                max={10}
-                step={1}
-                marks={marks}
-                valueLabelDisplay="auto"
-              />
-            </Box>
-          )}
+          <SetImportance
+            initialConsensusImportance={consensusImportance}
+            initialLoriImportance={loriImportance}
+            initialTedImportance={tedImportance}
+            onImportanceChange={handleImportanceChange}
+            onError={handleError}
+          />
           {error && <div style={{ color: 'red', marginTop: '10px', wordWrap: 'break-word' }}>{error}</div>}
         </Box>
       </DialogContent>

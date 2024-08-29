@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
-import { Button, DialogActions, DialogContent, FormControlLabel, Tooltip, RadioGroup, FormControl, FormLabel, Radio, Slider, Typography, TextField } from '@mui/material';
+import { Button, DialogActions, DialogContent, TextField } from '@mui/material';
 import { getCategoryById } from '../selectors';
 import { Category, useTypedSelector } from '../types';
 import SetImportance from './SetImportance';
