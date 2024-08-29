@@ -37,48 +37,48 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(check.overrideCategoryId);
   const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(check.excludeFromReportCalculations);
 
-  interface DiscretionarinessParameters {
-    enableDiscretionariness: boolean;
-    discretionarinessOption: 'consensus' | 'individual';
-    consensusDiscretionariness: number | undefined;
-    loriDiscretionariness: number | undefined;
-    tedDiscretionariness: number | undefined;
+  interface ImportanceParameters {
+    enableImportance: boolean;
+    importanceOption: 'consensus' | 'individual';
+    consensusImportance: number | undefined;
+    loriImportance: number | undefined;
+    tedImportance: number | undefined;
   }
 
-  const getDiscretionarinessParameters = (): DiscretionarinessParameters => {
-    if (check.consensusDiscretionariness !== undefined) {
+  const getImportanceParameters = (): ImportanceParameters => {
+    if (check.consensusImportance !== undefined) {
       return {
-        enableDiscretionariness: true,
-        discretionarinessOption: 'consensus',
-        consensusDiscretionariness: check.consensusDiscretionariness,
-        loriDiscretionariness: undefined,
-        tedDiscretionariness: undefined,
+        enableImportance: true,
+        importanceOption: 'consensus',
+        consensusImportance: check.consensusImportance,
+        loriImportance: undefined,
+        tedImportance: undefined,
       };
-    } else if (check.loriDiscretionariness !== undefined || check.tedDiscretionariness !== undefined) {
+    } else if (check.loriImportance !== undefined || check.tedImportance !== undefined) {
       return {
-        enableDiscretionariness: true,
-        discretionarinessOption: 'individual',
-        consensusDiscretionariness: undefined,
-        loriDiscretionariness: check.loriDiscretionariness,
-        tedDiscretionariness: check.tedDiscretionariness || 5,
+        enableImportance: true,
+        importanceOption: 'individual',
+        consensusImportance: undefined,
+        loriImportance: check.loriImportance,
+        tedImportance: check.tedImportance || 5,
       };
     } else {
       return {
-        enableDiscretionariness: false,
-        discretionarinessOption: 'consensus',
-        consensusDiscretionariness: undefined,
-        loriDiscretionariness: undefined,
-        tedDiscretionariness: undefined,
+        enableImportance: false,
+        importanceOption: 'consensus',
+        consensusImportance: undefined,
+        loriImportance: undefined,
+        tedImportance: undefined,
       };
     }
   }
 
-  const discretionarinessParameters : DiscretionarinessParameters = getDiscretionarinessParameters();
-  const [enableDiscretionariness, setEnableDiscretionariness] = useState(discretionarinessParameters.enableDiscretionariness);
-  const [discretionarinessOption, setDiscretionarinessOption] = useState<'consensus' | 'individual'>(discretionarinessParameters.discretionarinessOption);
-  const [consensusDiscretionariness, setConsensusDiscretionariness] = useState<number | undefined>(discretionarinessParameters.consensusDiscretionariness);
-  const [loriDiscretionariness, setLoriDiscretionariness] = useState<number | undefined>(discretionarinessParameters.loriDiscretionariness);
-  const [tedDiscretionariness, setTedDiscretionariness] = useState<number | undefined>(discretionarinessParameters.tedDiscretionariness);
+  const importanceParameters: ImportanceParameters = getImportanceParameters();
+  const [enableImportance, setEnableImportance] = useState(importanceParameters.enableImportance);
+  const [importanceOption, setImportanceOption] = useState<'consensus' | 'individual'>(importanceParameters.importanceOption);
+  const [consensusImportance, setConsensusImportance] = useState<number | undefined>(importanceParameters.consensusImportance);
+  const [loriImportance, setLoriImportance] = useState<number | undefined>(importanceParameters.loriImportance);
+  const [tedImportance, setTedImportance] = useState<number | undefined>(importanceParameters.tedImportance);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
   React.useEffect(() => {
@@ -109,7 +109,7 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
       label: 'Max',
     },
   ];
-  
+
   const handleEditTransactionMoreOptions = () => {
     setShowEditTransactionMoreOptionsDialog(true);
   };
@@ -138,20 +138,20 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
       overrideCategoryId,
       excludeFromReportCalculations,
     };
-    if (enableDiscretionariness) {
-      if (discretionarinessOption === 'consensus') {
-        updatedCheck.consensusDiscretionariness = consensusDiscretionariness;
-        updatedCheck.loriDiscretionariness = undefined;
-        updatedCheck.tedDiscretionariness = undefined;
+    if (enableImportance) {
+      if (importanceOption === 'consensus') {
+        updatedCheck.consensusImportance = consensusImportance;
+        updatedCheck.loriImportance = undefined;
+        updatedCheck.tedImportance = undefined;
       } else {
-        updatedCheck.consensusDiscretionariness = undefined;
-        updatedCheck.loriDiscretionariness = loriDiscretionariness;
-        updatedCheck.tedDiscretionariness = tedDiscretionariness;
+        updatedCheck.consensusImportance = undefined;
+        updatedCheck.loriImportance = loriImportance;
+        updatedCheck.tedImportance = tedImportance;
       }
     } else {
-      updatedCheck.consensusDiscretionariness = undefined;
-      updatedCheck.loriDiscretionariness = undefined;
-      updatedCheck.tedDiscretionariness = undefined;
+      updatedCheck.consensusImportance = undefined;
+      updatedCheck.loriImportance = undefined;
+      updatedCheck.tedImportance = undefined;
     }
     console.log('handleSave');
     console.log(updatedCheck);
@@ -187,12 +187,12 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
     setOverrideCategoryId(categoryId);
   }
 
-  const handleEnableDiscretionarinessChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean): void => {
-    setEnableDiscretionariness(checked);
+  const handleEnableImportanceChange = (event: ChangeEvent<HTMLInputElement>, checked: boolean): void => {
+    setEnableImportance(checked);
   };
 
-  const handleDiscretionarinessOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setDiscretionarinessOption(event.target.value as 'consensus' | 'individual');
+  const handleImportanceOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setImportanceOption(event.target.value as 'consensus' | 'individual');
   };
 
   return (
@@ -262,33 +262,33 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={enableDiscretionariness}
-                  onChange={handleEnableDiscretionarinessChange}
+                  checked={enableImportance}
+                  onChange={handleEnableImportanceChange}
                 />
               }
-              label="Set Discretionariness"
+              label="Set Importance"
             />
-            {enableDiscretionariness && (
+            {enableImportance && (
               <Box sx={{ mt: 2 }}>
                 <FormControl component="fieldset">
-                  <FormLabel component="legend">Discretionariness Option</FormLabel>
+                  <FormLabel component="legend">Importance Option</FormLabel>
                   <RadioGroup
                     row
-                    aria-label="discretionariness-option"
-                    name="discretionariness-option"
-                    value={discretionarinessOption}
-                    onChange={handleDiscretionarinessOptionChange}
+                    aria-label="importance-option"
+                    name="importance-option"
+                    value={importanceOption}
+                    onChange={handleImportanceOptionChange}
                   >
                     <FormControlLabel value="consensus" control={<Radio />} label="Consensus" />
                     <FormControlLabel value="individual" control={<Radio />} label="Individual" />
                   </RadioGroup>
                 </FormControl>
-                {discretionarinessOption === 'consensus' ? (
+                {importanceOption === 'consensus' ? (
                   <Box sx={{ mt: 2 }}>
-                    <Typography>Consensus Discretionariness</Typography>
+                    <Typography>Consensus Importance</Typography>
                     <Slider
-                      value={consensusDiscretionariness}
-                      onChange={(event, newValue) => setConsensusDiscretionariness(newValue as number)}
+                      value={consensusImportance}
+                      onChange={(event, newValue) => setConsensusImportance(newValue as number)}
                       min={0}
                       max={10}
                       step={1}
@@ -298,20 +298,20 @@ const EditCheckFromStatementDialog: React.FC<EditCheckFromStatementDialogProps> 
                   </Box>
                 ) : (
                   <Box sx={{ mt: 2 }}>
-                    <Typography>Lori's Discretionariness</Typography>
+                    <Typography>Lori's Importance</Typography>
                     <Slider
-                      value={loriDiscretionariness}
-                      onChange={(event, newValue) => setLoriDiscretionariness(newValue as number)}
+                      value={loriImportance}
+                      onChange={(event, newValue) => setLoriImportance(newValue as number)}
                       min={0}
                       max={10}
                       step={1}
                       marks={marks}
                       valueLabelDisplay="auto"
                     />
-                    <Typography sx={{ mt: 2 }}>Ted's Discretionariness</Typography>
+                    <Typography sx={{ mt: 2 }}>Ted's Importance</Typography>
                     <Slider
-                      value={tedDiscretionariness}
-                      onChange={(event, newValue) => setTedDiscretionariness(newValue as number)}
+                      value={tedImportance}
+                      onChange={(event, newValue) => setTedImportance(newValue as number)}
                       min={0}
                       max={10}
                       step={1}

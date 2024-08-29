@@ -12,9 +12,9 @@ export interface AddCategoryDialogProps {
     categoryLabel: string,
     isSubCategory: boolean,
     parentCategoryId: string,
-    consensusDiscretionariness?: number,
-    loriDiscretionariness?: number,
-    tedDiscretionariness?: number,
+    consensusImportance?: number,
+    loriImportance?: number,
+    tedImportance?: number,
   ) => void;
   onClose: () => void;
 }
@@ -25,10 +25,10 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
   const [categoryLabel, setCategoryLabel] = React.useState('');
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
-  const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(6);
-  const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(6);
-  const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(6);
-  const [discretionarinessType, setDiscretionarinessType] = React.useState<'consensus' | 'individual'>('consensus');
+  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(6);
+  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(6);
+  const [tedImportance, setTedImportance] = React.useState<number | undefined>(6);
+  const [importanceType, setImportanceType] = React.useState<'consensus' | 'individual'>('consensus');
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
@@ -65,7 +65,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
       label: 'Max',
     },
   ];
-  
+
   const handleClose = () => {
     onClose();
   };
@@ -81,7 +81,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     }
 
     // If validation passes, add the category
-    props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, consensusDiscretionariness, loriDiscretionariness, tedDiscretionariness);
+    props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, consensusImportance, loriImportance, tedImportance);
     props.onClose();
   };
 
@@ -103,8 +103,8 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     setParentCategoryId(categoryId);
   }
 
-  const handleDiscretionarinessTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDiscretionarinessType(event.target.value as 'consensus' | 'individual');
+  const handleImportanceTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setImportanceType(event.target.value as 'consensus' | 'individual');
     setError(null);
   };
 
@@ -138,22 +138,22 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
             />
           )}
           <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
-            <FormLabel component="legend">Discretionariness Type</FormLabel>
+            <FormLabel component="legend">Importance Type</FormLabel>
             <RadioGroup
-              value={discretionarinessType}
-              onChange={handleDiscretionarinessTypeChange}
+              value={importanceType}
+              onChange={handleImportanceTypeChange}
               style={{ flexDirection: 'row' }}
             >
-              <FormControlLabel value="consensus" control={<Radio />} label="Consensus Discretionariness" />
-              <FormControlLabel value="individual" control={<Radio />} label="Individual Discretionariness" />
+              <FormControlLabel value="consensus" control={<Radio />} label="Consensus Importance" />
+              <FormControlLabel value="individual" control={<Radio />} label="Individual Importance" />
             </RadioGroup>
           </FormControl>
-          {discretionarinessType === 'consensus' && (
+          {importanceType === 'consensus' && (
             <Box style={{ marginTop: '16px' }}>
-              <Typography gutterBottom>Consensus Discretionariness</Typography>
+              <Typography gutterBottom>Consensus Importance</Typography>
               <Slider
-                value={consensusDiscretionariness}
-                onChange={(event, newValue) => setConsensusDiscretionariness(newValue as number)}
+                value={consensusImportance}
+                onChange={(event, newValue) => setConsensusImportance(newValue as number)}
                 min={0}
                 max={10}
                 step={1}
@@ -162,22 +162,22 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               />
             </Box>
           )}
-          {discretionarinessType === 'individual' && (
+          {importanceType === 'individual' && (
             <Box style={{ marginTop: '16px' }}>
-              <Typography gutterBottom>Lori Discretionariness</Typography>
+              <Typography gutterBottom>Lori Importance</Typography>
               <Slider
-                value={loriDiscretionariness}
-                onChange={(event, newValue) => setLoriDiscretionariness(newValue as number)}
+                value={loriImportance}
+                onChange={(event, newValue) => setLoriImportance(newValue as number)}
                 min={0}
                 max={10}
                 step={1}
                 marks={marks}
                 valueLabelDisplay="auto"
               />
-              <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Discretionariness</Typography>
+              <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Importance</Typography>
               <Slider
-                value={tedDiscretionariness}
-                onChange={(event, newValue) => setTedDiscretionariness(newValue as number)}
+                value={tedImportance}
+                onChange={(event, newValue) => setTedImportance(newValue as number)}
                 min={0}
                 max={10}
                 step={1}

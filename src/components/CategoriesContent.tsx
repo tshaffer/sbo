@@ -22,9 +22,9 @@ const CategoriesContent: React.FC = () => {
     categoryLabel: string,
     isSubCategory: boolean,
     parentId: string,
-    consensusDiscretionariness: number | undefined, 
-    loriDiscretionariness: number | undefined, 
-    tedDiscretionariness: number | undefined, 
+    consensusImportance: number | undefined,
+    loriImportance: number | undefined,
+    tedImportance: number | undefined,
   ): void => {
     const id: string = uuidv4();
     const category: Category = {
@@ -32,9 +32,9 @@ const CategoriesContent: React.FC = () => {
       name: categoryLabel,
       parentId,
       disregardLevel: DisregardLevel.None,
-      consensusDiscretionariness,
-      loriDiscretionariness,
-      tedDiscretionariness
+      consensusImportance,
+      loriImportance,
+      tedImportance
     };
     dispatch(addCategory(category));
   };

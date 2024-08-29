@@ -23,10 +23,10 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
 
   const category: Category | undefined = useTypedSelector(state => getCategoryById(state, props.categoryId));
   const [categoryLabel, setCategoryLabel] = React.useState(category ? category.name : '');
-  const [consensusDiscretionariness, setConsensusDiscretionariness] = React.useState<number | undefined>(category ? category.consensusDiscretionariness : 5);
-  const [loriDiscretionariness, setLoriDiscretionariness] = React.useState<number | undefined>(category ? category.loriDiscretionariness : 6);
-  const [tedDiscretionariness, setTedDiscretionariness] = React.useState<number | undefined>(category ? category.tedDiscretionariness : 6);
-  const [discretionarinessType, setDiscretionarinessType] = React.useState<'consensus' | 'individual'>(category?.consensusDiscretionariness !== undefined ? 'consensus' : 'individual');
+  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(category ? category.consensusImportance : 5);
+  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(category ? category.loriImportance : 6);
+  const [tedImportance, setTedImportance] = React.useState<number | undefined>(category ? category.tedImportance : 6);
+  const [importanceType, setImportanceType] = React.useState<'consensus' | 'individual'>(category?.consensusImportance !== undefined ? 'consensus' : 'individual');
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
@@ -74,13 +74,13 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
     const updatedCategory: Category = {
       ...category!,
       name: categoryLabel,
-      consensusDiscretionariness: discretionarinessType === 'consensus' ? consensusDiscretionariness : undefined,
-      loriDiscretionariness: discretionarinessType === 'individual' ? loriDiscretionariness : undefined,
-      tedDiscretionariness: discretionarinessType === 'individual' ? tedDiscretionariness : undefined,
+      consensusImportance: importanceType === 'consensus' ? consensusImportance : undefined,
+      loriImportance: importanceType === 'individual' ? loriImportance : undefined,
+      tedImportance: importanceType === 'individual' ? tedImportance : undefined,
     }
     props.onSave(updatedCategory);
     props.onClose();
-  
+
   };
 
   const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
@@ -90,8 +90,8 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
     }
   };
 
-  const handleDiscretionarinessTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDiscretionarinessType(event.target.value as 'consensus' | 'individual');
+  const handleImportanceTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setImportanceType(event.target.value as 'consensus' | 'individual');
     setError(null);
   };
 
@@ -115,22 +115,22 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
             />
           </div>
           <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
-            <FormLabel component="legend">Discretionariness Type</FormLabel>
+            <FormLabel component="legend">Importance Type</FormLabel>
             <RadioGroup
-              value={discretionarinessType}
-              onChange={handleDiscretionarinessTypeChange}
+              value={importanceType}
+              onChange={handleImportanceTypeChange}
               style={{ flexDirection: 'row' }}
             >
-              <FormControlLabel value="consensus" control={<Radio />} label="Consensus Discretionariness" />
-              <FormControlLabel value="individual" control={<Radio />} label="Individual Discretionariness" />
+              <FormControlLabel value="consensus" control={<Radio />} label="Consensus Importance" />
+              <FormControlLabel value="individual" control={<Radio />} label="Individual Importance" />
             </RadioGroup>
           </FormControl>
-          {discretionarinessType === 'consensus' && (
+          {importanceType === 'consensus' && (
             <Box style={{ marginTop: '16px' }}>
-              <Typography gutterBottom>Consensus Discretionariness</Typography>
+              <Typography gutterBottom>Consensus Importance</Typography>
               <Slider
-                value={consensusDiscretionariness}
-                onChange={(event, newValue) => setConsensusDiscretionariness(newValue as number)}
+                value={consensusImportance}
+                onChange={(event, newValue) => setConsensusImportance(newValue as number)}
                 min={0}
                 max={10}
                 step={1}
@@ -139,22 +139,22 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
               />
             </Box>
           )}
-          {discretionarinessType === 'individual' && (
+          {importanceType === 'individual' && (
             <Box style={{ marginTop: '16px' }}>
-              <Typography gutterBottom>Lori Discretionariness</Typography>
+              <Typography gutterBottom>Lori Importance</Typography>
               <Slider
-                value={loriDiscretionariness}
-                onChange={(event, newValue) => setLoriDiscretionariness(newValue as number)}
+                value={loriImportance}
+                onChange={(event, newValue) => setLoriImportance(newValue as number)}
                 min={0}
                 max={10}
                 step={1}
                 marks={marks}
                 valueLabelDisplay="auto"
               />
-              <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Discretionariness</Typography>
+              <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Importance</Typography>
               <Slider
-                value={tedDiscretionariness}
-                onChange={(event, newValue) => setTedDiscretionariness(newValue as number)}
+                value={tedImportance}
+                onChange={(event, newValue) => setTedImportance(newValue as number)}
                 min={0}
                 max={10}
                 step={1}

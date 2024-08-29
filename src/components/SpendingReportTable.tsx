@@ -161,17 +161,17 @@ const SpendingReportTable: React.FC = () => {
     return sortedCategorizedTransactions;
   }
 
-  const matches = (matchLowerDiscretionary: boolean, categoryDiscretionarinessValue: number, reportSpecDiscretionarinessValue: number): boolean => {
-    if (matchLowerDiscretionary && categoryDiscretionarinessValue < reportSpecDiscretionarinessValue) {
+  const matches = (matchLowerDiscretionary: boolean, categoryImportanceValue: number, reportSpecImportanceValue: number): boolean => {
+    if (matchLowerDiscretionary && categoryImportanceValue < reportSpecImportanceValue) {
       return true;
     }
-    if (!matchLowerDiscretionary && categoryDiscretionarinessValue >= reportSpecDiscretionarinessValue) {
+    if (!matchLowerDiscretionary && categoryImportanceValue >= reportSpecImportanceValue) {
       return true;
     }
     return false;
   }
 
-  const trimCategoriesPerDiscretionariness = (categories: Category[]): Category[] => {
+  const trimCategoriesPerImportance = (categories: Category[]): Category[] => {
     const {
       consensusDiscretionary: reportSpecConsensusDiscretionary,
       loriDiscretionary: reportSpecLoriDiscretionary,
@@ -179,37 +179,37 @@ const SpendingReportTable: React.FC = () => {
       consensusValue: reportSpecConsensusValue,
       loriValue: reportSpecLoriValue,
       tedValue: reportSpecTedValue,
-      matchLowerDiscretionary: reportSpecMatchLowerDiscretionariness,
+      matchLowerDiscretionary: reportSpecMatchLowerImportance,
       individualDiscretionaryPriority: reportSpecIndividualDiscretionaryPriority,
     } = reportDataState;
-  
+
     if (!reportSpecConsensusDiscretionary && !reportSpecLoriDiscretionary && !reportSpecTedDiscretionary) {
       return categories;
     }
-  
+
     return categories.filter((category) => {
-      const { consensusDiscretionariness, loriDiscretionariness, tedDiscretionariness } = category;
-  
-      if (reportSpecConsensusDiscretionary && !isNil(consensusDiscretionariness)) {
-        return matches(reportSpecMatchLowerDiscretionariness, consensusDiscretionariness, reportSpecConsensusValue!);
+      const { consensusImportance, loriImportance, tedImportance } = category;
+
+      if (reportSpecConsensusDiscretionary && !isNil(consensusImportance)) {
+        return matches(reportSpecMatchLowerImportance, consensusImportance, reportSpecConsensusValue!);
       }
-  
+
       if (reportSpecLoriDiscretionary && reportSpecTedDiscretionary) {
-        const prioritizedDiscretionary = reportSpecIndividualDiscretionaryPriority === 'ted' ? tedDiscretionariness : loriDiscretionariness;
+        const prioritizedDiscretionary = reportSpecIndividualDiscretionaryPriority === 'ted' ? tedImportance : loriImportance;
         const prioritizedValue = reportSpecIndividualDiscretionaryPriority === 'ted' ? reportSpecTedValue! : reportSpecLoriValue!;
         if (!isNil(prioritizedDiscretionary)) {
-          return matches(reportSpecMatchLowerDiscretionariness, prioritizedDiscretionary, prioritizedValue);
+          return matches(reportSpecMatchLowerImportance, prioritizedDiscretionary, prioritizedValue);
         }
       }
-  
-      if (reportSpecLoriDiscretionary && !isNil(loriDiscretionariness)) {
-        return matches(reportSpecMatchLowerDiscretionariness, loriDiscretionariness, reportSpecLoriValue!);
+
+      if (reportSpecLoriDiscretionary && !isNil(loriImportance)) {
+        return matches(reportSpecMatchLowerImportance, loriImportance, reportSpecLoriValue!);
       }
-  
-      if (reportSpecTedDiscretionary && !isNil(tedDiscretionariness)) {
-        return matches(reportSpecMatchLowerDiscretionariness, tedDiscretionariness, reportSpecTedValue!);
+
+      if (reportSpecTedDiscretionary && !isNil(tedImportance)) {
+        return matches(reportSpecMatchLowerImportance, tedImportance, reportSpecTedValue!);
       }
-  
+
       return false;
     });
   };
@@ -218,7 +218,7 @@ const SpendingReportTable: React.FC = () => {
   trimmedCategories = categories.filter(category =>
     !categoryIdsToExclude.includes(category.id) && category.id !== ignoreCategory?.id
   );
-  trimmedCategories = trimCategoriesPerDiscretionariness(trimmedCategories);
+  trimmedCategories = trimCategoriesPerImportance(trimmedCategories);
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
 

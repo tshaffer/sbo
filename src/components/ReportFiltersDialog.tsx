@@ -97,7 +97,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
       <DialogTitle sx={{ paddingBottom: '0px' }}>Report Filters</DialogTitle>
       <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label="Exclusions" />
-        <Tab label="Discretionariness" />
+        <Tab label="Importance" />
       </Tabs>
       <DialogContent sx={{ paddingBottom: '0px' }}>
         {tabIndex === 0 && (
@@ -137,7 +137,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
         {tabIndex === 1 && (
           <Box>
             <Typography variant="body1" gutterBottom>
-              For each choice (consensus, Lori, and Ted), include the categories where the discretionariness is specified for that choice
+              For each choice (consensus, Lori, and Ted), include the categories where the importance is specified for that choice
               and the value matches (less than or greater than) the value specified here.
             </Typography>
             <FormControlLabel
@@ -191,17 +191,17 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               }
               label="Match lower discretionary"
             />
-          <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
-            <FormLabel component="legend">Priority when there are conflicting discretionary choices</FormLabel>
-            <RadioGroup
-              value={individualDiscretionaryPriority}
-              onChange={handleIndividualDiscretionaryPriorityChange}
-              style={{ flexDirection: 'row' }}
-            >
-              <FormControlLabel value="lori" control={<Radio />} label="Lori" />
-              <FormControlLabel value="ted" control={<Radio />} label="Ted" />
-            </RadioGroup>
-          </FormControl>
+            <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
+              <FormLabel component="legend">Priority when there are conflicting discretionary choices</FormLabel>
+              <RadioGroup
+                value={individualDiscretionaryPriority}
+                onChange={handleIndividualDiscretionaryPriorityChange}
+                style={{ flexDirection: 'row' }}
+              >
+                <FormControlLabel value="lori" control={<Radio />} label="Lori" />
+                <FormControlLabel value="ted" control={<Radio />} label="Ted" />
+              </RadioGroup>
+            </FormControl>
           </Box>
         )}
       </DialogContent>
