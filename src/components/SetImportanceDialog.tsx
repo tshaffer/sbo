@@ -1,45 +1,55 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Slider, Typography } from '@mui/material';
 
-import Box from '@mui/material/Box';
-import { FormControlLabel, RadioGroup, FormControl, FormLabel, Radio, Slider, Typography } from '@mui/material';
-import { getCategoryById } from '../selectors';
-import { Category, useTypedSelector } from '../types';
-
-export interface SetImportanceDialogProps {
-  categoryId: string;
+interface SetImportanceDialogProps {
+  initialConsensusImportance?: number;
+  initialLoriImportance?: number;
+  initialTedImportance?: number;
+  onImportanceChange: (importance: {
+    consensusImportance?: number;
+    loriImportance?: number;
+    tedImportance?: number;
+  }) => void;
+  onError: (error: string | null) => void;
 }
 
-const SetImportanceDialog: React.FC<SetImportanceDialogProps> = (props: SetImportanceDialogProps) => {
-
-  const category: Category | undefined = useTypedSelector(state => getCategoryById(state, props.categoryId));
-  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(category ? category.consensusImportance : 5);
-  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(category ? category.loriImportance : 6);
-  const [tedImportance, setTedImportance] = React.useState<number | undefined>(category ? category.tedImportance : 6);
-  const [importanceType, setImportanceType] = React.useState<'consensus' | 'individual'>(category?.consensusImportance !== undefined ? 'consensus' : 'individual');
-  const [error, setError] = React.useState<string | null>(null);
+const SetImportanceDialog: React.FC<SetImportanceDialogProps> = ({
+  initialConsensusImportance,
+  initialLoriImportance,
+  initialTedImportance,
+  onImportanceChange,
+  onError,
+}) => {
+  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(initialConsensusImportance);
+  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(initialLoriImportance);
+  const [tedImportance, setTedImportance] = React.useState<number | undefined>(initialTedImportance);
+  const [importanceType, setImportanceType] = React.useState<'consensus' | 'individual'>(
+    initialConsensusImportance !== undefined ? 'consensus' : 'individual'
+  );
 
   const marks = [
-    {
-      value: 0,
-      label: 'None',
-    },
-    {
-      value: 1,
-      label: 'Min',
-    },
-    {
-      value: 6,
-      label: 'Medium',
-    },
-    {
-      value: 10,
-      label: 'Max',
-    },
+    { value: 0, label: 'None' },
+    { value: 1, label: 'Min' },
+    { value: 6, label: 'Medium' },
+    { value: 10, label: 'Max' },
   ];
+
+  // Effect to handle validation and communicate changes
+  useEffect(() => {
+    if (importanceType === 'consensus' && consensusImportance !== undefined) {
+      onImportanceChange({ consensusImportance });
+      onError(null);
+    } else if (importanceType === 'individual' && (loriImportance !== undefined || tedImportance !== undefined)) {
+      onImportanceChange({ loriImportance, tedImportance });
+      onError(null);
+    } else {
+      onError('Please specify the required Importance values correctly.');
+    }
+  }, [importanceType, consensusImportance, loriImportance, tedImportance, onImportanceChange, onError]);
 
   const handleImportanceTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setImportanceType(event.target.value as 'consensus' | 'individual');
-    setError(null);
+    onError(null); // Reset error on type change
   };
 
   return (
@@ -55,6 +65,7 @@ const SetImportanceDialog: React.FC<SetImportanceDialogProps> = (props: SetImpor
           <FormControlLabel value="individual" control={<Radio />} label="Individual Importance" />
         </RadioGroup>
       </FormControl>
+
       {importanceType === 'consensus' && (
         <Box style={{ marginTop: '16px' }}>
           <Typography gutterBottom>Consensus Importance</Typography>
@@ -69,6 +80,7 @@ const SetImportanceDialog: React.FC<SetImportanceDialogProps> = (props: SetImpor
           />
         </Box>
       )}
+
       {importanceType === 'individual' && (
         <Box style={{ marginTop: '16px' }}>
           <Typography gutterBottom>Lori Importance</Typography>
@@ -93,7 +105,6 @@ const SetImportanceDialog: React.FC<SetImportanceDialogProps> = (props: SetImpor
           />
         </Box>
       )}
-      {error && <div style={{ color: 'red', marginTop: '10px', wordWrap: 'break-word' }}>{error}</div>}
     </React.Fragment>
   );
 };
