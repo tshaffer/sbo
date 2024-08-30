@@ -73,7 +73,6 @@ const reportDataSlice = createSlice({
       state.tedDiscretionary = action.payload;
     },
     setConsensusValue: (state, action: PayloadAction<number>) => {
-      console.log('setConsensusValue', action.payload);
       state.consensusValue = action.payload;
     },
     setLoriValue: (state, action: PayloadAction<number>) => {
