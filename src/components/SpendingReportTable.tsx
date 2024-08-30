@@ -36,7 +36,7 @@ const SpendingReportTable: React.FC = () => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
 
-  const buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
+  const old_buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
 
     const map: StringToCategoryMenuItemLUT = {};
     const roots: CategoryMenuItem[] = [];
@@ -271,6 +271,75 @@ const SpendingReportTable: React.FC = () => {
     return categoryExpensesData;
   }
 
+  const buildCategoryMenuItems = (
+    categoriesExpensesData: CategoryExpensesData[]
+  ): CategoryMenuItem[] => {
+    const map: StringToCategoryMenuItemLUT = {};
+    const roots: CategoryMenuItem[] = new Array<CategoryMenuItem>();
+  
+    // Create a map for easy lookup of categories by ID
+    categories.forEach(category => {
+      map[category.id] = { ...category, children: [], level: -1 };
+    });
+  
+    // Set to track categories to include (all categories with transactions and their ancestors)
+    const categoriesToInclude = new Set<string>();
+  
+    // Add categories in categoriesExpensesData and all their ancestors to the set
+    const addCategoryAndAncestors = (categoryId: string) => {
+      let currentCategoryId = categoryId;
+      while (currentCategoryId) {
+        if (categoriesToInclude.has(currentCategoryId)) break; // Already processed this branch
+  
+        categoriesToInclude.add(currentCategoryId);
+        const currentCategory = map[currentCategoryId];
+        currentCategoryId = currentCategory.parentId;
+      }
+    };
+  
+    // Populate the set with all categories in categoriesExpensesData and their ancestors
+    categoriesExpensesData.forEach(categoryExpenses => {
+      addCategoryAndAncestors(categoryExpenses.id);
+    });
+  
+    // Now, build the tree based on categoriesToInclude
+    categoriesToInclude.forEach(categoryId => {
+      const category = map[categoryId];
+      if (category.parentId === '') {
+        roots.push(category);
+      } else {
+        map[category.parentId]?.children.push(category);
+      }
+    });
+  
+    // Function to recursively calculate levels
+    const calculateLevels = (category: CategoryMenuItem, level: number) => {
+      category.level = level;
+      category.children.forEach(child => calculateLevels(child, level + 1));
+    };
+  
+    // Calculate levels starting from the roots
+    roots.forEach(root => calculateLevels(root, 0));
+  
+    // Function to flatten the tree
+    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []): CategoryMenuItem[] => {
+      categoryMenuItems.forEach(categoryMenuItem => {
+        result.push(categoryMenuItem);
+        if (categoryMenuItem.children.length > 0) {
+          flattenTree(categoryMenuItem.children, result);
+        }
+      });
+      return result;
+    };
+  
+    // Return the flattened tree structure
+    return flattenTree(roots);
+  };
+
+  const fillInTotalExpenses = (): any => {
+    return null;
+  }
+
   // beginning of the main code
   // algorithm
   // 1. Filter out categories that have been excluded
@@ -294,7 +363,7 @@ const SpendingReportTable: React.FC = () => {
 
   debugger;
 
-  const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
+  const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(categoriesExpensesData);
 
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
 
