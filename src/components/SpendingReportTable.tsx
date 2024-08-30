@@ -336,10 +336,6 @@ const SpendingReportTable: React.FC = () => {
     return flattenTree(roots);
   };
 
-  const oldgenerateCategoryMenuItems = (categoryMenuItems: CategoryMenuItem[], categoriesExpensesData: CategoryExpensesData[]): CategoryExpensesData[] => {
-    return [];
-  }
-
   const generateCategoryMenuItems = (
     categoryMenuItems: CategoryMenuItem[],
     categoriesExpensesData: CategoryExpensesData[]
@@ -398,8 +394,20 @@ const SpendingReportTable: React.FC = () => {
       }
     });
   
+    // Ensure all elements in the original categoriesExpensesData array are included with updated fields
+    categoriesExpensesData.forEach(expensesData => {
+      if (!result.some(item => item.id === expensesData.id)) {
+        result.push({
+          ...expensesData,
+          totalExpenses: expensesData.totalExpenses,
+          percentageOfTotal: (expensesData.totalExpenses / result.reduce((sum, item) => sum + item.totalExpenses, 0)) * 100
+        });
+      }
+    });
+  
     return result;
   };
+
   // beginning of the main code
   // algorithm
   // 1. Filter out categories that have been excluded
@@ -428,7 +436,7 @@ const SpendingReportTable: React.FC = () => {
   const allCategoriesExpensesData: CategoryExpensesData[] = generateCategoryMenuItems(categoryMenuItems, categoriesExpensesData);
 
   console.log('allCategoriesExpensesData', allCategoriesExpensesData);
-  
+
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
 
   let totalAmount = 0;
