@@ -28,10 +28,12 @@ const SetImportance: React.FC<SetImportanceProps> = ({
   );
 
   const marks = [
-    { value: 0, label: 'None' },
-    { value: 1, label: 'Min' },
-    { value: 6, label: 'Medium' },
-    { value: 10, label: 'Max' },
+    { value: 0, label: 'Unnecessary' },
+    { value: 2, label: 'Optional' },
+    { value: 4, label: 'Moderate' },
+    { value: 6, label: 'Important' },
+    { value: 8, label: 'High Priority' },
+    { value: 10, label: 'Required' },
   ];
 
   // Effect to handle validation and communicate changes
@@ -46,7 +48,7 @@ const SetImportance: React.FC<SetImportanceProps> = ({
 
       setLoriImportance(currentLoriImportance);
       setTedImportance(currentTedImportance);
-      
+
       onImportanceChange({ loriImportance: currentLoriImportance, tedImportance: currentTedImportance });
       onError(null);
     } else {
@@ -68,27 +70,31 @@ const SetImportance: React.FC<SetImportanceProps> = ({
         setTedImportance(defaultImportance);
       }
     }
-    
+
     onError(null); // Reset error on type change
   };
 
   return (
     <React.Fragment>
       <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
-        <FormLabel component="legend">Importance Type</FormLabel>
+        <FormLabel component="legend">Set Importance of Transactions in this Category</FormLabel>
         <RadioGroup
           value={importanceType}
           onChange={handleImportanceTypeChange}
           style={{ flexDirection: 'row' }}
         >
-          <FormControlLabel value="consensus" control={<Radio />} label="Consensus Importance" />
-          <FormControlLabel value="individual" control={<Radio />} label="Individual Importance" />
+          <FormControlLabel value="consensus" control={<Radio />} label="Consensus Value" />
+          <FormControlLabel value="individual" control={<Radio />} label="Individual Values" />
         </RadioGroup>
       </FormControl>
 
       {importanceType === 'consensus' && (
-        <Box style={{ marginTop: '16px' }}>
-          <Typography gutterBottom>Consensus Importance</Typography>
+        <Box style={{
+          marginTop: '16px',
+          paddingLeft: '24px',
+          paddingRight: '24px',
+        }}>
+          <Typography gutterBottom>Consensus Value</Typography>
           <Slider
             value={consensusImportance}
             onChange={(event, newValue) => setConsensusImportance(newValue as number)}
@@ -102,8 +108,12 @@ const SetImportance: React.FC<SetImportanceProps> = ({
       )}
 
       {importanceType === 'individual' && (
-        <Box style={{ marginTop: '16px' }}>
-          <Typography gutterBottom>Lori Importance</Typography>
+        <Box style={{
+          marginTop: '16px',
+          paddingLeft: '24px',
+          paddingRight: '24px',
+        }}>
+          <Typography gutterBottom>Lori's Value for Importance</Typography>
           <Slider
             value={loriImportance}
             onChange={(event, newValue) => setLoriImportance(newValue as number)}
@@ -113,7 +123,7 @@ const SetImportance: React.FC<SetImportanceProps> = ({
             marks={marks}
             valueLabelDisplay="auto"
           />
-          <Typography gutterBottom style={{ marginTop: '16px' }}>Ted Importance</Typography>
+          <Typography gutterBottom style={{ marginTop: '16px' }}>Ted's Value for Importance</Typography>
           <Slider
             value={tedImportance}
             onChange={(event, newValue) => setTedImportance(newValue as number)}
