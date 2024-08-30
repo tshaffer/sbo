@@ -24,9 +24,18 @@ const categoryStateSlice = createSlice({
         state.categories[index] = action.payload;
       }
     },
+    deleteCategoryRedux: (state, action: PayloadAction<Category>) => {
+      state.categories = state.categories.filter(category => category.id !== action.payload.id);
+    },
   },
 });
 
-export const { addCategoryRedux, addCategoriesRedux, replaceCategoriesRedux, updateCategoryRedux } = categoryStateSlice.actions;
+export const {
+  addCategoryRedux,
+  addCategoriesRedux,
+  deleteCategoryRedux,
+  replaceCategoriesRedux,
+  updateCategoryRedux
+} = categoryStateSlice.actions;
 
 export default categoryStateSlice.reducer;

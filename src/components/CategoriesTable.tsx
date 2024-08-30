@@ -2,13 +2,14 @@ import React from 'react';
 import { Box, Collapse, IconButton, Tooltip } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { getAppInitialized, getCategories, getCategoryAssignmentRules, getCategoryByName } from '../selectors';
 import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT, useDispatch } from '../types';
 import '../styles/Tracker.css';
 import { cloneDeep, isNil } from 'lodash';
 import { useTypedSelector } from '../types';
 import EditCategoryDialog from './EditCategoryDialog';
-import { updateCategory } from '../controllers';
+import { deleteCategory, updateCategory } from '../controllers';
 
 const CategoriesTable: React.FC = () => {
 
@@ -45,6 +46,11 @@ const CategoriesTable: React.FC = () => {
   function handleEditCategory(category: Category): void {
     setSelectedCategory(category);
     setShowEditCategoryDialog(true);
+  }
+
+  function handleDeleteCategory(category: Category): void {
+    console.log('Deleting category', category);
+    dispatch(deleteCategory(category));
   }
 
   const handleSaveCategory = (category: Category) => {
@@ -94,7 +100,7 @@ const CategoriesTable: React.FC = () => {
           </IconButton>
         </td>
         <td className="chatgpt-category-table-cell">
-          <Tooltip title="Edit transaction">
+          <Tooltip title="Edit category">
             <IconButton onClick={() => handleEditCategory(categoryMenuItem)}>
               <EditIcon />
             </IconButton>
@@ -102,6 +108,14 @@ const CategoriesTable: React.FC = () => {
         </td>
         <td className="chatgpt-category-table-cell">{categoryMenuItem.name}</td>
         <td className="chatgpt-category-table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
+        <td className="chatgpt-category-table-cell">
+          <Tooltip title="Delete" arrow>
+            <IconButton onClick={() => handleDeleteCategory(categoryMenuItem)}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+
+        </td>
       </tr>
       <tr className="chatgpt-category-table-row">
         <td className="chatgpt-category-table-cell" colSpan={3}>
@@ -164,6 +178,7 @@ const CategoriesTable: React.FC = () => {
               <th className="chatgpt-category-table-cell"></th>
               <th className="chatgpt-category-table-cell">Category Name</th>
               <th className="chatgpt-category-table-cell">Number of Rules</th>
+              <th className="chatgpt-category-table-cell"></th>
             </tr>
           </thead>
           <tbody className="chatgpt-category-table-body">
