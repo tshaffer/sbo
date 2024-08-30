@@ -37,6 +37,7 @@ const SpendingReportTable: React.FC = () => {
   };
 
   const buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
+
     const map: StringToCategoryMenuItemLUT = {};
     const roots: CategoryMenuItem[] = [];
 
@@ -50,7 +51,11 @@ const SpendingReportTable: React.FC = () => {
       if (category.parentId === '') {
         roots.push(map[category.id]);
       } else {
-        map[category.parentId]?.children.push(map[category.id]);
+        if (map[category.parentId]) {
+          map[category.parentId].children.push(map[category.id]);
+        } else {
+          console.warn(`Parent category with ID ${category.parentId} not found for category ${category.id}`);
+        }
       }
     });
 
@@ -76,8 +81,6 @@ const SpendingReportTable: React.FC = () => {
 
     return flattenTree(roots);
   };
-
-
   const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
 
     // Sort top-level categories by total expenses
@@ -156,10 +159,12 @@ const SpendingReportTable: React.FC = () => {
       return categoryRow;
     };
 
-    // Collect top-level rows
+    // Collect top-level rows, ensuring no duplicate processing of child categories
+    const processedCategoryIds = new Set<string>();
     categories.forEach(category => {
-      if (category.parentId === '' || categoryExpensesMap.has(category.id)) {
+      if (category.parentId === '' && !processedCategoryIds.has(category.id)) {
         rows.push(processCategory(category));
+        processedCategoryIds.add(category.id);
       }
     });
 
@@ -175,6 +180,7 @@ const SpendingReportTable: React.FC = () => {
       });
       return flatRows;
     };
+
     return flattenRows(sortedRows);
   };
 
