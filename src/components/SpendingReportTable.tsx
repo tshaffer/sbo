@@ -336,10 +336,70 @@ const SpendingReportTable: React.FC = () => {
     return flattenTree(roots);
   };
 
-  const fillInTotalExpenses = (): any => {
-    return null;
+  const oldgenerateCategoryMenuItems = (categoryMenuItems: CategoryMenuItem[], categoriesExpensesData: CategoryExpensesData[]): CategoryExpensesData[] => {
+    return [];
   }
 
+  const generateCategoryMenuItems = (
+    categoryMenuItems: CategoryMenuItem[],
+    categoriesExpensesData: CategoryExpensesData[]
+  ): CategoryExpensesData[] => {
+    // Create a map from categoriesExpensesData for quick lookup
+    const expensesDataMap = new Map<string, CategoryExpensesData>();
+    categoriesExpensesData.forEach(expensesData => {
+      expensesDataMap.set(expensesData.id, expensesData);
+    });
+  
+    // Function to accumulate and calculate expenses recursively
+    const calculateExpenses = (
+      categoryMenuItem: CategoryMenuItem,
+      parentTotalExpenses: number = 0
+    ): CategoryExpensesData => {
+      // If this category already has expenses data, use it
+      let categoryExpensesData = expensesDataMap.get(categoryMenuItem.id);
+  
+      if (!categoryExpensesData) {
+        // Create an empty CategoryExpensesData object for categories with no transactions
+        categoryExpensesData = {
+          id: categoryMenuItem.id,
+          categoryName: categoryMenuItem.name,
+          transactions: [],
+          transactionCount: 0,
+          totalExpenses: 0,
+          percentageOfTotal: 0,
+          children: []
+        };
+        expensesDataMap.set(categoryMenuItem.id, categoryExpensesData);
+      }
+  
+      // Accumulate expenses for child categories
+      let totalChildExpenses = 0;
+      categoryMenuItem.children.forEach(child => {
+        const childExpensesData = calculateExpenses(child, categoryExpensesData!.totalExpenses);
+        categoryExpensesData!.children.push(childExpensesData);
+        totalChildExpenses += childExpensesData.totalExpenses;
+      });
+  
+      // Update the totalExpenses for the current category
+      categoryExpensesData.totalExpenses += totalChildExpenses;
+  
+      // Calculate percentage of total (in the context of its parent or the entire report)
+      const percentageOfParent = parentTotalExpenses ? (categoryExpensesData.totalExpenses / parentTotalExpenses) * 100 : 0;
+      categoryExpensesData.percentageOfTotal = percentageOfParent;
+  
+      return categoryExpensesData;
+    };
+  
+    // Process each top-level category in categoryMenuItems
+    const result: CategoryExpensesData[] = [];
+    categoryMenuItems.forEach(categoryMenuItem => {
+      if (categoryMenuItem.parentId === '') {
+        result.push(calculateExpenses(categoryMenuItem));
+      }
+    });
+  
+    return result;
+  };
   // beginning of the main code
   // algorithm
   // 1. Filter out categories that have been excluded
@@ -361,10 +421,14 @@ const SpendingReportTable: React.FC = () => {
   // Get category expenses data for trimmed categories
   const categoriesExpensesData: CategoryExpensesData[] = buildCategoriesExpensesData(trimmedCategories);
 
-  debugger;
-
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(categoriesExpensesData);
 
+  debugger;
+
+  const allCategoriesExpensesData: CategoryExpensesData[] = generateCategoryMenuItems(categoryMenuItems, categoriesExpensesData);
+
+  console.log('allCategoriesExpensesData', allCategoriesExpensesData);
+  
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
 
   let totalAmount = 0;
