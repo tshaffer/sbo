@@ -199,6 +199,15 @@ const SpendingReportTable: React.FC = () => {
     return false;
   }
 
+  // new code
+  const trimCategoriesPerExclusions = (categories: Category[]): Category[] => {
+    let trimmedCategories = cloneDeep(categories);
+    trimmedCategories = categories.filter(category =>
+      !categoryIdsToExclude.includes(category.id) && category.id !== ignoreCategory?.id
+    );
+    return trimmedCategories;
+  }
+
   const trimCategoriesPerImportance = (categories: Category[]): Category[] => {
     const {
       consensusDiscretionary: reportSpecConsensusDiscretionary,
@@ -242,11 +251,48 @@ const SpendingReportTable: React.FC = () => {
     });
   };
 
-  let trimmedCategories: Category[] = cloneDeep(categories);
-  trimmedCategories = categories.filter(category =>
-    !categoryIdsToExclude.includes(category.id) && category.id !== ignoreCategory?.id
-  );
+  const buildCategoryExpensesData = (category: Category): CategoryExpensesData => {
+    const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
+    const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
+    const categoryExpensesData: CategoryExpensesData = {
+      id: category.id,
+      categoryName: category.name,
+      transactions,
+      totalExpenses: categoryTotalExpenses,
+      transactionCount: transactions.length,
+      percentageOfTotal: 0,
+      children: []
+    };
+    return categoryExpensesData;
+  }
+
+  const buildCategoriesExpensesData = (categories: Category[]): CategoryExpensesData[] => {
+    const categoryExpensesData: CategoryExpensesData[] = categories.map(category => buildCategoryExpensesData(category));
+    return categoryExpensesData;
+  }
+
+  // beginning of the main code
+  // algorithm
+  // 1. Filter out categories that have been excluded
+  // 2. Trim categories based on importance
+  // 3. Build category menu items
+  // 4. Get rows
+  // 5. Calculate total amount
+  // 6. Calculate per month
+  // 7. Render the table
+
+  let trimmedCategories: Category[];
+
+  // Filter out categories that have been excluded
+  trimmedCategories = trimCategoriesPerExclusions(categories);
+
+  // Trim categories based on importance
   trimmedCategories = trimCategoriesPerImportance(trimmedCategories);
+
+  // Get category expenses data for trimmed categories
+  const categoriesExpensesData: CategoryExpensesData[] = buildCategoriesExpensesData(trimmedCategories);
+
+  debugger;
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
 
