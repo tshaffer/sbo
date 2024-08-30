@@ -38,22 +38,45 @@ const SpendingReportTable: React.FC = () => {
 
   const buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
     const map: StringToCategoryMenuItemLUT = {};
-    const categoryMenuItems: CategoryMenuItem[] = [];
+    const roots: CategoryMenuItem[] = [];
 
+    // First pass: Create the map with children and initialize levels to -1
     categories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: 0 };
+      map[category.id] = { ...category, children: [], level: -1 };
     });
 
+    // Second pass: Populate the children and identify root categories
     categories.forEach(category => {
       if (category.parentId === '') {
-        categoryMenuItems.push(map[category.id]);
+        roots.push(map[category.id]);
       } else {
-        map[category.parentId].children.push(map[category.id]);
+        map[category.parentId]?.children.push(map[category.id]);
       }
     });
 
-    return categoryMenuItems;
+    // Function to recursively calculate levels
+    const calculateLevels = (category: CategoryMenuItem, level: number) => {
+      category.level = level;
+      category.children.forEach(child => calculateLevels(child, level + 1));
+    };
+
+    // Calculate levels starting from the roots
+    roots.forEach(root => calculateLevels(root, 0));
+
+    // Function to flatten the tree
+    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []): CategoryMenuItem[] => {
+      categoryMenuItems.forEach(categoryMenuItem => {
+        result.push(categoryMenuItem);
+        if (categoryMenuItem.children.length > 0) {
+          flattenTree(categoryMenuItem.children, result);
+        }
+      });
+      return result;
+    };
+
+    return flattenTree(roots);
   };
+
 
   const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
 
@@ -75,23 +98,21 @@ const SpendingReportTable: React.FC = () => {
     const categoryExpensesMap = new Map<string, number>();
     let totalTopLevelExpenses = 0;
 
-    // remove categories that have no transactions
-    categories = categories.filter(category => {
-      const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
-      return transactions.length > 0;
-    });
-
     // First pass to accumulate the total expenses for each category
     const accumulateExpenses = (category: CategoryMenuItem): number => {
       const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
       const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
       let totalExpenses = categoryTotalExpenses;
 
+      // Accumulate expenses for child categories
       category.children.forEach((subCategory) => {
         totalExpenses += accumulateExpenses(subCategory);
       });
 
-      categoryExpensesMap.set(category.id, totalExpenses);
+      // Only add to the map if there are any expenses (direct or from children)
+      if (totalExpenses > 0 || category.children.length > 0) {
+        categoryExpensesMap.set(category.id, totalExpenses);
+      }
 
       // Accumulate total expenses for top-level categories
       if (category.parentId === '') {
@@ -126,6 +147,7 @@ const SpendingReportTable: React.FC = () => {
         children: []
       };
 
+      // Process subcategories recursively
       category.children.forEach((subCategory) => {
         const subCategoryRow = processCategory(subCategory, level + 1, categoryTotalExpenses);
         categoryRow.children.push(subCategoryRow);
@@ -136,7 +158,7 @@ const SpendingReportTable: React.FC = () => {
 
     // Collect top-level rows
     categories.forEach(category => {
-      if (category.parentId === '') {
+      if (category.parentId === '' || categoryExpensesMap.has(category.id)) {
         rows.push(processCategory(category));
       }
     });
