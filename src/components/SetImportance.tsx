@@ -75,7 +75,7 @@ const SetImportance: React.FC<SetImportanceProps> = ({
   };
 
   return (
-    <React.Fragment>
+    <Box>
       <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
         <FormLabel component="legend">Set Importance of Transactions in this Category</FormLabel>
         <RadioGroup
@@ -135,7 +135,7 @@ const SetImportance: React.FC<SetImportanceProps> = ({
           />
         </Box>
       )}
-    </React.Fragment>
+    </Box>
   );
 };
 
