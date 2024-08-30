@@ -36,13 +36,13 @@ export interface ReportDataState {
   reportStatementId: string;
   categoryIdsToExclude: string[];
   
+  importanceFilter: 'greater' | 'lower';
   consensusDiscretionary: boolean;
   loriDiscretionary: boolean;
   tedDiscretionary: boolean;
   consensusValue: number;
   loriValue: number;
   tedValue: number;
-  matchLowerDiscretionary: boolean;
   individualDiscretionaryPriority: string;
 }
 

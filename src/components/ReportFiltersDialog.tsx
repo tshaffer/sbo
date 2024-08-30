@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
   Checkbox, List, ListItem, ListItemText, Typography, Box,
@@ -8,7 +8,7 @@ import {
   Radio,
   RadioGroup
 } from '@mui/material';
-import { addCategoryIdToExclude, removeCategoryIdToExclude, setConsensusDiscretionary, setConsensusValue, setLoriDiscretionary, setLoriValue, setMatchLowerDiscretionary, setTedDiscretionary, setTedValue, setIndividualDiscretionaryPriority } from '../models';
+import { addCategoryIdToExclude, removeCategoryIdToExclude, setConsensusDiscretionary, setConsensusValue, setLoriDiscretionary, setLoriValue, setImportanceFilter, setTedDiscretionary, setTedValue, setIndividualDiscretionaryPriority } from '../models';
 import { getCategories, getCategoryIdsToExclude } from '../selectors';
 import { Category } from '../types';
 
@@ -32,7 +32,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
   const consensusValue: number = useTypedSelector(state => state.reportDataState.consensusValue);
   const loriValue: number = useTypedSelector(state => state.reportDataState.loriValue);
   const tedValue: number = useTypedSelector(state => state.reportDataState.tedValue);
-  const matchLowerDiscretionary: boolean = useTypedSelector(state => state.reportDataState.matchLowerDiscretionary);
+  const importanceFilter: string = useTypedSelector(state => state.reportDataState.importanceFilter);
   const individualDiscretionaryPriority: string = useTypedSelector(state => state.reportDataState.individualDiscretionaryPriority);
 
   const [tabIndex, setTabIndex] = useState(0);
@@ -82,15 +82,15 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     dispatch(setTedDiscretionary(event.target.checked));
   };
 
-  const handleMatchLowerDiscretionary = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setMatchLowerDiscretionary(event.target.checked));
-  }
-
   const handleIndividualDiscretionaryPriorityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log('handleIndividualDiscretionaryPriorityChange', event.target.value);
     dispatch(setIndividualDiscretionaryPriority(event.target.value));
   };
 
+
+  function handleChangeImportanceFilter(event: ChangeEvent<HTMLInputElement>, value: string): void {
+    setImportanceFilter(value as 'greater' | 'lower');
+  }
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -137,9 +137,21 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
         {tabIndex === 1 && (
           <Box>
             <Typography variant="body1" gutterBottom>
-              For each choice (consensus, Lori, and Ted), include the categories where the importance is specified for that choice
-              and the value matches (less than or greater than) the value specified here.
+              For each choice (Consensus, Lori, and Ted), include the categories where the importance is specified for that choice
+              and the value matches per the Importance Filter specifid below.
             </Typography>
+            <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
+              <FormLabel component="legend">Importance Filter</FormLabel>
+              <RadioGroup
+                value={importanceFilter}
+                onChange={handleChangeImportanceFilter}
+                style={{ flexDirection: 'row' }}
+              >
+                <FormControlLabel value="greater" control={<Radio />} label="Select categories with the same or higher importance" />
+                <FormControlLabel value="lower" control={<Radio />} label="Select categories with the same or lower importance" />
+              </RadioGroup>
+            </FormControl>
+
             <FormControlLabel
               control={
                 <Checkbox checked={consensusDiscretionary} onChange={handleConsensusChecked} />
@@ -184,12 +196,6 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               max={10}
               step={1}
               valueLabelDisplay="auto"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox checked={matchLowerDiscretionary} onChange={handleMatchLowerDiscretionary} />
-              }
-              label="Match lower discretionary"
             />
             <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
               <FormLabel component="legend">Priority when there are conflicting discretionary choices</FormLabel>

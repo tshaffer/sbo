@@ -17,13 +17,13 @@ const initialState: ReportDataState = {
   minMaxTransactionDates: { minDate: '', maxDate: '' },
   reportStatementId: '',
   categoryIdsToExclude: [],
+  importanceFilter: 'greater',
   consensusDiscretionary: true,
   loriDiscretionary: false,
   tedDiscretionary: false,
   consensusValue: 0,
   loriValue: 0,
   tedValue: 0,
-  matchLowerDiscretionary: false,
   individualDiscretionaryPriority: 'ted',
 };
 
@@ -82,11 +82,11 @@ const reportDataSlice = createSlice({
     setTedValue: (state, action: PayloadAction<number>) => {
       state.tedValue = action.payload;
     },
-    setMatchLowerDiscretionary: (state, action: PayloadAction<boolean>) => {
-      state.matchLowerDiscretionary = action.payload;
-    },
     setIndividualDiscretionaryPriority: (state, action: PayloadAction<string>) => {
       state.individualDiscretionaryPriority = action.payload;
+    },
+    setImportanceFilter: (state, action: PayloadAction<'greater' | 'lower'>) => {
+      state.importanceFilter = action.payload;
     },
   },
 });
@@ -107,8 +107,8 @@ export const {
   setConsensusValue,
   setLoriValue,
   setTedValue,
-  setMatchLowerDiscretionary,
-  setIndividualDiscretionaryPriority
+  setIndividualDiscretionaryPriority,
+  setImportanceFilter,
 } = reportDataSlice.actions;
 
 export default reportDataSlice.reducer;

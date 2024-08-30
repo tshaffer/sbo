@@ -161,11 +161,11 @@ const SpendingReportTable: React.FC = () => {
     return sortedCategorizedTransactions;
   }
 
-  const matches = (matchLowerDiscretionary: boolean, categoryImportanceValue: number, reportSpecImportanceValue: number): boolean => {
-    if (matchLowerDiscretionary && categoryImportanceValue < reportSpecImportanceValue) {
+  const matches = (importanceFilter: string, categoryImportanceValue: number, reportSpecImportanceValue: number): boolean => {
+    if (importanceFilter === 'lower' && categoryImportanceValue < reportSpecImportanceValue) {
       return true;
     }
-    if (!matchLowerDiscretionary && categoryImportanceValue >= reportSpecImportanceValue) {
+    else if (categoryImportanceValue >= reportSpecImportanceValue) {
       return true;
     }
     return false;
@@ -179,7 +179,7 @@ const SpendingReportTable: React.FC = () => {
       consensusValue: reportSpecConsensusValue,
       loriValue: reportSpecLoriValue,
       tedValue: reportSpecTedValue,
-      matchLowerDiscretionary: reportSpecMatchLowerImportance,
+      importanceFilter: reportSpecImportanceFilter,
       individualDiscretionaryPriority: reportSpecIndividualDiscretionaryPriority,
     } = reportDataState;
 
@@ -191,23 +191,23 @@ const SpendingReportTable: React.FC = () => {
       const { consensusImportance, loriImportance, tedImportance } = category;
 
       if (reportSpecConsensusDiscretionary && !isNil(consensusImportance)) {
-        return matches(reportSpecMatchLowerImportance, consensusImportance, reportSpecConsensusValue!);
+        return matches(reportSpecImportanceFilter, consensusImportance, reportSpecConsensusValue!);
       }
 
       if (reportSpecLoriDiscretionary && reportSpecTedDiscretionary) {
         const prioritizedDiscretionary = reportSpecIndividualDiscretionaryPriority === 'ted' ? tedImportance : loriImportance;
         const prioritizedValue = reportSpecIndividualDiscretionaryPriority === 'ted' ? reportSpecTedValue! : reportSpecLoriValue!;
         if (!isNil(prioritizedDiscretionary)) {
-          return matches(reportSpecMatchLowerImportance, prioritizedDiscretionary, prioritizedValue);
+          return matches(reportSpecImportanceFilter, prioritizedDiscretionary, prioritizedValue);
         }
       }
 
       if (reportSpecLoriDiscretionary && !isNil(loriImportance)) {
-        return matches(reportSpecMatchLowerImportance, loriImportance, reportSpecLoriValue!);
+        return matches(reportSpecImportanceFilter, loriImportance, reportSpecLoriValue!);
       }
 
       if (reportSpecTedDiscretionary && !isNil(tedImportance)) {
-        return matches(reportSpecMatchLowerImportance, tedImportance, reportSpecTedValue!);
+        return matches(reportSpecImportanceFilter, tedImportance, reportSpecTedValue!);
       }
 
       return false;
