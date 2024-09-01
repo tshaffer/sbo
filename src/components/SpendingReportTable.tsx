@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
 
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import EditIcon from '@mui/icons-material/Edit';
 
 import '../styles/Tracker.css';
-import { CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getCategoryById } from '../selectors';
+import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
+import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
+import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
+import EditTransactionDialog from './EditTransactionDialog';
+
 import { useDispatch, useTypedSelector } from '../types';
+import { Tooltip } from '@mui/material';
 
 const SpendingReportTable: React.FC = () => {
 
@@ -27,6 +35,9 @@ const SpendingReportTable: React.FC = () => {
   const dispatch = useDispatch();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = React.useState('');
+  const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
+  const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
   if (isEmpty(transactionsByCategoryId)) {
     return null;
@@ -35,6 +46,40 @@ const SpendingReportTable: React.FC = () => {
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
+
+  const handleEditTransaction = (transaction: Transaction) => {
+    setTransactionId(transaction.id);
+    setShowEditTransactionDialog(true);
+  };
+
+  const handleSaveTransaction = (transaction: Transaction) => {
+    dispatch(updateTransaction(transaction));
+  };
+
+  const handleCloseEditTransactionDialog = () => {
+    setShowEditTransactionDialog(false);
+  }
+
+  const handleAssignCategory = (transaction: Transaction) => {
+    setTransactionId(transaction.id);
+    setShowAddCategoryAssignmentRuleDialog(true);
+  };
+
+  const handleSaveRule = (pattern: string, categoryId: string): void => {
+    const id: string = uuidv4();
+    const categoryAssignmentRule: CategoryAssignmentRule = {
+      id,
+      pattern,
+      categoryId
+    };
+    console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
+    dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
+  }
+
+  const handleCloseAddRuleDialog = () => {
+    setShowAddCategoryAssignmentRuleDialog(false);
+  };
+
 
   const old_buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
 
@@ -556,6 +601,18 @@ const SpendingReportTable: React.FC = () => {
 
   return (
     <React.Fragment>
+      <AddCategoryAssignmentRuleDialog
+        open={showAddCategoryAssignmentRuleDialog}
+        onSaveRule={handleSaveRule}
+        onClose={handleCloseAddRuleDialog}
+        transactionId={transactionId}
+      />
+      <EditTransactionDialog
+        open={showEditTransactionDialog}
+        transactionId={transactionId}
+        onClose={handleCloseEditTransactionDialog}
+        onSave={handleSaveTransaction}
+      />
       <h4>Date Range {formatDate(generatedReportStartDate)} - {formatDate(generatedReportEndDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
       <h4>Per Month: {expensesPerMonth(totalAmount, generatedReportStartDate, generatedReportEndDate)}</h4>
@@ -596,7 +653,17 @@ const SpendingReportTable: React.FC = () => {
                   <div className="table-body">
                     {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
                       <div className="table-row" key={transaction.bankTransaction.id}>
-                        <div className="table-cell"></div>
+                        <div className="table-cell">
+                          <IconButton onClick={() => handleAssignCategory(transaction.bankTransaction)}>
+                            <AssignmentIcon />
+                          </IconButton>
+
+                          <Tooltip title="Edit transaction">
+                            <IconButton onClick={() => handleEditTransaction(transaction.bankTransaction)}>
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </div>
                         <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
                         <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
                         <div className="table-cell">{transaction.bankTransaction.userDescription}</div>
