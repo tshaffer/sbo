@@ -42,6 +42,15 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     return null;
   }
 
+  const marks = [
+    { value: 0, label: 'Unnecessary' },
+    { value: 2, label: 'Optional' },
+    { value: 4, label: 'Moderate' },
+    { value: 6, label: 'Important' },
+    { value: 8, label: 'High Priority' },
+    { value: 10, label: 'Required' },
+  ];
+
   const handleToggle = (id: string) => () => {
     if (categoryIdsToExclude.includes(id)) {
       dispatch(removeCategoryIdToExclude(id));
@@ -138,7 +147,10 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
           </Box>
         )}
         {tabIndex === 1 && (
-          <Box>
+          <Box style={{
+            paddingLeft: '24px',
+            paddingRight: '24px',
+          }}>
             <Typography variant="body1" gutterBottom>
               For each choice (Consensus, Lori, and Ted), include the categories where the importance is specified for that choice
               and the value matches per the Importance Filter specifid below.
@@ -168,6 +180,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               min={0}
               max={10}
               step={1}
+              marks={marks}
               valueLabelDisplay="auto"
             />
             <FormControlLabel
@@ -183,6 +196,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               min={0}
               max={10}
               step={1}
+              marks={marks}
               valueLabelDisplay="auto"
             />
             <FormControlLabel
@@ -198,6 +212,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               min={0}
               max={10}
               step={1}
+              marks={marks}
               valueLabelDisplay="auto"
             />
             <FormControl component="fieldset" style={{ marginTop: '16px', marginLeft: '0px' }}>
