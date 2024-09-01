@@ -44,7 +44,7 @@ const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategor
       } else {
         setSortCriteria('consensus');
       }
-      setSortOrder('asc'); // Reset to ascending when switching criteria
+      setSortOrder('desc'); // Set to descending when switching criteria
     }
   };
 
@@ -81,6 +81,23 @@ const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategor
     }
   });
 
+  const getImportanceLabel = () => {
+    switch (sortCriteria) {
+      case 'consensus':
+        return 'Importance Consensus';
+      case 'ted':
+        return 'Importance Ted';
+      case 'lori':
+        return 'Importance Lori';
+      default:
+        return 'Importance';
+    }
+  };
+
+  const getSortIcon = () => {
+    return sortOrder === 'asc' ? '↑' : '↓';
+  };
+
   return (
     <table>
       <thead>
@@ -88,14 +105,11 @@ const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategor
           <th>Toggle</th>
           <th>Edit</th>
           <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer' }}>
-            Name {sortCriteria === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+            Name {sortCriteria === 'name' && getSortIcon()}
           </th>
           <th>Rules</th>
           <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer' }}>
-            Importance 
-            {sortCriteria === 'consensus' && (sortOrder === 'asc' ? '↑' : '↓')}
-            {sortCriteria === 'ted' && (sortOrder === 'asc' ? 'Ted ↑' : 'Ted ↓')}
-            {sortCriteria === 'lori' && (sortOrder === 'asc' ? 'Lori ↑' : 'Lori ↓')}
+            {getImportanceLabel()} {sortCriteria !== 'name' && getSortIcon()}
           </th>
           <th>Delete</th>
         </tr>
@@ -149,7 +163,8 @@ const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategor
   );
 };
 
-export default CategoriesTable;*/
+export default CategoriesTable;
+*/
 
 type SortCriteria = 'name' | 'consensus' | 'ted' | 'lori';
 type SortOrder = 'asc' | 'desc';
@@ -192,7 +207,7 @@ const CategoriesTable: React.FC = () => {
       } else {
         setSortCriteria('consensus');
       }
-      setSortOrder('asc'); // Reset to ascending when switching criteria
+      setSortOrder('desc'); // Reset to descending when switching criteria
     }
   };
 
@@ -299,6 +314,23 @@ const CategoriesTable: React.FC = () => {
       return aValue < bValue ? 1 : -1;
     }
   });
+
+  const getImportanceLabel = () => {
+    switch (sortCriteria) {
+      case 'consensus':
+        return 'Importance Consensus';
+      case 'ted':
+        return 'Importance Ted';
+      case 'lori':
+        return 'Importance Lori';
+      default:
+        return 'Importance';
+    }
+  };
+
+  const getSortIcon = () => {
+    return sortOrder === 'asc' ? '↑' : '↓';
+  };
 
   const renderPatternTable = (categoryMenuItem: CategoryMenuItem): JSX.Element | null => {
     const categoryAssignmentRules: CategoryAssignmentRule[] = getRulesByCategory(categoryMenuItem.id);
@@ -426,15 +458,12 @@ const CategoriesTable: React.FC = () => {
               <th className="chatgpt-category-table-cell"></th>
               <th className="chatgpt-category-table-cell"></th>
               <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer' }}>
-                Name {sortCriteria === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Name {sortCriteria === 'name' && getSortIcon()}
               </th>
               <th className="chatgpt-category-table-cell">Rules</th>
               {/* <th className="chatgpt-category-table-cell">Importance</th> */}
               <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer' }}>
-                Importance
-                {sortCriteria === 'consensus' && (sortOrder === 'asc' ? '↑' : '↓')}
-                {sortCriteria === 'ted' && (sortOrder === 'asc' ? 'Ted ↑' : 'Ted ↓')}
-                {sortCriteria === 'lori' && (sortOrder === 'asc' ? 'Lori ↑' : 'Lori ↓')}
+                {getImportanceLabel()} {sortCriteria !== 'name' && getSortIcon()}
               </th>
               <th className="chatgpt-category-table-cell"></th>
             </tr>
