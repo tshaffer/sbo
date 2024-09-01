@@ -109,6 +109,23 @@ const CategoriesTable: React.FC = () => {
         <td className="chatgpt-category-table-cell">{categoryMenuItem.name}</td>
         <td className="chatgpt-category-table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
         <td className="chatgpt-category-table-cell">
+          <Tooltip
+            title={
+              categoryMenuItem.consensusImportance !== undefined
+                ? `Consensus Importance: ${categoryMenuItem.consensusImportance}`
+                : `Lori Importance: ${categoryMenuItem.loriImportance}, Ted Importance: ${categoryMenuItem.tedImportance}`
+            }
+            arrow
+          >
+            <span>
+              {categoryMenuItem.consensusImportance !== undefined ? (
+                `Consensus: ${categoryMenuItem.consensusImportance}`
+              ) : (
+                `Lori: ${categoryMenuItem.loriImportance}, Ted: ${categoryMenuItem.tedImportance}`
+              )}
+            </span>
+          </Tooltip>
+        </td>        <td className="chatgpt-category-table-cell">
           <Tooltip title="Delete" arrow>
             <IconButton onClick={() => handleDeleteCategory(categoryMenuItem)}>
               <DeleteIcon />
@@ -176,8 +193,9 @@ const CategoriesTable: React.FC = () => {
             <tr className="chatgpt-category-table-row">
               <th className="chatgpt-category-table-cell"></th>
               <th className="chatgpt-category-table-cell"></th>
-              <th className="chatgpt-category-table-cell">Category Name</th>
-              <th className="chatgpt-category-table-cell">Number of Rules</th>
+              <th className="chatgpt-category-table-cell">Name</th>
+              <th className="chatgpt-category-table-cell">Rules</th>
+              <th className="chatgpt-category-table-cell">Importance</th>
               <th className="chatgpt-category-table-cell"></th>
             </tr>
           </thead>
