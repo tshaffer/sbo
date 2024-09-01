@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import SafetyDividerIcon from '@mui/icons-material/SafetyDivider';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, Transaction } from '../types';
 import { categorizeTransaction, findMatchingRule, getCategories, getCategoryAssignmentRules, getCategoryById, getOverrideCategory, getOverrideCategoryId, MatchingRuleAssignment } from '../selectors';
@@ -74,6 +76,15 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 
   const handleCloseEditTransactionDialog = () => {
     setShowEditTransactionDialog(false);
+  }
+
+  const handleRemoveCategoryOverride = (transaction: CheckingAccountTransaction) => {
+    const updatedTransaction: CheckingAccountTransaction = {
+      ...transaction,
+      overrideCategory: false,
+      overrideCategoryId: ''
+    };
+    dispatch(updateTransaction(updatedTransaction));
   }
 
   const handleSaveRule = (pattern: string, categoryId: string): void => {
@@ -186,6 +197,14 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       <div className="grid-table-cell">{patternFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{categoryNameFromCategoryOverride}</div>
       <div className="grid-table-cell">{categorizedTransactionName}</div>
+      <Tooltip title="Category Override">
+        <IconButton
+          onClick={() => handleRemoveCategoryOverride(props.checkingAccountTransaction)}
+          disabled={!props.checkingAccountTransaction.overrideCategory}
+        >
+          {props.checkingAccountTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
+        </IconButton>
+      </Tooltip>
     </React.Fragment>
   );
 }
