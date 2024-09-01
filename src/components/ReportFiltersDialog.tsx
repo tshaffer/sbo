@@ -13,6 +13,7 @@ import { getCategories, getCategoryIdsToExclude } from '../selectors';
 import { Category } from '../types';
 
 import { useDispatch, useTypedSelector } from '../types';
+import { cloneDeep } from 'lodash';
 
 export interface ReportFiltersDialogProps {
   open: boolean;
@@ -91,6 +92,9 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     dispatch(setImportanceFilter(value as 'greater' | 'lower'));
   }
 
+  let sortedCategories = cloneDeep(categories);
+  sortedCategories.sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <Dialog open={props.open} onClose={props.onClose}>
       <DialogTitle sx={{ paddingBottom: '0px' }}>Report Filters</DialogTitle>
@@ -116,7 +120,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
               Categories to exclude
             </Typography>
             <List sx={{ paddingTop: '0px', paddingBottom: '0px' }}>
-              {categories.map((category) => (
+              {sortedCategories.map((category) => (
                 <ListItem key={category.id} sx={{ padding: '0px' }}>
                   <Box display="flex" alignItems="center">
                     <Checkbox
