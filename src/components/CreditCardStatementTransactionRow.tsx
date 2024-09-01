@@ -15,6 +15,8 @@ import { Tooltip, IconButton, Checkbox } from '@mui/material';
 import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
@@ -27,7 +29,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
-  const [checked, setChecked] = React.useState(false);
+  const [transactionSelected, setTransactionSelected] = React.useState(false);
 
   const dispatch = useDispatch();
 
@@ -57,6 +59,15 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     setShowAddCategoryAssignmentRuleDialog(true);
   };
 
+  const handleRemoveCategoryOverride = (transaction: CreditCardTransaction) => {
+    const updatedTransaction: CreditCardTransaction = {
+      ...transaction,
+      overrideCategory: false,
+      overrideCategoryId: ''
+    };
+    dispatch(updateTransaction(updatedTransaction));
+  }
+
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -72,6 +83,11 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     setShowAddCategoryAssignmentRuleDialog(false);
   }
 
+  function handleToggleTransactionSelected(event: any, checked: boolean): void {
+    setTransactionSelected(checked);
+    props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
+  }
+
   const renderEditIcon = (): JSX.Element => {
     return (
       <div className="grid-table-cell">
@@ -82,11 +98,6 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
         </Tooltip>
       </div>
     );
-  }
-
-  function handleChange(event: any, checked: boolean): void {
-    setChecked(checked);
-    props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
   }
 
   return (
@@ -106,8 +117,8 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
 
       <div className="grid-table-cell">
         <Checkbox
-          checked={checked}
-          onChange={handleChange}
+          checked={transactionSelected}
+          onChange={handleToggleTransactionSelected}
         />
       </div>
       <div className="grid-table-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
@@ -125,6 +136,14 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{patternFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{categoryNameFromCategoryOverride}</div>
+      <Tooltip title="Category Override">
+        <IconButton
+          onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
+          disabled={!creditCardTransaction.overrideCategory}
+        >
+          {creditCardTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
+        </IconButton>
+      </Tooltip>
     </React.Fragment>
   );
 }

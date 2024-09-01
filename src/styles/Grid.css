@@ -63,7 +63,7 @@
 
 .credit-card-statement-grid-table-container {
   display: grid;
-  grid-template-columns: 60px 90px 100px 1fr 40px 1fr 1fr 1fr 40px 1fr 1fr 1fr;
+  grid-template-columns: 60px 90px 100px 1fr 40px 1fr 1fr 1fr 40px 1fr 1fr 1fr 1fr;
   border: 1px solid #ccc;
   width: 100%;
   margin: 0 auto;
