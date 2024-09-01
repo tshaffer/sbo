@@ -96,101 +96,6 @@ const SpendingReportTable: React.FC = () => {
     return sortedCategories;
   };
 
-  const old_getRows = (categories: CategoryMenuItem[]): CategoryExpensesData[] => {
-    const rows: CategoryExpensesData[] = [];
-    const categoryExpensesMap = new Map<string, number>();
-    let totalTopLevelExpenses = 0;
-
-    // First pass to accumulate the total expenses for each category
-    const accumulateExpenses = (category: CategoryMenuItem): number => {
-      const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
-      const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
-      let totalExpenses = categoryTotalExpenses;
-
-      // Accumulate expenses for child categories
-      category.children.forEach((subCategory) => {
-        const subCategoryExpenses = accumulateExpenses(subCategory);
-        console.log('totalExpenses', totalExpenses)
-        console.log('subCategoryExpenses', subCategoryExpenses);
-        totalExpenses += subCategoryExpenses;
-        console.log('totalExpenses', totalExpenses)
-        // totalExpenses += accumulateExpenses(subCategory);
-      });
-
-      // Only add to the map if there are any expenses (direct or from children)
-      if (totalExpenses > 0 || category.children.length > 0) {
-        categoryExpensesMap.set(category.id, totalExpenses);
-      }
-
-      // Accumulate total expenses for top-level categories
-      if (category.parentId === '') {
-        totalTopLevelExpenses += totalExpenses;
-      }
-
-      console.log('totalExpenses for category', category.name, totalExpenses);
-
-      return totalExpenses;
-    };
-
-    categories.forEach(category => accumulateExpenses(category));
-
-    // Second pass to build rows and calculate percentages
-    const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
-      const transactions = transactionsByCategoryId[category.id] || [];
-      const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
-      const categoryTransactionCount = transactions.length;
-
-      const spaces = '\u00A0'.repeat(level * 8);
-
-      const percentageOfParent = parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0;
-      const percentageOfTotal = parentTotalExpenses === 0 && totalTopLevelExpenses !== 0
-        ? roundTo((categoryTotalExpenses / totalTopLevelExpenses) * 100, 2)
-        : percentageOfParent;
-
-      const categoryRow: CategoryExpensesData = {
-        id: category.id,
-        categoryName: `${spaces}${category.name}`,
-        transactions,
-        totalExpenses: categoryTotalExpenses,
-        transactionCount: categoryTransactionCount,
-        percentageOfTotal: percentageOfTotal,
-        children: []
-      };
-
-      // Process subcategories recursively
-      category.children.forEach((subCategory) => {
-        const subCategoryRow = processCategory(subCategory, level + 1, categoryTotalExpenses);
-        categoryRow.children.push(subCategoryRow);
-      });
-
-      return categoryRow;
-    };
-
-    // Collect top-level rows, ensuring no duplicate processing of child categories
-    const processedCategoryIds = new Set<string>();
-    categories.forEach(category => {
-      if (category.parentId === '' && !processedCategoryIds.has(category.id)) {
-        rows.push(processCategory(category));
-        processedCategoryIds.add(category.id);
-      }
-    });
-
-    const sortedRows = sortCategoriesRecursively(rows);
-
-    // Flatten the sorted structure for rendering
-    const flattenRows = (sortedRows: CategoryExpensesData[], flatRows: CategoryExpensesData[] = []): CategoryExpensesData[] => {
-      sortedRows.forEach((row) => {
-        flatRows.push(row);
-        if (row.children && row.children.length > 0) {
-          flattenRows(row.children, flatRows);
-        }
-      });
-      return flatRows;
-    };
-
-    return flattenRows(sortedRows);
-  };
-
   const getRows = (allCategoriesExpensesData: CategoryExpensesData[], categoryMenuItems: CategoryMenuItem[]): CategoryExpensesData[] => {
 
     const rows: CategoryExpensesData[] = [];
@@ -199,42 +104,6 @@ const SpendingReportTable: React.FC = () => {
     let totalTopLevelExpensesNew = 0;
 
     // First pass to accumulate the total expenses for each category
-    console.log('accumulateExpenses');
-    const accumulateExpenses = (categoryMenuItem: CategoryMenuItem): number => {
-      const transactions: CategorizedTransaction[] = transactionsByCategoryId[categoryMenuItem.id] || [];
-      const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
-      let totalExpenses = categoryTotalExpenses;
-
-      // Accumulate expenses for child categories
-      // categoryMenuItem.children.forEach((subCategory) => {
-      //   totalExpenses += accumulateExpenses(subCategory);
-      // });
-      categoryMenuItem.children.forEach((subCategory) => {
-        const subCategotryExpenses = accumulateExpenses(subCategory);
-        console.log('totalExpenses before adding subCategoryExpenses', totalExpenses)
-        console.log('subCategoryExpenses', subCategotryExpenses);
-        totalExpenses += subCategotryExpenses;
-        console.log('totalExpenses after adding subCategoryExpenses', totalExpenses)
-        // totalExpenses += accumulateExpenses(subCategory);
-      });
-
-      // Only add to the map if there are any expenses (direct or from children)
-      if (totalExpenses > 0 || categoryMenuItem.children.length > 0) {
-        categoryExpensesMap.set(categoryMenuItem.id, totalExpenses);
-      }
-
-      // Accumulate total expenses for top-level categories
-      if (categoryMenuItem.parentId === '') {
-        totalTopLevelExpenses += totalExpenses;
-      }
-
-      console.log('totalExpenses for category', categoryMenuItem.name, totalExpenses);
-
-      return totalExpenses;
-    };
-
-    categoryMenuItems.forEach(category => accumulateExpenses(category));
-
     const getCategoryMenuItemById = (id: string): CategoryMenuItem => {
       return categoryMenuItems.find(category => category.id === id) as CategoryMenuItem;
     }
@@ -313,10 +182,10 @@ const SpendingReportTable: React.FC = () => {
 
     // Collect top-level rows, ensuring no duplicate processing of child categories
     const processedCategoryIds = new Set<string>();
-    categoryMenuItems.forEach(category => {
-      if (category.parentId === '' && !processedCategoryIds.has(category.id)) {
-        rows.push(processCategory(category));
-        processedCategoryIds.add(category.id);
+    categoryMenuItems.forEach(categoryMenuItem => {
+      if (categoryMenuItem.parentId === '' && !processedCategoryIds.has(categoryMenuItem.id)) {
+        rows.push(processCategory(categoryMenuItem));
+        processedCategoryIds.add(categoryMenuItem.id);
       }
     });
 
@@ -521,15 +390,10 @@ const SpendingReportTable: React.FC = () => {
       }
 
       // Accumulate expenses for child categories
-      // let totalChildExpenses = 0;
       categoryMenuItem.children.forEach(child => {
         const childExpensesData = calculateExpenses(child, categoryExpensesData!.totalExpenses);
         categoryExpensesData!.children.push(childExpensesData);
-        // totalChildExpenses += childExpensesData.totalExpenses;
       });
-
-      // Update the totalExpenses for the current category
-      // categoryExpensesData.totalExpenses += totalChildExpenses;
 
       // Calculate percentage of total (in the context of its parent or the entire report)
       const percentageOfParent = parentTotalExpenses ? (categoryExpensesData.totalExpenses / parentTotalExpenses) * 100 : 0;
@@ -560,15 +424,13 @@ const SpendingReportTable: React.FC = () => {
     return result;
   };
 
-  // beginning of the main code
-  // algorithm
-  // 1. Filter out categories that have been excluded
-  // 2. Trim categories based on importance
-  // 3. Build category menu items
-  // 4. Get rows
-  // 5. Calculate total amount
-  // 6. Calculate per month
-  // 7. Render the table
+  // Filter out categories that have been excluded
+  // Trim categories based on importance
+  // Get category expenses data for trimmed categories
+  // Build category menu items
+  // Generate Category Expenses Data
+  // Get rows
+  // Calculate total amount
 
   let trimmedCategories: Category[];
 
@@ -581,15 +443,18 @@ const SpendingReportTable: React.FC = () => {
   // Get category expenses data for trimmed categories
   const categoriesExpensesData: CategoryExpensesData[] = buildCategoriesExpensesData(trimmedCategories);
 
+  // Build category menu items
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(categoriesExpensesData);
 
+  // Generate Category Expenses Data
   const allCategoriesExpensesData: CategoryExpensesData[] = generateCategoryExpensesData(categoryMenuItems, categoriesExpensesData);
 
   console.log('allCategoriesExpensesData', allCategoriesExpensesData);
 
-  // const rows: CategoryExpensesData[] = old_getRows(categoryMenuItems);
+  // Get rows
   const rows: CategoryExpensesData[] = getRows(allCategoriesExpensesData, categoryMenuItems);
 
+  // Calculate total amount
   let totalAmount = 0;
   for (const categoryExpensesData of rows) {
     const category: Category = categoryByCategoryNameLUT[categoryExpensesData.categoryName.trim()];
