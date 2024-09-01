@@ -23,7 +23,7 @@ const CheckingAccountStatementTable: React.FC = () => {
   const [sortColumn, setSortColumn] = useState<string>('transactionDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-if (isNil(checkingAccountStatementId)) {
+  if (isNil(checkingAccountStatementId)) {
     return null;
   }
 
@@ -69,6 +69,7 @@ if (isNil(checkingAccountStatementId)) {
           <div className="grid-table-cell" onClick={() => handleSort('patternFromCategoryAssignmentRule')}>Pattern{renderSortIndicator('patternFromCategoryAssignmentRule')}</div>
           <div className="grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryOverride')}>Category (override){renderSortIndicator('categoryNameFromCategoryOverride')}</div>
           <div className="grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
+          <div className="grid-table-cell"></div>
         </div>
         <div className="grid-table-body">
           {sortedTransactions.map((checkingAccountTransactionRowInStatementTableProperties: CheckingAccountTransactionRowInStatementTableProperties) => (

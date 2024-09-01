@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
+import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 import { CategoryAssignmentRule, CreditCardTransaction, Transaction } from '../types';
 import { getTransactionById, findMatchingRule, MatchingRuleAssignment, categorizeTransaction, getCategories, getCategoryAssignmentRules, getCategoryById, getOverrideCategory, getOverrideCategoryId } from '../selectors';
@@ -15,8 +17,6 @@ import { Tooltip, IconButton, Checkbox } from '@mui/material';
 import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
-import ToggleOffIcon from '@mui/icons-material/ToggleOff';
-import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
