@@ -11,6 +11,160 @@ import { useTypedSelector } from '../types';
 import EditCategoryDialog from './EditCategoryDialog';
 import { deleteCategory, updateCategory } from '../controllers';
 
+/*
+import React, { useState } from 'react';
+import { IconButton, Tooltip } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+
+type SortCriteria = 'name' | 'consensus' | 'ted' | 'lori';
+type SortOrder = 'asc' | 'desc';
+
+const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategory, handleDeleteCategory }) => {
+  const [sortCriteria, setSortCriteria] = useState<SortCriteria>('name');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
+  const handleSortToggle = (criteria: SortCriteria) => () => {
+    if (criteria === 'name') {
+      if (sortCriteria === 'name') {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSortCriteria('name');
+        setSortOrder('asc');
+      }
+    } else {
+      if (sortCriteria === 'consensus') {
+        setSortCriteria('ted');
+      } else if (sortCriteria === 'ted') {
+        setSortCriteria('lori');
+      } else if (sortCriteria === 'lori') {
+        setSortCriteria('consensus');
+      } else {
+        setSortCriteria('consensus');
+      }
+      setSortOrder('desc'); // Set to descending when switching criteria
+    }
+  };
+
+  const sortedCategories = [...categories].sort((a, b) => {
+    let aValue: number | string | undefined;
+    let bValue: number | string | undefined;
+
+    switch (sortCriteria) {
+      case 'name':
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case 'consensus':
+        aValue = a.consensusImportance;
+        bValue = b.consensusImportance;
+        break;
+      case 'ted':
+        aValue = a.tedImportance;
+        bValue = b.tedImportance;
+        break;
+      case 'lori':
+        aValue = a.loriImportance;
+        bValue = b.loriImportance;
+        break;
+    }
+
+    if (aValue === undefined) aValue = -1; // Undefined values go last
+    if (bValue === undefined) bValue = -1;
+
+    if (sortOrder === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
+
+  const getImportanceLabel = () => {
+    switch (sortCriteria) {
+      case 'consensus':
+        return 'Importance Consensus';
+      case 'ted':
+        return 'Importance Ted';
+      case 'lori':
+        return 'Importance Lori';
+      default:
+        return 'Importance';
+    }
+  };
+
+  const getSortIcon = () => {
+    return sortOrder === 'asc' ? '↑' : '↓';
+  };
+
+  return (
+    <table style={{ tableLayout: 'fixed', width: '100%' }}>
+      <thead>
+        <tr>
+          <th style={{ width: '50px' }}>Toggle</th>
+          <th style={{ width: '50px' }}>Edit</th>
+          <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer', width: '150px' }}>
+            Name {sortCriteria === 'name' && getSortIcon()}
+          </th>
+          <th style={{ width: '50px' }}>Rules</th>
+          <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer', width: '200px' }}>
+            {getImportanceLabel()} {sortCriteria !== 'name' && getSortIcon()}
+          </th>
+          <th style={{ width: '50px' }}>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {sortedCategories.map((categoryMenuItem) => (
+          <tr className="chatgpt-category-table-row" key={categoryMenuItem.id}>
+            <td className="chatgpt-category-table-cell">
+              <IconButton onClick={() => handleToggle(categoryMenuItem.id)}>
+                {openRows[categoryMenuItem.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+              </IconButton>
+            </td>
+            <td className="chatgpt-category-table-cell">
+              <Tooltip title="Edit category">
+                <IconButton onClick={() => handleEditCategory(categoryMenuItem)}>
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+            </td>
+            <td className="chatgpt-category-table-cell">{categoryMenuItem.name}</td>
+            <td className="chatgpt-category-table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
+            <td className="chatgpt-category-table-cell">
+              <Tooltip
+                title={
+                  categoryMenuItem.consensusImportance !== undefined
+                    ? `Consensus Importance: ${categoryMenuItem.consensusImportance}`
+                    : `Lori Importance: ${categoryMenuItem.loriImportance}, Ted Importance: ${categoryMenuItem.tedImportance}`
+                }
+                arrow
+              >
+                <span>
+                  {categoryMenuItem.consensusImportance !== undefined ? (
+                    `Consensus: ${categoryMenuItem.consensusImportance}`
+                  ) : (
+                    `Lori: ${categoryMenuItem.loriImportance}, Ted: ${categoryMenuItem.tedImportance}`
+                  )}
+                </span>
+              </Tooltip>
+            </td>
+            <td className="chatgpt-category-table-cell">
+              <Tooltip title="Delete" arrow>
+                <IconButton onClick={() => handleDeleteCategory(categoryMenuItem)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export default CategoriesTable;
+*/
 type SortCriteria = 'name' | 'consensus' | 'ted' | 'lori';
 type SortOrder = 'asc' | 'desc';
 
@@ -265,20 +419,19 @@ const CategoriesTable: React.FC = () => {
     <React.Fragment>
       {getEditCategoryDialog()}
       <Box sx={{ width: '100%' }}>
-        <table className="chatgpt-category-table-container">
+        <table style={{ tableLayout: 'fixed', width: '100%' }}>
           <thead className="chatgpt-category-table-header">
             <tr className="chatgpt-category-table-row">
-              <th className="chatgpt-category-table-cell"></th>
-              <th className="chatgpt-category-table-cell"></th>
-              <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer' }}>
+              <th style={{ width: '50px' }}></th>
+              <th style={{ width: '50px' }}></th>
+              <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer', width: '150px' }}>
                 Name {sortCriteria === 'name' && getSortIcon()}
               </th>
-              <th className="chatgpt-category-table-cell">Rules</th>
-              {/* <th className="chatgpt-category-table-cell">Importance</th> */}
-              <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer' }}>
+              <th style={{ width: '50px' }}>Rules</th>
+              <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer', width: '200px' }}>
                 {getImportanceLabel()} {sortCriteria !== 'name' && getSortIcon()}
               </th>
-              <th className="chatgpt-category-table-cell"></th>
+              <th style={{ width: '50px' }}></th>
             </tr>
           </thead>
           <tbody className="chatgpt-category-table-body">
