@@ -102,16 +102,16 @@ const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategor
     <table style={{ tableLayout: 'fixed', width: '100%' }}>
       <thead>
         <tr>
-          <th style={{ width: '50px' }}>Toggle</th>
-          <th style={{ width: '50px' }}>Edit</th>
-          <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer', width: '150px' }}>
+          <th style={{ width: '50px', textAlign: 'left' }}>Toggle</th>
+          <th style={{ width: '50px', textAlign: 'left' }}>Edit</th>
+          <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer', width: '150px', textAlign: 'left' }}>
             Name {sortCriteria === 'name' && getSortIcon()}
           </th>
-          <th style={{ width: '50px' }}>Rules</th>
-          <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer', width: '200px' }}>
+          <th style={{ width: '50px', textAlign: 'left' }}>Rules</th>
+          <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer', width: '200px', textAlign: 'left' }}>
             {getImportanceLabel()} {sortCriteria !== 'name' && getSortIcon()}
           </th>
-          <th style={{ width: '50px' }}>Delete</th>
+          <th style={{ width: '50px', textAlign: 'left' }}>Delete</th>
         </tr>
       </thead>
       <tbody>
@@ -177,7 +177,7 @@ const CategoriesTable: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = React.useState<Category | null>(null);
   const [showEditCategoryDialog, setShowEditCategoryDialog] = React.useState(false);
 
-  const [sortCriteria, setSortCriteria] = useState<SortCriteria>('consensus');
+  const [sortCriteria, setSortCriteria] = useState<SortCriteria>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   const [openRows, setOpenRows] = React.useState<{ [key: string]: boolean }>({});
@@ -422,16 +422,16 @@ const CategoriesTable: React.FC = () => {
         <table style={{ tableLayout: 'fixed', width: '100%' }}>
           <thead className="chatgpt-category-table-header">
             <tr className="chatgpt-category-table-row">
-              <th style={{ width: '50px' }}></th>
-              <th style={{ width: '50px' }}></th>
-              <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer', width: '150px' }}>
+              <th style={{ width: '50px', textAlign: 'left' }}></th>
+              <th style={{ width: '50px', textAlign: 'left' }}></th>
+              <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer', width: '150px', textAlign: 'left' }}>
                 Name {sortCriteria === 'name' && getSortIcon()}
               </th>
-              <th style={{ width: '50px' }}>Rules</th>
-              <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer', width: '200px' }}>
+              <th style={{ width: '50px', textAlign: 'left' }}>Rules</th>
+              <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer', width: '200px', textAlign: 'left' }}>
                 {getImportanceLabel()} {sortCriteria !== 'name' && getSortIcon()}
               </th>
-              <th style={{ width: '50px' }}></th>
+              <th style={{ width: '50px', textAlign: 'left' }}></th>
             </tr>
           </thead>
           <tbody className="chatgpt-category-table-body">
