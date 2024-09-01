@@ -27,11 +27,24 @@ const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategor
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   const handleSortToggle = (criteria: SortCriteria) => () => {
-    if (criteria === sortCriteria) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    if (criteria === 'name') {
+      if (sortCriteria === 'name') {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSortCriteria('name');
+        setSortOrder('asc');
+      }
     } else {
-      setSortCriteria(criteria);
-      setSortOrder('asc');
+      if (sortCriteria === 'consensus') {
+        setSortCriteria('ted');
+      } else if (sortCriteria === 'ted') {
+        setSortCriteria('lori');
+      } else if (sortCriteria === 'lori') {
+        setSortCriteria('consensus');
+      } else {
+        setSortCriteria('consensus');
+      }
+      setSortOrder('asc'); // Reset to ascending when switching criteria
     }
   };
 
@@ -79,7 +92,10 @@ const CategoriesTable = ({ categories, openRows, handleToggle, handleEditCategor
           </th>
           <th>Rules</th>
           <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer' }}>
-            Importance {sortCriteria !== 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+            Importance 
+            {sortCriteria === 'consensus' && (sortOrder === 'asc' ? '↑' : '↓')}
+            {sortCriteria === 'ted' && (sortOrder === 'asc' ? 'Ted ↑' : 'Ted ↓')}
+            {sortCriteria === 'lori' && (sortOrder === 'asc' ? 'Lori ↑' : 'Lori ↓')}
           </th>
           <th>Delete</th>
         </tr>
@@ -159,12 +175,24 @@ const CategoriesTable: React.FC = () => {
   }
 
   const handleSortToggle = (criteria: SortCriteria) => () => {
-    if (criteria === sortCriteria) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    if (criteria === 'name') {
+      if (sortCriteria === 'name') {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSortCriteria('name');
+        setSortOrder('asc');
+      }
     } else {
-      console.log('setSortCriteria', criteria);
-      setSortCriteria(criteria);
-      setSortOrder('asc');
+      if (sortCriteria === 'consensus') {
+        setSortCriteria('ted');
+      } else if (sortCriteria === 'ted') {
+        setSortCriteria('lori');
+      } else if (sortCriteria === 'lori') {
+        setSortCriteria('consensus');
+      } else {
+        setSortCriteria('consensus');
+      }
+      setSortOrder('asc'); // Reset to ascending when switching criteria
     }
   };
 
@@ -206,8 +234,39 @@ const CategoriesTable: React.FC = () => {
   if (!isNil(ignoreCategory)) {
     trimmedCategories = categories.filter(category => category.id !== ignoreCategory!.id)
   }
-  
+
   // const sortedTrimmedCategories: Category[] = trimmedCategories.sort((a, b) => a.name.localeCompare(b.name));
+  const oldsortedTrimmedCategories = [...trimmedCategories].sort((a, b) => {
+    let aValue: number | string | undefined;
+    let bValue: number | string | undefined;
+
+    switch (sortCriteria) {
+      case 'name':
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case 'consensus':
+        aValue = a.consensusImportance;
+        bValue = b.consensusImportance;
+        break;
+      case 'ted':
+        aValue = a.tedImportance;
+        bValue = b.tedImportance;
+        break;
+      case 'lori':
+        aValue = a.loriImportance;
+        bValue = b.loriImportance;
+        break;
+    }
+    if (aValue === undefined) aValue = -1; // Undefined values go last
+    if (bValue === undefined) bValue = -1;
+
+    if (sortOrder === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
   const sortedTrimmedCategories = [...trimmedCategories].sort((a, b) => {
     let aValue: number | string | undefined;
     let bValue: number | string | undefined;
@@ -230,6 +289,7 @@ const CategoriesTable: React.FC = () => {
         bValue = b.loriImportance;
         break;
     }
+
     if (aValue === undefined) aValue = -1; // Undefined values go last
     if (bValue === undefined) bValue = -1;
 
@@ -371,8 +431,11 @@ const CategoriesTable: React.FC = () => {
               <th className="chatgpt-category-table-cell">Rules</th>
               {/* <th className="chatgpt-category-table-cell">Importance</th> */}
               <th onClick={handleSortToggle('consensus')} style={{ cursor: 'pointer' }}>
-            Importance {sortCriteria !== 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
-          </th>
+                Importance
+                {sortCriteria === 'consensus' && (sortOrder === 'asc' ? '↑' : '↓')}
+                {sortCriteria === 'ted' && (sortOrder === 'asc' ? 'Ted ↑' : 'Ted ↓')}
+                {sortCriteria === 'lori' && (sortOrder === 'asc' ? 'Lori ↑' : 'Lori ↓')}
+              </th>
               <th className="chatgpt-category-table-cell"></th>
             </tr>
           </thead>
