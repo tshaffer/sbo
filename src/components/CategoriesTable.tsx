@@ -324,22 +324,22 @@ const CategoriesTable: React.FC = () => {
 
   const renderTree = (categoryMenuItem: CategoryMenuItem) => (
     <React.Fragment key={categoryMenuItem.id}>
-      <tr className="chatgpt-category-table-row">
-        <td className="chatgpt-category-table-cell">
+      <tr>
+        <td>
           <IconButton onClick={() => handleToggle(categoryMenuItem.id)}>
             {openRows[categoryMenuItem.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </td>
-        <td className="chatgpt-category-table-cell">
+        <td>
           <Tooltip title="Edit category">
             <IconButton onClick={() => handleEditCategory(categoryMenuItem)}>
               <EditIcon />
             </IconButton>
           </Tooltip>
         </td>
-        <td className="chatgpt-category-table-cell">{categoryMenuItem.name}</td>
-        <td className="chatgpt-category-table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
-        <td className="chatgpt-category-table-cell">
+        <td>{categoryMenuItem.name}</td>
+        <td>{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
+        <td>
           <Tooltip
             title={
               categoryMenuItem.consensusImportance !== undefined
@@ -357,26 +357,12 @@ const CategoriesTable: React.FC = () => {
             </span>
           </Tooltip>
         </td>
-        <td className="chatgpt-category-table-cell">
+        <td>
           <Tooltip title="Delete" arrow>
             <IconButton onClick={() => handleDeleteCategory(categoryMenuItem)}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-        </td>
-      </tr>
-      <tr className="chatgpt-category-table-row">
-        <td className="chatgpt-category-table-cell" colSpan={3}>
-          <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              {renderPatternTable(categoryMenuItem)}
-              {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
-                <div className="chatgpt-category-table-body">
-                  {categoryMenuItem.children.map((child) => renderTree(child))}
-                </div>
-              )}
-            </Box>
-          </Collapse>
         </td>
       </tr>
     </React.Fragment>
@@ -419,9 +405,9 @@ const CategoriesTable: React.FC = () => {
     <React.Fragment>
       {getEditCategoryDialog()}
       <Box sx={{ width: '100%' }}>
-        <table style={{ tableLayout: 'fixed', width: '100%' }}>
-          <thead className="chatgpt-category-table-header">
-            <tr className="chatgpt-category-table-row">
+        <table style={{ tableLayout: 'fixed', width: '100%', borderCollapse: 'collapse' }}>
+          <thead style={{ position: 'sticky', top: 0, backgroundColor: '#f5f5f5', zIndex: 1 }}>
+            <tr>
               <th style={{ width: '50px', textAlign: 'left' }}></th>
               <th style={{ width: '50px', textAlign: 'left' }}></th>
               <th onClick={handleSortToggle('name')} style={{ cursor: 'pointer', width: '150px', textAlign: 'left' }}>
@@ -434,7 +420,7 @@ const CategoriesTable: React.FC = () => {
               <th style={{ width: '50px', textAlign: 'left' }}></th>
             </tr>
           </thead>
-          <tbody className="chatgpt-category-table-body">
+          <tbody>
             {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
           </tbody>
         </table>
