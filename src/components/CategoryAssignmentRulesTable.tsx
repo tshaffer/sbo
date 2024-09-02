@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { cloneDeep, isEmpty } from 'lodash';
 
-import { Box, IconButton, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 import '../styles/Tracker.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
-import { deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
+import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
+import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 
 import { useDispatch, useTypedSelector } from '../types';
 
@@ -34,10 +38,27 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
   const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
-  
+
   const [sortColumn, setSortColumn] = useState<string>('pattern');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [categoryAssignmentRuleTableRows, setCategoryAssignmentRuleTableRows] = React.useState<CategoryAssignmentRuleTableRow[]>([]);
+
+  const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
+
+  const handleSaveRule = (pattern: string, categoryId: string): void => {
+    const id: string = uuidv4();
+    const categoryAssignmentRule: CategoryAssignmentRule = {
+      id,
+      pattern,
+      categoryId
+    };
+    console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
+    dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
+  }
+
+  const handleCloseAddRuleDialog = () => {
+    setShowAddCategoryAssignmentRuleDialog(false);
+  }
 
   const updateCategoryAssignmentRuleTableRows = (): void => {
     const localCategoryAssignmentRuleTableRows: CategoryAssignmentRuleTableRow[] = [];
@@ -265,51 +286,68 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   });
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
-      <DownloadCategoryAssignmentRules />
-      <UploadCategoryAssignmentRules />
-      <div className="table-container">
-        <div className="table-header">
-          <div className="table-row">
-            <div className="table-cell-category-assignment-rule" onClick={() => handleSort('pattern')}>Pattern{renderSortIndicator('pattern')}</div>
-            <div className="table-cell-category-assignment-rule" onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
-            <div className="table-cell"></div>
+    <React.Fragment>
+      <AddCategoryAssignmentRuleDialog
+        open={showAddCategoryAssignmentRuleDialog}
+        transactionId={''}
+        onClose={handleCloseAddRuleDialog}
+        onSaveRule={handleSaveRule}
+      />
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
+        <DownloadCategoryAssignmentRules />
+        <UploadCategoryAssignmentRules />
+        <Box>
+          <Button
+            startIcon={<AddIcon />}
+            onClick={() => setShowAddCategoryAssignmentRuleDialog(true)}
+          >
+            Add Rule
+          </Button>
+        </Box>
+        <div className="table-container">
+          <div className="table-header">
+            <div className="table-row">
+              <div className="table-cell-category-assignment-rule" onClick={() => handleSort('pattern')}>Pattern{renderSortIndicator('pattern')}</div>
+              <div className="table-cell-category-assignment-rule" onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
+              <div className="table-cell"></div>
+            </div>
+          </div>
+          <div className="category-assignment-rules-table-body">
+            {sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
+              <div className="table-row" key={categoryAssignmentRule.id}>
+                <div className="table-cell-category-assignment-rule">
+                  <TextField
+                    value={categoryAssignmentRuleById[categoryAssignmentRule.id].pattern}
+                    onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
+                    style={{ minWidth: '400px' }}
+                    helperText="Edit the pattern"
+                  />
+                </div>
+                <SelectCategory
+                  selectedCategoryId={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
+                  onSetCategoryId={(categoryId: string) => handleCategoryChange(categoryAssignmentRule.id, categoryId)}
+                />
+                <div className="table-cell-category-assignment-rule" style={{ marginLeft: '32px' }}>
+                  <Tooltip title="Save" arrow>
+                    <IconButton onClick={() => handleSaveCategoryAssignmentRule(categoryAssignmentRule.id)}>
+                      <SaveIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete" arrow>
+                    <IconButton onClick={() => handleDeleteCategoryAssignmentRule(categoryAssignmentRule.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="category-assignment-rules-table-body">
-          {sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
-            <div className="table-row" key={categoryAssignmentRule.id}>
-              <div className="table-cell-category-assignment-rule">
-                <TextField
-                  value={categoryAssignmentRuleById[categoryAssignmentRule.id].pattern}
-                  onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
-                  style={{ minWidth: '400px' }}
-                  helperText="Edit the pattern"
-                />
-              </div>
-              <SelectCategory
-                selectedCategoryId={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
-                onSetCategoryId={(categoryId: string) => handleCategoryChange(categoryAssignmentRule.id, categoryId)}
-              />
-              <div className="table-cell-category-assignment-rule" style={{ marginLeft: '32px' }}>
-                <Tooltip title="Save" arrow>
-                  <IconButton onClick={() => handleSaveCategoryAssignmentRule(categoryAssignmentRule.id)}>
-                    <SaveIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete" arrow>
-                  <IconButton onClick={() => handleDeleteCategoryAssignmentRule(categoryAssignmentRule.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Box>
+      </Box>
+    </React.Fragment>
   );
 }
 
 export default CategoryAssignmentRulesTable;
+
