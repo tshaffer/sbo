@@ -102,7 +102,6 @@ const SpendingReportTable: React.FC = () => {
     let totalTopLevelExpenses = 0;
 
     // First pass to accumulate the total expenses for each category
-    console.log('accumulateExpenses');
     const accumulateExpenses = (category: CategoryMenuItem): number => {
       const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
       const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
@@ -122,8 +121,6 @@ const SpendingReportTable: React.FC = () => {
       if (category.parentId === '') {
         totalTopLevelExpenses += totalExpenses;
       }
-
-      console.log('totalExpenses for category', category.name, totalExpenses);
 
       return totalExpenses;
     };
