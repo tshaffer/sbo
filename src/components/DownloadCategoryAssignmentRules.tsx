@@ -57,7 +57,7 @@ const DownloadCategoryAssignmentRules: React.FC = () => {
   };
 
   return (
-    <button onClick={handleDownload}>Download Category Assignment Rules</button>
+    <button onClick={handleDownload}>Download Rules</button>
   );
 };
 
