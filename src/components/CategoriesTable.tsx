@@ -368,14 +368,14 @@ const CategoriesTable: React.FC = () => {
       <tr>
         <td colSpan={3}>
           <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              {renderPatternTable(categoryMenuItem)}
-              {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
-                <div>
+            {renderPatternTable(categoryMenuItem)}
+            {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
+              <table>
+                <tbody>
                   {categoryMenuItem.children.map((child) => renderTree(child))}
-                </div>
-              )}
-            </Box>
+                </tbody>
+              </table>
+            )}
           </Collapse>
         </td>
       </tr>
