@@ -365,6 +365,20 @@ const CategoriesTable: React.FC = () => {
           </Tooltip>
         </td>
       </tr>
+      <tr>
+        <td colSpan={3}>
+          <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+              {renderPatternTable(categoryMenuItem)}
+              {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
+                <div>
+                  {categoryMenuItem.children.map((child) => renderTree(child))}
+                </div>
+              )}
+            </Box>
+          </Collapse>
+        </td>
+      </tr>
     </React.Fragment>
   );
 

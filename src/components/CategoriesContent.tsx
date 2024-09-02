@@ -64,7 +64,7 @@ const CategoriesContent: React.FC = () => {
         <Box
           sx={{
             width: '100%',
-            height: '400px', // Set the height of the container
+            height: '640px', // Set the height of the container
             overflowY: 'auto', // Allow vertical scrolling
             position: 'relative',
           }}
