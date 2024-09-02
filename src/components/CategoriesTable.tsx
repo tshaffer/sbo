@@ -366,11 +366,11 @@ const CategoriesTable: React.FC = () => {
         </td>
       </tr>
       <tr>
-        <td colSpan={3}>
+        <td colSpan={6} style={{ padding: 0 }}>
           <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
             {renderPatternTable(categoryMenuItem)}
             {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
-              <table>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <tbody>
                   {categoryMenuItem.children.map((child) => renderTree(child))}
                 </tbody>
