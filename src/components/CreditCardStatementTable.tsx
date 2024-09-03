@@ -51,15 +51,7 @@ const CreditCardStatementTable: React.FC = () => {
     setShowOverrideTransactionCategoriesDialog(false);
   }
 
-  function handleSetCreditCardTransactionSelected(transactionId: string, selected: boolean): any {
-    const newSelectedTransactionIds = new Set(selectedTransactionIds);
-    if (selected) {
-      newSelectedTransactionIds.add(transactionId);
-    } else {
-      newSelectedTransactionIds.delete(transactionId);
-    }
-    setSelectedTransactionId(newSelectedTransactionIds);
-  }
+  const lastSelectedIndexRef = React.useRef<number | null>(null);
 
   const sortedTransactions = [...(creditCardTransactionRows)].sort((a: any, b: any) => {
     const aValue = a[sortColumn];
@@ -73,6 +65,42 @@ const CreditCardStatementTable: React.FC = () => {
     }
     return 0;
   });
+
+  function handleTransactionSelectedChanged(event: React.ChangeEvent<HTMLInputElement>, transactionId: string, checked: boolean): any {
+
+    const currentIndex = sortedTransactions.findIndex(transaction => transaction.id === transactionId);
+
+    const isShiftPressed = (event.nativeEvent as MouseEvent).shiftKey;
+
+    if (isShiftPressed && lastSelectedIndexRef.current !== null) {
+      const start = Math.min(currentIndex, lastSelectedIndexRef.current);
+      const end = Math.max(currentIndex, lastSelectedIndexRef.current);
+      const newSelectedTransactionIds = new Set(selectedTransactionIds);
+
+      for (let i = start; i <= end; i++) {
+        if (checked) {
+          newSelectedTransactionIds.add(sortedTransactions[i].id);
+        } else {
+          newSelectedTransactionIds.delete(sortedTransactions[i].id);
+        }
+      }
+
+      setSelectedTransactionId(newSelectedTransactionIds);
+    } else {
+      const newSelectedTransactionIds = new Set(selectedTransactionIds);
+      if (selectedTransactionIds.has(transactionId)) {
+        if (!checked) {
+          newSelectedTransactionIds.delete(transactionId);
+          setSelectedTransactionId(newSelectedTransactionIds);
+        }
+      } else if (checked) {
+        newSelectedTransactionIds.add(transactionId);
+        setSelectedTransactionId(newSelectedTransactionIds);
+      }
+
+      lastSelectedIndexRef.current = currentIndex;
+    }
+  }
 
   const renderSortIndicator = (column: string) => {
     if (sortColumn !== column) return null;
@@ -114,7 +142,7 @@ const CreditCardStatementTable: React.FC = () => {
               <CreditCardStatementTransactionRow
                 creditCardTransactionId={creditCardTransaction.id}
                 transactionSelected={selectedTransactionIds.has(creditCardTransaction.id)}
-                onSetCreditCardTransactionSelected={(transactionId: string, selected: boolean) => handleSetCreditCardTransactionSelected(transactionId, selected)}
+                onTransactionSelectedChanged={(event: React.ChangeEvent<HTMLInputElement>, transactionId: string, selected: boolean) => handleTransactionSelectedChanged(event, transactionId, selected)}
               />
             </div>
           ))}
