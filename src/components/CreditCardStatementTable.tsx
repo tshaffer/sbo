@@ -23,6 +23,7 @@ const CreditCardStatementTable: React.FC = () => {
   const [sortColumn, setSortColumn] = useState<string>('transactionDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedTransactionIds, setSelectedTransactionId] = useState<Set<string>>(new Set());
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
   const [showOverrideTransactionCategoriesDialog, setShowOverrideTransactionCategoriesDialog] = React.useState(false);
 
   const creditCardTransactionRows: CreditCardTransactionRowInStatementTableProperties[] = useTypedSelector(state => getCreditCardTransactionRowInStatementTableProperties(state, id!));
@@ -117,6 +118,8 @@ const CreditCardStatementTable: React.FC = () => {
                 sortedTransactions={sortedTransactions}
                 selectedTransactionIds={selectedTransactionIds}
                 onSetSelectedTransactionIds={setSelectedTransactionId}
+                onSetLastSelectedIndex={setLastSelectedIndex}
+                lastSelectedIndex={lastSelectedIndex}
               />
             </div>
           ))}

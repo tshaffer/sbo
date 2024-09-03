@@ -21,7 +21,9 @@ import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
   onSetCreditCardTransactionSelected: (creditCardTransactionId: string, selected: boolean) => any;
-  sortedTransactions: CreditCardTransactionRowInStatementTableProperties[]
+  sortedTransactions: CreditCardTransactionRowInStatementTableProperties[];
+  lastSelectedIndex: number | null;
+  onSetLastSelectedIndex: (lastSelectedIndex: number) => any;
   selectedTransactionIds: Set<string>;
   onSetSelectedTransactionIds: (transactionIds: Set<string>) => any;
 }
@@ -92,16 +94,16 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   //   setTransactionSelected(checked);
   //   props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
   // }
-  const lastSelectedIndexRef = React.useRef<number | null>(null);
+  // const lastSelectedIndexRef = React.useRef<number | null>(null);
   
   function handleToggleTransactionSelected(event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void {
     const currentIndex = props.sortedTransactions.findIndex(transaction => transaction.id === creditCardTransaction.id);
 
     const isShiftPressed = (event.nativeEvent as MouseEvent).shiftKey;
 
-    if (isShiftPressed && lastSelectedIndexRef.current !== null) {
-      const start = Math.min(currentIndex, lastSelectedIndexRef.current);
-      const end = Math.max(currentIndex, lastSelectedIndexRef.current);
+    if (isShiftPressed && props.lastSelectedIndex !== null) {
+      const start = Math.min(currentIndex, props.lastSelectedIndex);
+      const end = Math.max(currentIndex, props.lastSelectedIndex);
       const newSelectedTransactionIds = new Set(props.selectedTransactionIds);
 
       for (let i = start; i <= end; i++) {
@@ -118,7 +120,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
     }
 
-    lastSelectedIndexRef.current = currentIndex;
+    props.onSetLastSelectedIndex(currentIndex);
   }
 
 
