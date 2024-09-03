@@ -66,17 +66,14 @@ const CreditCardStatementTable: React.FC = () => {
     return 0;
   });
 
-  function handleTransactionSelectedChanged(event: React.ChangeEvent<HTMLInputElement>, transactionId: string, checked: boolean): any {
-
+  function handleTransactionSelectedChanged(event: React.ChangeEvent<HTMLInputElement>, transactionId: string, checked: boolean): void {
     const currentIndex = sortedTransactions.findIndex(transaction => transaction.id === transactionId);
-
     const isShiftPressed = (event.nativeEvent as MouseEvent).shiftKey;
-
+    const newSelectedTransactionIds = new Set(selectedTransactionIds);
+  
     if (isShiftPressed && lastSelectedIndexRef.current !== null) {
-      const start = Math.min(currentIndex, lastSelectedIndexRef.current);
-      const end = Math.max(currentIndex, lastSelectedIndexRef.current);
-      const newSelectedTransactionIds = new Set(selectedTransactionIds);
-
+      const [start, end] = [Math.min(currentIndex, lastSelectedIndexRef.current), Math.max(currentIndex, lastSelectedIndexRef.current)];
+      
       for (let i = start; i <= end; i++) {
         if (checked) {
           newSelectedTransactionIds.add(sortedTransactions[i].id);
@@ -84,22 +81,16 @@ const CreditCardStatementTable: React.FC = () => {
           newSelectedTransactionIds.delete(sortedTransactions[i].id);
         }
       }
-
-      setSelectedTransactionId(newSelectedTransactionIds);
     } else {
-      const newSelectedTransactionIds = new Set(selectedTransactionIds);
-      if (selectedTransactionIds.has(transactionId)) {
-        if (!checked) {
-          newSelectedTransactionIds.delete(transactionId);
-          setSelectedTransactionId(newSelectedTransactionIds);
-        }
-      } else if (checked) {
+      if (checked) {
         newSelectedTransactionIds.add(transactionId);
-        setSelectedTransactionId(newSelectedTransactionIds);
+      } else {
+        newSelectedTransactionIds.delete(transactionId);
       }
-
       lastSelectedIndexRef.current = currentIndex;
     }
+  
+    setSelectedTransactionId(newSelectedTransactionIds);
   }
 
   const renderSortIndicator = (column: string) => {
