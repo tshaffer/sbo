@@ -57,23 +57,23 @@ const CheckingAccountStatementTable: React.FC = () => {
   return (
     <React.Fragment>
       <div className="checking-account-statement-grid-table-container">
-        <div className="grid-table-header">
-          <div className="grid-table-cell"></div>
-          <div className="grid-table-cell" onClick={() => handleSort('transactionDate')}>Date{renderSortIndicator('transactionDate')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('amount')}>Amount{renderSortIndicator('amount')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('name')}>Description{renderSortIndicator('name')}</div>
-          <div className="grid-table-cell"></div>
-          <div className="grid-table-cell" onClick={() => handleSort('userDescription')}>User Description{renderSortIndicator('userDescription')}</div>
-          <div className="grid-table-cell"></div>
-          <div className="grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryAssignmentRule')}>Category (rule){renderSortIndicator('categoryNameFromCategoryAssignmentRule')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('patternFromCategoryAssignmentRule')}>Pattern{renderSortIndicator('patternFromCategoryAssignmentRule')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryOverride')}>Category (override){renderSortIndicator('categoryNameFromCategoryOverride')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
-          <div className="grid-table-cell"></div>
+        <div className="checking-account-statement-grid-table-header">
+          <div className="checking-account-statement-grid-table-cell"></div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('transactionDate')}>Date{renderSortIndicator('transactionDate')}</div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('amount')}>Amount{renderSortIndicator('amount')}</div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('name')}>Description{renderSortIndicator('name')}</div>
+          <div className="checking-account-statement-grid-table-cell"></div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('userDescription')}>User Description{renderSortIndicator('userDescription')}</div>
+          <div className="checking-account-statement-grid-table-cell"></div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryAssignmentRule')}>Category (rule){renderSortIndicator('categoryNameFromCategoryAssignmentRule')}</div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('patternFromCategoryAssignmentRule')}>Pattern{renderSortIndicator('patternFromCategoryAssignmentRule')}</div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryOverride')}>Category (override){renderSortIndicator('categoryNameFromCategoryOverride')}</div>
+          <div className="checking-account-statement-grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
+          <div className="checking-account-statement-grid-table-cell"></div>
         </div>
-        <div className="grid-table-body">
+        <div className="checking-account-statement-grid-table-body">
           {sortedTransactions.map((checkingAccountTransactionRowInStatementTableProperties: CheckingAccountTransactionRowInStatementTableProperties) => (
-            <div className="grid-table-row" key={checkingAccountTransactionRowInStatementTableProperties.id}>
+            <div className="checking-account-statement-grid-table-row" key={checkingAccountTransactionRowInStatementTableProperties.id}>
               <CheckingAccountStatementTransactionRow checkingAccountTransaction={checkingAccountTransactionRowInStatementTableProperties.checkingAccountTransaction} />
             </div>
           ))}

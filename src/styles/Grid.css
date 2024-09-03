@@ -5,11 +5,11 @@
   margin: 0 auto;
   border: 1px solid #ccc;
   position: relative;
-  max-height: 512px;
+  max-height: 666px;
   overflow-y: auto; /* Ensure the container scrolls */
 }
 
-.grid-table-header {
+.checking-account-statement-grid-table-header {
   position: sticky;
   top: 0;
   z-index: 2;
@@ -17,9 +17,69 @@
   display: contents; /* Ensure it aligns with the grid layout */
 }
 
-.grid-table-body {
+.checking-account-statement-grid-table-body {
   display: grid;
   grid-template-columns: inherit; /* Inherit the same grid columns from the container */
+}
+
+.checking-account-statement-grid-table-row {
+  display: contents;
+}
+
+.checking-account-statement-grid-table-cell {
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+.checking-account-statement-grid-table-cell:first-child {
+  justify-content: center;
+}
+
+.checking-account-statement-grid-table-cell-clickable {
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.checking-account-statement-grid-table-cell-clickable:hover {
+  background-color: #f0f0f0;
+}
+
+.checking-account-statement-grid-table-cell-clickable:focus {
+  outline: none;
+  background-color: #e0e0e0;
+}
+
+.credit-card-statement-grid-table-container {
+  display: grid;
+  grid-template-columns: 60px 90px 100px 1fr 40px 1fr 1fr 1fr 40px 1fr 1fr 1fr 1fr;
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+.grid-table-header {
+  display: contents;
+}
+
+.grid-table-header .grid-table-cell {
+  position: sticky;
+  top: 0;
+  background-color: #f5f5f5;
+  z-index: 2; /* Ensure the header is above the scrolling content */
+  border-bottom: 1px solid #ccc;
+}
+
+.grid-table-body {
+  max-height: 512px;
+  overflow-y: auto;
+  display: contents;
 }
 
 .grid-table-row {
@@ -37,20 +97,30 @@
   justify-content: center;
 }
 
+.grid-table-container {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr;
+  border: 1px solid #ccc;
+  width: 100%;
+  /* max-width: 600px; */
+  margin: 0 auto;
+}
+
 .grid-table-cell-clickable {
   padding: 8px 16px;
   border-bottom: 1px solid #ccc;
   display: flex;
   align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  cursor: pointer; /* Change cursor to pointer */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
 .grid-table-cell-clickable:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Light gray background on hover */
 }
 
 .grid-table-cell-clickable:focus {
   outline: none;
-  background-color: #e0e0e0;
+  background-color: #e0e0e0; /* Slightly darker gray background on focus */
 }
+
