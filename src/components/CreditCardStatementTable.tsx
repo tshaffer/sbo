@@ -61,7 +61,7 @@ const CreditCardStatementTable: React.FC = () => {
     setSelectedTransactionId(newSelectedTransactionIds);
   }
 
-  const sortedTransactions = [...(creditCardTransactionRows)].sort((a: any, b: any) => {
+  const sortedTransactions: CreditCardTransactionRowInStatementTableProperties[] = [...(creditCardTransactionRows)].sort((a: any, b: any) => {
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
 
@@ -114,6 +114,9 @@ const CreditCardStatementTable: React.FC = () => {
               <CreditCardStatementTransactionRow
                 creditCardTransactionId={creditCardTransaction.id}
                 onSetCreditCardTransactionSelected={(transactionId: string, selected: boolean) => handleSetCreditCardTransactionSelected(transactionId, selected)}
+                sortedTransactions={sortedTransactions}
+                selectedTransactionIds={selectedTransactionIds}
+                onSetSelectedTransactionIds={setSelectedTransactionId}
               />
             </div>
           ))}

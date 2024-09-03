@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useTypedSelector } from '../types';
+import { CreditCardTransactionRowInStatementTableProperties, useDispatch, useTypedSelector } from '../types';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,6 +21,9 @@ import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
   onSetCreditCardTransactionSelected: (creditCardTransactionId: string, selected: boolean) => any;
+  sortedTransactions: CreditCardTransactionRowInStatementTableProperties[]
+  selectedTransactionIds: Set<string>;
+  onSetSelectedTransactionIds: (transactionIds: Set<string>) => any;
 }
 
 const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (props: CreditCardStatementProps) => {
@@ -30,6 +33,8 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
   const [transactionSelected, setTransactionSelected] = React.useState(false);
+
+  // const [selectedTransactionIds, setSelectedTransactionId] = React.useState<Set<string>>(new Set());
 
   const dispatch = useDispatch();
 
@@ -83,10 +88,39 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     setShowAddCategoryAssignmentRuleDialog(false);
   }
 
-  function handleToggleTransactionSelected(event: any, checked: boolean): void {
-    setTransactionSelected(checked);
-    props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
+  // function handleToggleTransactionSelected(event: any, checked: boolean): void {
+  //   setTransactionSelected(checked);
+  //   props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
+  // }
+  const lastSelectedIndexRef = React.useRef<number | null>(null);
+  
+  function handleToggleTransactionSelected(event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void {
+    const currentIndex = props.sortedTransactions.findIndex(transaction => transaction.id === creditCardTransaction.id);
+
+    const isShiftPressed = (event.nativeEvent as MouseEvent).shiftKey;
+
+    if (isShiftPressed && lastSelectedIndexRef.current !== null) {
+      const start = Math.min(currentIndex, lastSelectedIndexRef.current);
+      const end = Math.max(currentIndex, lastSelectedIndexRef.current);
+      const newSelectedTransactionIds = new Set(props.selectedTransactionIds);
+
+      for (let i = start; i <= end; i++) {
+        if (checked) {
+          newSelectedTransactionIds.add(props.sortedTransactions[i].id);
+        } else {
+          newSelectedTransactionIds.delete(props.sortedTransactions[i].id);
+        }
+      }
+
+      props.onSetSelectedTransactionIds(newSelectedTransactionIds);
+    } else {
+      setTransactionSelected(checked);
+      props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
+    }
+
+    lastSelectedIndexRef.current = currentIndex;
   }
+
 
   const renderEditIcon = (): JSX.Element => {
     return (
