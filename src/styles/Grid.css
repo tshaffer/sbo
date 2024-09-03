@@ -5,33 +5,21 @@
   margin: 0 auto;
   border: 1px solid #ccc;
   position: relative;
-}
-
-.credit-card-statement-grid-table-container {
-  display: grid;
-  grid-template-columns: 60px 90px 100px 1fr 40px 1fr 1fr 1fr 40px 1fr 1fr 1fr 1fr;
-  width: 100%;
-  margin: 0 auto;
-  border: 1px solid #ccc;
-  position: relative;
+  max-height: 512px;
+  overflow-y: auto; /* Ensure the container scrolls */
 }
 
 .grid-table-header {
-  display: contents;
-}
-
-.grid-table-header .grid-table-cell {
   position: sticky;
   top: 0;
+  z-index: 2;
   background-color: #f5f5f5;
-  z-index: 2; /* Ensure the header is above the scrolling content */
-  border-bottom: 1px solid #ccc;
+  display: contents; /* Ensure it aligns with the grid layout */
 }
 
 .grid-table-body {
-  max-height: 512px;
-  overflow-y: auto;
-  display: contents;
+  display: grid;
+  grid-template-columns: inherit; /* Inherit the same grid columns from the container */
 }
 
 .grid-table-row {
@@ -49,30 +37,20 @@
   justify-content: center;
 }
 
-.grid-table-container {
-  display: grid;
-  grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr;
-  border: 1px solid #ccc;
-  width: 100%;
-  /* max-width: 600px; */
-  margin: 0 auto;
-}
-
 .grid-table-cell-clickable {
   padding: 8px 16px;
   border-bottom: 1px solid #ccc;
   display: flex;
   align-items: center;
-  cursor: pointer; /* Change cursor to pointer */
-  transition: background-color 0.3s; /* Smooth transition for hover effect */
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .grid-table-cell-clickable:hover {
-  background-color: #f0f0f0; /* Light gray background on hover */
+  background-color: #f0f0f0;
 }
 
 .grid-table-cell-clickable:focus {
   outline: none;
-  background-color: #e0e0e0; /* Slightly darker gray background on focus */
+  background-color: #e0e0e0;
 }
-
