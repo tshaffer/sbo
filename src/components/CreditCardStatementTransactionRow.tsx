@@ -20,6 +20,7 @@ import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
 
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
+  transactionSelected: boolean;
   onSetCreditCardTransactionSelected: (creditCardTransactionId: string, selected: boolean) => any;
 }
 
@@ -28,8 +29,6 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const [transactionId, setTransactionId] = React.useState('');
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
-
-  const [transactionSelected, setTransactionSelected] = React.useState(false);
 
   const dispatch = useDispatch();
 
@@ -84,7 +83,6 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   }
 
   function handleToggleTransactionSelected(event: any, checked: boolean): void {
-    setTransactionSelected(checked);
     props.onSetCreditCardTransactionSelected(creditCardTransaction.id, checked);
   }
 
@@ -117,7 +115,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
 
       <div className="grid-table-cell">
         <Checkbox
-          checked={transactionSelected}
+          checked={props.transactionSelected}
           onChange={handleToggleTransactionSelected}
         />
       </div>

@@ -113,6 +113,7 @@ const CreditCardStatementTable: React.FC = () => {
             <div className="grid-table-row" key={creditCardTransaction.id}>
               <CreditCardStatementTransactionRow
                 creditCardTransactionId={creditCardTransaction.id}
+                transactionSelected={selectedTransactionIds.has(creditCardTransaction.id)}
                 onSetCreditCardTransactionSelected={(transactionId: string, selected: boolean) => handleSetCreditCardTransactionSelected(transactionId, selected)}
               />
             </div>
