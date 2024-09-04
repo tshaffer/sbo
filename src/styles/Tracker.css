@@ -31,6 +31,25 @@
   /* Add vertical scrollbar */
 }
 
+/* 
+.credit-card-statement-grid-table-cell-clickable {
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+ */
+
+.table-row-clickable {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
 .table-row {
   display: flex;
   justify-content: space-between;

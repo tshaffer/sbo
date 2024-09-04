@@ -20,6 +20,7 @@ import EditTransactionDialog from './EditTransactionDialog';
 
 import { useDispatch, useTypedSelector } from '../types';
 import { Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const SpendingReportTable: React.FC = () => {
 
@@ -33,6 +34,7 @@ const SpendingReportTable: React.FC = () => {
   const reportDataState = useTypedSelector(selectReportDataState);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [transactionId, setTransactionId] = React.useState('');
@@ -45,6 +47,10 @@ const SpendingReportTable: React.FC = () => {
 
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
+  };
+
+  const handleClickTransaction = (transaction: Transaction) => {
+    navigate(`/statements/credit-card/${transaction.statementId}`);
   };
 
   const handleEditTransaction = (transaction: Transaction) => {
@@ -72,7 +78,6 @@ const SpendingReportTable: React.FC = () => {
       pattern,
       categoryId
     };
-    console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
     dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
   }
 
@@ -155,11 +160,7 @@ const SpendingReportTable: React.FC = () => {
       // Accumulate expenses for child categories
       category.children.forEach((subCategory) => {
         const subCategoryExpenses = accumulateExpenses(subCategory);
-        console.log('totalExpenses', totalExpenses)
-        console.log('subCategoryExpenses', subCategoryExpenses);
         totalExpenses += subCategoryExpenses;
-        console.log('totalExpenses', totalExpenses)
-        // totalExpenses += accumulateExpenses(subCategory);
       });
 
       // Only add to the map if there are any expenses (direct or from children)
@@ -171,8 +172,6 @@ const SpendingReportTable: React.FC = () => {
       if (category.parentId === '') {
         totalTopLevelExpenses += totalExpenses;
       }
-
-      console.log('totalExpenses for category', category.name, totalExpenses);
 
       return totalExpenses;
     };
@@ -251,7 +250,6 @@ const SpendingReportTable: React.FC = () => {
       return allCategoriesExpensesData.find(category => category.id === id) as CategoryExpensesData;
     }
 
-    console.log('accumulateExpenses');
     const accumulateExpenses = (categoriesExpensesData: CategoryExpensesData): number => {
       const categoryMenuItem: CategoryMenuItem = getCategoryMenuItemById(categoriesExpensesData.id);
 
@@ -260,10 +258,7 @@ const SpendingReportTable: React.FC = () => {
       // Accumulate expenses for child categories
       categoryMenuItem.children.forEach((subCategory) => {
         const subCategoryExpensesData = getCategoryExpensesDataById(subCategory.id)
-        console.log('totalExpenses before adding subCategoryExpenses', totalExpenses)
-        console.log('subCategoryExpenses', subCategoryExpensesData);
         totalExpenses += accumulateExpenses(subCategoryExpensesData);
-        console.log('totalExpenses after adding subCategoryExpenses', totalExpenses)
       });
 
       // Only add to the map if there are any expenses (direct or from children)
@@ -275,8 +270,6 @@ const SpendingReportTable: React.FC = () => {
       if (categoryMenuItem.parentId === '') {
         totalTopLevelExpenses += totalExpenses;
       }
-
-      console.log('totalExpenses for category', categoryMenuItem.name, totalExpenses);
 
       return totalExpenses;
     };
@@ -584,8 +577,6 @@ const SpendingReportTable: React.FC = () => {
   // Generate Category Expenses Data
   const allCategoriesExpensesData: CategoryExpensesData[] = generateCategoryExpensesData(categoryMenuItems, categoriesExpensesData);
 
-  console.log('allCategoriesExpensesData', allCategoriesExpensesData);
-
   // Get rows
   // const rows: CategoryExpensesData[] = old_getRows(categoryMenuItems);
   const rows: CategoryExpensesData[] = getRows(allCategoriesExpensesData, categoryMenuItems);
@@ -652,7 +643,11 @@ const SpendingReportTable: React.FC = () => {
                   </div>
                   <div className="table-body">
                     {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
-                      <div className="table-row" key={transaction.bankTransaction.id}>
+                      <div
+                        className="table-row-clickable"
+                        key={transaction.bankTransaction.id}
+                        onClick={() => handleClickTransaction(transaction.bankTransaction)}
+                      >
                         <div className="table-cell">
                           <IconButton onClick={() => handleAssignCategory(transaction.bankTransaction)}>
                             <AssignmentIcon />
