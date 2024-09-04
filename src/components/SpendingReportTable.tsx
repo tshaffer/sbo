@@ -649,12 +649,19 @@ const SpendingReportTable: React.FC = () => {
                         onClick={() => handleClickTransaction(transaction.bankTransaction)}
                       >
                         <div className="table-cell">
-                          <IconButton onClick={() => handleAssignCategory(transaction.bankTransaction)}>
+                          <IconButton onClick={(event: any) => {
+                            event.stopPropagation();
+                            handleAssignCategory(transaction.bankTransaction)
+                          }
+                          }>
                             <AssignmentIcon />
                           </IconButton>
-
                           <Tooltip title="Edit transaction">
-                            <IconButton onClick={() => handleEditTransaction(transaction.bankTransaction)}>
+                            <IconButton onClick={(event: any) => {
+                              event.stopPropagation();
+                              handleEditTransaction(transaction.bankTransaction)
+                            }
+                            }>
                               <EditIcon />
                             </IconButton>
                           </Tooltip>
