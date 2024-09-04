@@ -18,7 +18,7 @@ const initialState: ReportDataState = {
   reportStatementId: '',
   categoryIdsToExclude: [],
   importanceFilter: 'greater',
-  consensusDiscretionary: true,
+  consensusDiscretionary: false,
   loriDiscretionary: false,
   tedDiscretionary: false,
   consensusValue: 0,
