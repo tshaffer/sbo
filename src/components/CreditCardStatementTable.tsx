@@ -70,10 +70,10 @@ const CreditCardStatementTable: React.FC = () => {
     const currentIndex = sortedTransactions.findIndex(transaction => transaction.id === transactionId);
     const isShiftPressed = (event.nativeEvent as MouseEvent).shiftKey;
     const newSelectedTransactionIds = new Set(selectedTransactionIds);
-  
+
     if (isShiftPressed && lastSelectedIndexRef.current !== null) {
       const [start, end] = [Math.min(currentIndex, lastSelectedIndexRef.current), Math.max(currentIndex, lastSelectedIndexRef.current)];
-      
+
       for (let i = start; i <= end; i++) {
         if (checked) {
           newSelectedTransactionIds.add(sortedTransactions[i].id);
@@ -89,7 +89,7 @@ const CreditCardStatementTable: React.FC = () => {
       }
       lastSelectedIndexRef.current = currentIndex;
     }
-  
+
     setSelectedTransactionId(newSelectedTransactionIds);
   }
 

@@ -23,38 +23,6 @@ const CreditCardStatementsTable: React.FC = () => {
     return null;
   }
 
-  function findMinMaxDates(statements:CreditCardStatement[]): { minDate: string, maxDate: string } {
-    
-    if (statements.length === 0) {
-      throw new Error("The input array is empty.");
-    }
-  
-    let minDate = statements[0].startDate;
-    let maxDate = statements[0].endDate;
-  
-    statements.forEach(item => {
-      if (item.startDate < minDate) {
-        minDate = item.startDate;
-      }
-      if (item.endDate > maxDate) {
-        maxDate = item.endDate;
-      }
-    });
-  
-    return { minDate, maxDate };
-  }
-
-  const generateAllTransactionsStatement = (): CreditCardStatement => {
-    const minMaxDates = findMinMaxDates(statements);
-    const allTransactionsStatement: CreditCardStatement = cloneDeep(statements[0]);
-    allTransactionsStatement.fileName = 'All Transactions';
-    allTransactionsStatement.startDate = minMaxDates.minDate;
-    allTransactionsStatement.endDate = minMaxDates.maxDate;
-    allTransactionsStatement.transactionCount = statements.reduce((acc, statement) => acc + statement.transactionCount, 0);
-    allTransactionsStatement.netDebits = statements.reduce((acc, statement) => acc + statement.netDebits, 0);
-    return allTransactionsStatement;
-  }
-
   const navigate = useNavigate();
 
   const handleStatementClicked = (creditCardStatement: CreditCardStatement) => {
@@ -66,8 +34,8 @@ const CreditCardStatementsTable: React.FC = () => {
 
   let sortedStatements = cloneDeep(statements);
   sortedStatements = sortedStatements.sort((a, b) => b.endDate.localeCompare(a.endDate));
-  const allTransactionsStatement: CreditCardStatement = generateAllTransactionsStatement();
-  sortedStatements.unshift(allTransactionsStatement);
+  // const allTransactionsStatement: CreditCardStatement = generateAllTransactionsStatement();
+  // sortedStatements.unshift(allTransactionsStatement);
 
   return (
     <React.Fragment>
