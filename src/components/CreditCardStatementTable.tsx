@@ -112,24 +112,24 @@ const CreditCardStatementTable: React.FC = () => {
         Override Selected
       </Button>
       <div className="credit-card-statement-grid-table-container">
-        <div className="grid-table-header">
-          <div className="grid-table-cell"></div>
-          <div className="grid-table-cell" onClick={() => handleSort('transactionDate')}>Date{renderSortIndicator('transactionDate')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('amount')}>Amount{renderSortIndicator('amount')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('description')}>Description{renderSortIndicator('description')}</div>
-          <div className="grid-table-cell"></div>
-          <div className="grid-table-cell" onClick={() => handleSort('userDescription')}>User Description{renderSortIndicator('userDescription')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('category')}>Category from statement{renderSortIndicator('category')}</div>
-          <div className="grid-table-cell"></div>
-          <div className="grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryAssignmentRule')}>Category (rule){renderSortIndicator('categoryNameFromCategoryAssignmentRule')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('patternFromCategoryAssignmentRule')}>Pattern{renderSortIndicator('patternFromCategoryAssignmentRule')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryOverride')}>Category (override){renderSortIndicator('categoryNameFromCategoryOverride')}</div>
-          <div className="grid-table-cell"></div>
+        <div className="credit-card-statement-grid-table-header">
+          <div className="credit-card-statement-grid-table-cell"></div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('transactionDate')}>Date{renderSortIndicator('transactionDate')}</div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('amount')}>Amount{renderSortIndicator('amount')}</div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('description')}>Description{renderSortIndicator('description')}</div>
+          <div className="credit-card-statement-grid-table-cell"></div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('userDescription')}>User Description{renderSortIndicator('userDescription')}</div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('category')}>Category from statement{renderSortIndicator('category')}</div>
+          <div className="credit-card-statement-grid-table-cell"></div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryAssignmentRule')}>Category (rule){renderSortIndicator('categoryNameFromCategoryAssignmentRule')}</div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('patternFromCategoryAssignmentRule')}>Pattern{renderSortIndicator('patternFromCategoryAssignmentRule')}</div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryOverride')}>Category (override){renderSortIndicator('categoryNameFromCategoryOverride')}</div>
+          <div className="credit-card-statement-grid-table-cell"></div>
         </div>
-        <div className="grid-table-body">
+        <div className="credit-card-statement-grid-table-body">
           {sortedTransactions.map((creditCardTransaction: CreditCardTransactionRowInStatementTableProperties) => (
-            <div className="grid-table-row" key={creditCardTransaction.id}>
+            <div className="credit-card-statement-grid-table-row" key={creditCardTransaction.id}>
               <CreditCardStatementTransactionRow
                 creditCardTransactionId={creditCardTransaction.id}
                 transactionSelected={selectedTransactionIds.has(creditCardTransaction.id)}

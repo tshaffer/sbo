@@ -61,13 +61,13 @@
   background-color: #e0e0e0; /* Slightly darker gray background on focus */
 }
 
-.credit-card-statement-grid-table-container {
+/* .credit-card-statement-grid-table-container {
   display: grid;
   grid-template-columns: 60px 90px 100px 1fr 40px 1fr 1fr 1fr 40px 1fr 1fr 1fr 1fr;
   border: 1px solid #ccc;
   width: 100%;
   margin: 0 auto;
-}
+} */
 
 .checking-account-statement-grid-table-container {
   display: grid;
@@ -76,4 +76,73 @@
   width: 100%;
   margin: 0 auto;
 }
+
+.credit-card-statement-grid-table-container {
+  display: grid;
+  grid-template-columns: 60px 90px 100px 1fr 40px 1fr 1fr 1fr 40px 1fr 1fr 1fr 1fr;
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  position: relative;
+}
+
+.credit-card-statement-grid-table-header {
+  display: contents;
+}
+
+.credit-card-statement-grid-table-header .credit-card-statement-grid-table-cell {
+  position: sticky;
+  top: 0;
+  background-color: #f5f5f5;
+  z-index: 2; /* Ensure the header is above the scrolling content */
+  border-bottom: 1px solid #ccc;
+}
+
+.credit-card-statement-grid-table-body {
+  max-height: 512px;
+  overflow-y: auto;
+  display: contents;
+}
+
+.credit-card-statement-grid-table-row {
+  display: contents;
+}
+
+.credit-card-statement-grid-table-cell {
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+.credit-card-statement-grid-table-cell:first-child {
+  justify-content: center;
+}
+
+/* .credit-card-statement-grid-table-container {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin: 0 auto;
+} */
+
+.credit-card-statement-grid-table-cell-clickable {
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  cursor: pointer; /* Change cursor to pointer */
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.credit-card-statement-grid-table-cell-clickable:hover {
+  background-color: #f0f0f0; /* Light gray background on hover */
+}
+
+.credit-card-statement-grid-table-cell-clickable:focus {
+  outline: none;
+  background-color: #e0e0e0; /* Slightly darker gray background on focus */
+}
+
 

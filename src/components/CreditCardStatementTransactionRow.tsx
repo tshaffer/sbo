@@ -88,7 +88,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
 
   const renderEditIcon = (): JSX.Element => {
     return (
-      <div className="grid-table-cell">
+      <div className="credit-card-statement-grid-table-cell">
         <Tooltip title="Edit transaction">
           <IconButton onClick={() => handleEditTransaction()}>
             <EditIcon />
@@ -113,27 +113,27 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
         onSave={handleSaveTransaction}
       />
 
-      <div className="grid-table-cell">
+      <div className="credit-card-statement-grid-table-cell">
         <Checkbox
           checked={props.transactionSelected}
           onChange={handleTransactionSelectedChanged}
         />
       </div>
-      <div className="grid-table-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
-      <div className="grid-table-cell">{formatCurrency(creditCardTransaction.amount)}</div>
-      <div className="grid-table-cell">{creditCardTransaction.description}</div>
+      <div className="credit-card-statement-grid-table-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
+      <div className="credit-card-statement-grid-table-cell">{formatCurrency(creditCardTransaction.amount)}</div>
+      <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.description}</div>
       {renderEditIcon()}
-      <div className="grid-table-cell">{creditCardTransaction.userDescription}</div>
-      <div className="grid-table-cell">{categorizedTransactionName}</div>
-      <div className="grid-table-cell">{creditCardTransaction.category}</div>
+      <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
+      <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
+      <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.category}</div>
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
           <AssignmentIcon />
         </IconButton>
       </Tooltip>
-      <div className="grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{patternFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{categoryNameFromCategoryOverride}</div>
+      <div className="credit-card-statement-grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
+      <div className="credit-card-statement-grid-table-cell">{patternFromCategoryAssignmentRule}</div>
+      <div className="credit-card-statement-grid-table-cell">{categoryNameFromCategoryOverride}</div>
       <Tooltip title="Category Override">
         <IconButton
           onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
