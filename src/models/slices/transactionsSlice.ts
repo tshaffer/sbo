@@ -13,6 +13,11 @@ const transactionsSlice = createSlice({
       return initialState;
     },
     addTransactions: (state, action: PayloadAction<Transaction[]>) => {
+      console.log('addTransactions');
+      if (action.payload.length > 0) {
+        console.log(action.payload[0].statementId);
+      }
+
       action.payload.forEach((transaction) => {
         state.byId[transaction.id] = transaction;
         if (!state.allIds.includes(transaction.id)) {

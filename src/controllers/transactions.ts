@@ -98,6 +98,7 @@ export const loadTransactions = (startDate: string, endDate: string, includeCred
     const transactionsFromDb: Transactions = await getTransactions(startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
     dispatch(clearTransactions());
     const { creditCardTransactions, checkingAccountTransactions } = transactionsFromDb;
+    console.log('loadTransactions');
     dispatch(addTransactions(creditCardTransactions as Transaction[]));
     dispatch(addTransactions(checkingAccountTransactions as Transaction[]));
     return Promise.resolve();

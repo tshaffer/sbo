@@ -15,9 +15,14 @@ const creditCardStatementSlice = createSlice({
     ) => {
       state.creditCardStatements = action.payload;
     },
+    addCreditCardStatement(
+      state,
+      action: PayloadAction<CreditCardStatement>) {
+      state.creditCardStatements = state.creditCardStatements.concat(action.payload);
+    },
   },
 });
 
-export const { addCreditCardStatements } = creditCardStatementSlice.actions;
+export const { addCreditCardStatements, addCreditCardStatement } = creditCardStatementSlice.actions;
 
 export default creditCardStatementSlice.reducer;

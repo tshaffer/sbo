@@ -1,6 +1,8 @@
 import axios from "axios";
-import { CheckingAccountStatement, CreditCardStatement, StatementType, TrackerAnyPromiseThunkAction, TrackerDispatch, TrackerVoidPromiseThunkAction, apiUrlFragment, serverUrl } from "../types";
-import { addCreditCardStatements, addCheckingAccountStatements } from "../models";
+import { CheckingAccountStatement, CreditCardStatement, StatementType, TrackerAnyPromiseThunkAction, TrackerDispatch, TrackerVoidPromiseThunkAction, Transaction, apiUrlFragment, serverUrl } from "../types";
+import { addCreditCardStatements, addCheckingAccountStatements, addCreditCardStatement, addTransactions } from "../models";
+import { getTransactionsByStatementId } from "../selectors";
+import { cloneDeep } from "lodash";
 
 export const loadCreditCardStatements = (): TrackerAnyPromiseThunkAction => {
 
@@ -12,6 +14,7 @@ export const loadCreditCardStatements = (): TrackerAnyPromiseThunkAction => {
       .then((response: any) => {
         const statements: CreditCardStatement[] = response.data;
         dispatch(addCreditCardStatements(statements));
+        // dispatch(addAllTransactionsStatement(statements));
         return Promise.resolve();
       }).catch((error) => {
         console.log('error');
@@ -49,8 +52,8 @@ export const uploadFile = (formData: FormData): TrackerVoidPromiseThunkAction =>
   };
 };
 
-function findMinMaxDates(statements:CreditCardStatement[]): { minDate: string, maxDate: string } {
-    
+function findMinMaxDates(statements: CreditCardStatement[]): { minDate: string, maxDate: string } {
+
   if (statements.length === 0) {
     throw new Error("The input array is empty.");
   }
@@ -71,28 +74,45 @@ function findMinMaxDates(statements:CreditCardStatement[]): { minDate: string, m
 }
 
 
-export const addAllTransactionsStatement = (statements: CreditCardStatement[]): CreditCardStatement => {
+export const addAllTransactionsStatement = (statements: CreditCardStatement[]): TrackerAnyPromiseThunkAction => {
 
-  const allTransactionsStatement: CreditCardStatement = {
-    id: 'All Transactions',
-    fileName: 'All Transactions',
-    type: StatementType.CreditCard,
-    startDate: '',
-    endDate: '',
-    transactionCount: 0,
-    netDebits: 0,
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const state = getState();
+
+    const allTransactionsStatement: CreditCardStatement = {
+      id: 'allTransactions',
+      fileName: 'All Transactions',
+      type: StatementType.CreditCard,
+      startDate: '',
+      endDate: '',
+      transactionCount: 0,
+      netDebits: 0,
+    };
+
+    const minMaxDates = findMinMaxDates(statements);
+    allTransactionsStatement.startDate = minMaxDates.minDate;
+    allTransactionsStatement.endDate = minMaxDates.maxDate;
+
+    const allClonedTransactions: Transaction[] = [];
+
+    statements.forEach((statement: CreditCardStatement) => {
+      const allTransactionsInStatement: Transaction[] = getTransactionsByStatementId(state, statement.id);
+      allTransactionsInStatement.forEach((transaction: Transaction) => {
+        const clonedTransaction = cloneDeep(transaction);
+        clonedTransaction.statementId = allTransactionsStatement.id;
+        allClonedTransactions.push(clonedTransaction);
+      });
+    });
+
+    allTransactionsStatement.transactionCount = statements.reduce((acc, statement) => acc + statement.transactionCount, 0);
+    allTransactionsStatement.netDebits = statements.reduce((acc, statement) => acc + statement.netDebits, 0);
+
+    console.log('addAllTransactionsStatement');
+    dispatch(addTransactions(allClonedTransactions));
+    dispatch(addCreditCardStatement(allTransactionsStatement));
+
+    return Promise.resolve();
   };
-
-  const minMaxDates = findMinMaxDates(statements);
-  allTransactionsStatement.startDate = minMaxDates.minDate;
-  allTransactionsStatement.endDate = minMaxDates.maxDate;
-  
-  // const allTransactionsStatement: CreditCardStatement = cloneDeep(statements[0]);
-  allTransactionsStatement.fileName = 'All Transactions';
-  allTransactionsStatement.startDate = minMaxDates.minDate;
-  allTransactionsStatement.endDate = minMaxDates.maxDate;
-  allTransactionsStatement.transactionCount = statements.reduce((acc, statement) => acc + statement.transactionCount, 0);
-  allTransactionsStatement.netDebits = statements.reduce((acc, statement) => acc + statement.netDebits, 0);
-  return allTransactionsStatement;
 }
 
