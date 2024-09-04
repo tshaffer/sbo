@@ -4,18 +4,29 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Button, DialogActions, DialogContent } from '@mui/material';
+import { useDispatch } from '../types';
+import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
 
 export interface CategoryAssignmentRuleTransactionsListDialogProps {
   open: boolean;
+  categoryAssignmentRuleId: string;
   onClose: () => void;
 }
 
 const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentRuleTransactionsListDialogProps> = (props: CategoryAssignmentRuleTransactionsListDialogProps) => {
-  const { open, onClose } = props;
+  
+  const dispatch = useDispatch();
+
+  const { open, categoryAssignmentRuleId, onClose } = props;
 
   if (!open) {
     return null;
   }
+
+  React.useEffect(() => {
+    dispatch(getTransactionsByCategoryAssignmentRuleId(categoryAssignmentRuleId));
+  }, []);
+
 
   const handleClose = () => {
     onClose();

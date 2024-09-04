@@ -249,3 +249,14 @@ export const splitTransaction = (
   };
 };
 
+export const getTransactionsByCategoryAssignmentRuleId = (categoryAssignmentRuleId: string): TrackerAnyPromiseThunkAction => {
+  return async (dispatch: TrackerDispatch, getState: any) => {
+    const path = serverUrl + apiUrlFragment + 'transactionsByCategoryAssignmentRuleId?categoryAssignmentRuleId=' + categoryAssignmentRuleId;
+    return axios.get(path)
+      .then((response: any) => {
+        const transactions: Transaction[] = response.data;
+        console.log('getTransactionsByCategoryAssignmentRuleId: ', transactions);
+        return;
+      })
+  }
+};

@@ -46,6 +46,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const [categoryAssignmentRuleTableRows, setCategoryAssignmentRuleTableRows] = React.useState<CategoryAssignmentRuleTableRow[]>([]);
 
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
+  const [categoryAssignmentRuleId, setCategoryAssignmentRuleId] = React.useState('');
   const [showCategoryAssignmentRuleTransactionsListDialog, setShowCategoryAssignmentRuleTransactionsListDialog] = React.useState(false);
 
   const handleSaveRule = (pattern: string, categoryId: string): void => {
@@ -61,6 +62,11 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const handleCloseAddRuleDialog = () => {
     setShowAddCategoryAssignmentRuleDialog(false);
+  }
+
+  const handleShowCategoryAssignmentRuleTransactionsListDialog = (id: string) => {
+    setCategoryAssignmentRuleId(id);
+    setShowCategoryAssignmentRuleTransactionsListDialog(true);
   }
 
   const handleCloseCategoryAssignmentRuleTransactionsListDialog = () => {
@@ -302,6 +308,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
       />
       <CategoryAssignmentRuleTransactionsListDialog
         open={showCategoryAssignmentRuleTransactionsListDialog}
+        categoryAssignmentRuleId={categoryAssignmentRuleId}
         onClose={handleCloseCategoryAssignmentRuleTransactionsListDialog}
       />
       <Box sx={{ width: '100%' }}>
@@ -341,7 +348,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
                 />
                 <div className="table-cell-category-assignment-rule" style={{ marginLeft: '32px' }}>
                   <Tooltip title="Transactions" arrow>
-                    <IconButton onClick={() => setShowCategoryAssignmentRuleTransactionsListDialog(true)}>
+                    <IconButton onClick={() => handleShowCategoryAssignmentRuleTransactionsListDialog(categoryAssignmentRule.id)}>
                       <ViewListIcon />
                     </IconButton>
                   </Tooltip>
