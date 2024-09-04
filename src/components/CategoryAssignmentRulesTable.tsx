@@ -8,6 +8,7 @@ import { Box, Button, IconButton, TextField, Tooltip, Typography } from '@mui/ma
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import ViewListIcon from '@mui/icons-material/ViewList';
 
 import '../styles/Tracker.css';
 
@@ -18,6 +19,7 @@ import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
+import CategoryAssignmentRuleTransactionsListDialog from './CategoryAssignmentRuleTransactionsListDialog';
 
 import { useDispatch, useTypedSelector } from '../types';
 
@@ -44,6 +46,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const [categoryAssignmentRuleTableRows, setCategoryAssignmentRuleTableRows] = React.useState<CategoryAssignmentRuleTableRow[]>([]);
 
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
+  const [showCategoryAssignmentRuleTransactionsListDialog, setShowCategoryAssignmentRuleTransactionsListDialog] = React.useState(false);
 
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
@@ -58,6 +61,10 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const handleCloseAddRuleDialog = () => {
     setShowAddCategoryAssignmentRuleDialog(false);
+  }
+
+  const handleCloseCategoryAssignmentRuleTransactionsListDialog = () => {
+    setShowCategoryAssignmentRuleTransactionsListDialog(false);
   }
 
   const updateCategoryAssignmentRuleTableRows = (): void => {
@@ -293,6 +300,10 @@ const CategoryAssignmentRulesTable: React.FC = () => {
         onClose={handleCloseAddRuleDialog}
         onSaveRule={handleSaveRule}
       />
+      <CategoryAssignmentRuleTransactionsListDialog
+        open={showCategoryAssignmentRuleTransactionsListDialog}
+        onClose={handleCloseCategoryAssignmentRuleTransactionsListDialog}
+      />
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
         <DownloadCategoryAssignmentRules />
@@ -329,6 +340,11 @@ const CategoryAssignmentRulesTable: React.FC = () => {
                   onSetCategoryId={(categoryId: string) => handleCategoryChange(categoryAssignmentRule.id, categoryId)}
                 />
                 <div className="table-cell-category-assignment-rule" style={{ marginLeft: '32px' }}>
+                  <Tooltip title="Transactions" arrow>
+                    <IconButton onClick={() => setShowCategoryAssignmentRuleTransactionsListDialog(true)}>
+                      <ViewListIcon />
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip title="Save" arrow>
                     <IconButton onClick={() => handleSaveCategoryAssignmentRule(categoryAssignmentRule.id)}>
                       <SaveIcon />
