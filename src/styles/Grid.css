@@ -61,14 +61,6 @@
   background-color: #e0e0e0; /* Slightly darker gray background on focus */
 }
 
-/* .credit-card-statement-grid-table-container {
-  display: grid;
-  grid-template-columns: 60px 90px 100px 1fr 40px 1fr 1fr 1fr 40px 1fr 1fr 1fr 1fr;
-  border: 1px solid #ccc;
-  width: 100%;
-  margin: 0 auto;
-} */
-
 .checking-account-statement-grid-table-container {
   display: grid;
   grid-template-columns: 60px 90px 100px 1fr 40px 1fr 40px 1fr 1fr 1fr 1fr 1fr;
@@ -84,6 +76,8 @@
   margin: 0 auto;
   border: 1px solid #ccc;
   position: relative;
+  max-height: 650px;
+  overflow-y: auto;
 }
 
 .credit-card-statement-grid-table-header {
@@ -99,8 +93,6 @@
 }
 
 .credit-card-statement-grid-table-body {
-  max-height: 512px;
-  overflow-y: auto;
   display: contents;
 }
 
@@ -118,14 +110,6 @@
 .credit-card-statement-grid-table-cell:first-child {
   justify-content: center;
 }
-
-/* .credit-card-statement-grid-table-container {
-  display: grid;
-  grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr;
-  border: 1px solid #ccc;
-  width: 100%;
-  margin: 0 auto;
-} */
 
 .credit-card-statement-grid-table-cell-clickable {
   padding: 8px 16px;
