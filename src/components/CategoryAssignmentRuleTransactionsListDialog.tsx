@@ -1,11 +1,12 @@
-import React, {  } from 'react';
+import React from 'react';
 
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
-import { Button, DialogActions, DialogContent } from '@mui/material';
+import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { CreditCardTransaction, useDispatch } from '../types';
 import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
+import { formatCurrency, formatDate } from '../utilities';
 
 export interface CategoryAssignmentRuleTransactionsListDialogProps {
   open: boolean;
@@ -14,7 +15,7 @@ export interface CategoryAssignmentRuleTransactionsListDialogProps {
 }
 
 const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentRuleTransactionsListDialogProps> = (props: CategoryAssignmentRuleTransactionsListDialogProps) => {
-  
+
   const dispatch = useDispatch();
 
   const { open, categoryAssignmentRuleId, onClose } = props;
@@ -30,7 +31,7 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
     promise.then((transactions: CreditCardTransaction[]) => {
       setTransactions(transactions);
     });
-  }, []);
+  }, [dispatch, categoryAssignmentRuleId]);
 
   const handleClose = () => {
     onClose();
@@ -40,16 +41,33 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
       <DialogTitle>Category Assignment Rule Transactions</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
-        <Box
-          component="form"
-          noValidate
-          autoComplete="off"
-        >
-          <div>Pizza</div>
+        <Box component="form" noValidate autoComplete="off">
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell>Override Category</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {transactions.map(transaction => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>{formatDate(transaction.transactionDate)}</TableCell>
+                    <TableCell>{formatCurrency(-transaction.amount)}</TableCell>
+                    <TableCell>{transaction.userDescription}</TableCell>
+                    <TableCell>{transaction.overrideCategory ? 'Yes' : 'No'}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>Close</Button>
       </DialogActions>
     </Dialog>
   );
