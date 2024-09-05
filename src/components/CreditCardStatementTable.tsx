@@ -114,6 +114,7 @@ const CreditCardStatementTable: React.FC = () => {
       <div className="credit-card-statement-grid-table-container">
         <div className="credit-card-statement-grid-table-header">
           <div className="credit-card-statement-grid-table-cell"></div>
+          <div className="credit-card-statement-grid-table-cell"></div>
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('transactionDate')}>Date{renderSortIndicator('transactionDate')}</div>
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('amount')}>Amount{renderSortIndicator('amount')}</div>
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('description')}>Description{renderSortIndicator('description')}</div>

@@ -13,13 +13,15 @@ import { getTransactionById, findMatchingRule, MatchingRuleAssignment, categoriz
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
-import { Tooltip, IconButton, Checkbox } from '@mui/material';
+import { Tooltip, IconButton, Checkbox, Button, TextField } from '@mui/material';
 import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
 
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
@@ -45,6 +47,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
 
   const [isEditing, setIsEditing] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
 
   const handleSaveComment = () => {
@@ -132,33 +135,20 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
           onChange={handleTransactionSelectedChanged}
         />
       </div>
+
+      <div>
+          <IconButton onClick={() => setIsExpanded(!isExpanded)}>
+            {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+      </div>
+
       <div className="credit-card-statement-grid-table-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
       <div className="credit-card-statement-grid-table-cell">{formatCurrency(creditCardTransaction.amount)}</div>
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.description}</div>
       {renderEditIcon()}
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
-      <div className="credit-card-statement-grid-table-cell">
-        {isEditing ? (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <input
-              type="text"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <IconButton onClick={handleSaveComment}>
-              <SaveIcon />
-            </IconButton>
-            <IconButton onClick={() => setIsEditing(false)}>
-              <CancelIcon />
-            </IconButton>
-          </div>
-        ) : (
-          <div onClick={() => setIsEditing(true)}>
-            {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
-          </div>
-        )}
-      </div>
+      <div className="credit-card-statement-grid-table-cell">{comment}</div>
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
           <AssignmentIcon />
@@ -172,6 +162,22 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
           {creditCardTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
         </IconButton>
       </Tooltip>
+      {isExpanded && (
+        <tr>
+          <td colSpan={6}>
+            <TextField
+              fullWidth
+              multiline
+              rows={2}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <Button onClick={handleSaveComment}>Save</Button>
+            <Button onClick={() => setIsExpanded(false)}>Cancel</Button>
+          </td>
+        </tr>
+      )}
+
     </React.Fragment>
   );
 }
