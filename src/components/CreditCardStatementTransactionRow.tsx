@@ -175,8 +175,10 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-            <Button onClick={handleSaveComment}>Save</Button>
-            <Button onClick={() => setIsExpanded(false)}>Cancel</Button>
+            <div className="button-group">
+              <Button onClick={handleSaveComment} variant="contained" color="primary">Save</Button>
+              <Button onClick={() => setIsExpanded(false)} variant="outlined">Cancel</Button>
+            </div>
           </div>
         )}
       </div>
