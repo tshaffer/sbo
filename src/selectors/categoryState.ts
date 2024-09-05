@@ -40,12 +40,6 @@ export const getCategoryByCategoryNameLUT = createSelector(
   }
 );
 
-// Selector to get the disregard level of a category by its ID
-export const getCategoryDisregardLevel = createSelector(
-  [getCategoryById],
-  (category: Category | undefined): number => category ? category.disregardLevel : 0
-);
-
 // Selector to find missing categories based on uploaded category assignment rules
 export const getMissingCategories = createSelector(
   [getCategories, (_: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]) => uploadedCategoryAssignmentRules],

@@ -8,11 +8,6 @@ export enum CheckingAccountTransactionType {
   TBD = 'tbd',
 }
 
-export enum DisregardLevel {
-  None = 0,
-  All = 1,
-}
-
 export enum DateRangeType {
   All = 'all',
   YearToDate = 'ytd',

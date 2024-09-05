@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Box, Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import { Category, DisregardLevel, SidebarMenuButton } from '../types';
+import { Category, SidebarMenuButton } from '../types';
 import AddCategoryDialog from './AddCategoryDialog';
 import CategoriesTable from './CategoriesTable';
 import { addCategory } from '../controllers';
@@ -31,7 +31,6 @@ const CategoriesContent: React.FC = () => {
       id,
       name: categoryLabel,
       parentId,
-      disregardLevel: DisregardLevel.None,
       consensusImportance,
       loriImportance,
       tedImportance

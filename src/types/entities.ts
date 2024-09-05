@@ -1,4 +1,4 @@
-import { BankTransactionType, CheckingAccountTransactionType, DisregardLevel, StatementType } from "./enums";
+import { BankTransactionType, CheckingAccountTransactionType, StatementType } from "./enums";
 
 export interface CategorizedStatementData {
   transactions: CategorizedTransaction[];
@@ -129,7 +129,6 @@ export interface Category {
   id: string;
   name: string;
   parentId: string;
-  disregardLevel: DisregardLevel;
   consensusImportance?: number;
   loriImportance?: number;
   tedImportance?: number;

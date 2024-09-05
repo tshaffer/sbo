@@ -1,7 +1,7 @@
 import { isNil } from 'lodash';
 import { createSelector } from 'reselect';
 
-import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
+import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
 import { getCategories, getCategoryById } from './categoryState';
 
 import { roundTo } from '../utilities';
@@ -54,11 +54,6 @@ export const getTransactionsByStatementId = createSelector(
   }
 );
 
-const getActiveCategories = createSelector(
-  [getAllCategories],
-  (allCategories: Category[]) => allCategories.filter(category => category.disregardLevel === DisregardLevel.None)
-);
-
 export const categorizeTransaction = (
   transaction: BankTransaction,
   categories: Category[],
@@ -87,7 +82,7 @@ export const categorizeTransaction = (
 };
 
 const categorizeTransactions = createSelector(
-  [getTransactions, getActiveCategories, getIgnoreCategory, getCategoryAssignmentRules],
+  [getTransactions, getAllCategories, getIgnoreCategory, getCategoryAssignmentRules],
   (transactions, categories, ignoreCategory, categoryAssignmentRules): ReviewedTransactions => {
     const categorizedTransactions: CategorizedTransaction[] = [];
     const uncategorizedTransactions: BankTransaction[] = [];

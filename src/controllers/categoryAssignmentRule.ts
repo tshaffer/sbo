@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssignmentRule, TrackerState, Category, DisregardLevel, TrackerAnyPromiseThunkAction, TrackerDispatch } from "../types";
+import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssignmentRule, TrackerState, Category, TrackerAnyPromiseThunkAction, TrackerDispatch } from "../types";
 import { getCategoryAssignmentRules, getCategoryByName, getMissingCategories } from "../selectors";
 import { isNil } from "lodash";
 import { addCategories } from "./category";
@@ -86,7 +86,6 @@ const addMissingCategories = (state: TrackerState, uploadedCategoryAssignmentRul
           id: uuidv4(),
           name: categoryName,
           parentId: '',
-          disregardLevel: DisregardLevel.None,
         };
         return category;
       });

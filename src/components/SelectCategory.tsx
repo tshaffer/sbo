@@ -8,7 +8,7 @@ import { cloneDeep } from 'lodash';
 
 import { Button, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
-import { Category, CategoryMenuItem, DisregardLevel, StringToCategoryMenuItemLUT } from '../types';
+import { Category, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
 import { getCategories } from '../selectors';
 import AddCategoryDialog from './AddCategoryDialog';
 import { addCategory } from '../controllers';
@@ -112,7 +112,6 @@ const SelectCategory = (props: SelectCategoryProps) => {
       id,
       name: categoryLabel,
       parentId,
-      disregardLevel: DisregardLevel.None,
     };
     dispatch(addCategory(category));
     handleSetSelectedCategoryId(category.id);
