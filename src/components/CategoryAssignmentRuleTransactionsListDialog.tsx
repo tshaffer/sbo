@@ -3,7 +3,7 @@ import React from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
-import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector } from '../types';
 import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
 import { formatCurrency, formatDate } from '../utilities';
@@ -43,6 +43,10 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
       <DialogTitle>Category Assignment Rule Transactions</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
+        {/* Display the pattern here */}
+        <Typography variant="subtitle1" gutterBottom>
+          Pattern: {categoryAssignmentRule.pattern}
+        </Typography>
         <Box component="form" noValidate autoComplete="off">
           <TableContainer component={Paper}>
             <Table>
