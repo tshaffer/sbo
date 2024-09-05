@@ -43,13 +43,13 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
       <DialogTitle>Category Assignment Rule Transactions</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
-        {/* Display the pattern here */}
-        <Typography variant="subtitle1" gutterBottom>
+        {/* Pattern */}
+        <Typography variant="subtitle1" gutterBottom style={{ position: 'sticky', top: 0, backgroundColor: '#fff', zIndex: 1 }}>
           Pattern: {categoryAssignmentRule.pattern}
         </Typography>
         <Box component="form" noValidate autoComplete="off">
-          <TableContainer component={Paper}>
-            <Table>
+          <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+            <Table stickyHeader>
               <TableHead>
                 <TableRow>
                   <TableCell>Date</TableCell>
