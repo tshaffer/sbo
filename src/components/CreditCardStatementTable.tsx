@@ -70,10 +70,10 @@ const CreditCardStatementTable: React.FC = () => {
     const currentIndex = sortedTransactions.findIndex(transaction => transaction.id === transactionId);
     const isShiftPressed = (event.nativeEvent as MouseEvent).shiftKey;
     const newSelectedTransactionIds = new Set(selectedTransactionIds);
-  
+
     if (isShiftPressed && lastSelectedIndexRef.current !== null) {
       const [start, end] = [Math.min(currentIndex, lastSelectedIndexRef.current), Math.max(currentIndex, lastSelectedIndexRef.current)];
-      
+
       for (let i = start; i <= end; i++) {
         if (checked) {
           newSelectedTransactionIds.add(sortedTransactions[i].id);
@@ -89,7 +89,7 @@ const CreditCardStatementTable: React.FC = () => {
       }
       lastSelectedIndexRef.current = currentIndex;
     }
-  
+
     setSelectedTransactionId(newSelectedTransactionIds);
   }
 
@@ -111,29 +111,27 @@ const CreditCardStatementTable: React.FC = () => {
       >
         Override Selected
       </Button>
-      <div className="credit-card-statement-grid-table-container">
-        <div className="credit-card-statement-grid-table-header">
-          <div className="credit-card-statement-grid-table-cell"></div>
-          <div className="credit-card-statement-grid-table-cell"></div>
-          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('transactionDate')}>Date{renderSortIndicator('transactionDate')}</div>
-          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('amount')}>Amount{renderSortIndicator('amount')}</div>
-          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('description')}>Description{renderSortIndicator('description')}</div>
-          <div className="credit-card-statement-grid-table-cell"></div>
-          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('userDescription')}>User Description{renderSortIndicator('userDescription')}</div>
-          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
-          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('category')}>Comment{renderSortIndicator('comment')}</div>
-          <div className="credit-card-statement-grid-table-cell"></div>
-          <div className="credit-card-statement-grid-table-cell"></div>
+      <div className="transaction-table">
+        <div className="transaction-table-header">
+          <div className="transaction-table-cell"></div>
+          <div className="transaction-table-cell"></div>
+          <div className="transaction-table-cell" onClick={() => handleSort('transactionDate')}>Date{renderSortIndicator('transactionDate')}</div>
+          <div className="transaction-table-cell" onClick={() => handleSort('amount')}>Amount{renderSortIndicator('amount')}</div>
+          <div className="transaction-table-cell" onClick={() => handleSort('description')}>Description{renderSortIndicator('description')}</div>
+          <div className="transaction-table-cell"></div>
+          <div className="transaction-table-cell" onClick={() => handleSort('userDescription')}>User Description{renderSortIndicator('userDescription')}</div>
+          <div className="transaction-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
+          <div className="transaction-table-cell" onClick={() => handleSort('category')}>Comment{renderSortIndicator('comment')}</div>
+          <div className="transaction-table-cell"></div>
+          <div className="transaction-table-cell"></div>
         </div>
-        <div className="credit-card-statement-grid-table-body">
+        <div className="transaction-table-body">
           {sortedTransactions.map((creditCardTransaction: CreditCardTransactionRowInStatementTableProperties) => (
-            <div className="credit-card-statement-grid-table-row" key={creditCardTransaction.id}>
-              <CreditCardStatementTransactionRow
-                creditCardTransactionId={creditCardTransaction.id}
-                transactionSelected={selectedTransactionIds.has(creditCardTransaction.id)}
-                onTransactionSelectedChanged={(event: React.ChangeEvent<HTMLInputElement>, transactionId: string, selected: boolean) => handleTransactionSelectedChanged(event, transactionId, selected)}
-              />
-            </div>
+            <CreditCardStatementTransactionRow
+              creditCardTransactionId={creditCardTransaction.id}
+              transactionSelected={selectedTransactionIds.has(creditCardTransaction.id)}
+              onTransactionSelectedChanged={(event: React.ChangeEvent<HTMLInputElement>, transactionId: string, selected: boolean) => handleTransactionSelectedChanged(event, transactionId, selected)}
+            />
           ))}
         </div>
       </div>

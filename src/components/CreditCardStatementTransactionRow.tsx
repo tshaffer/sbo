@@ -104,7 +104,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
 
   const renderEditIcon = (): JSX.Element => {
     return (
-      <div className="credit-card-statement-grid-table-cell">
+      <div className="transaction-row-cell">
         <Tooltip title="Edit transaction">
           <IconButton onClick={() => handleEditTransaction()}>
             <EditIcon />
@@ -129,42 +129,45 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
         onSave={handleSaveTransaction}
       />
 
-      <div className="credit-card-statement-grid-table-cell">
-        <Checkbox
-          checked={props.transactionSelected}
-          onChange={handleTransactionSelectedChanged}
-        />
-      </div>
+      <div className="transaction-row">
+        <div className="transaction-row-main" key={creditCardTransaction.id}>
 
-      <div>
-          <IconButton onClick={() => setIsExpanded(!isExpanded)}>
-            {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          </IconButton>
-      </div>
+          <div className="transaction-row-cell">
+            <Checkbox
+              checked={props.transactionSelected}
+              onChange={handleTransactionSelectedChanged}
+            />
+          </div>
 
-      <div className="credit-card-statement-grid-table-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
-      <div className="credit-card-statement-grid-table-cell">{formatCurrency(creditCardTransaction.amount)}</div>
-      <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.description}</div>
-      {renderEditIcon()}
-      <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
-      <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
-      <div className="credit-card-statement-grid-table-cell">{comment}</div>
-      <Tooltip title="Edit rule">
-        <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
-          <AssignmentIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Category Override">
-        <IconButton
-          onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
-          disabled={!creditCardTransaction.overrideCategory}
-        >
-          {creditCardTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
-        </IconButton>
-      </Tooltip>
-      {isExpanded && (
-        <tr>
-          <td colSpan={6}>
+          <div>
+            <IconButton onClick={() => setIsExpanded(!isExpanded)}>
+              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          </div>
+
+          <div className="transaction-row-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
+          <div className="transaction-row-cell">{formatCurrency(creditCardTransaction.amount)}</div>
+          <div className="transaction-row-cell">{creditCardTransaction.description}</div>
+          {renderEditIcon()}
+          <div className="transaction-row-cell">{creditCardTransaction.userDescription}</div>
+          <div className="transaction-row-cell">{categorizedTransactionName}</div>
+          <div className="transaction-row-cell">{comment}</div>
+          <Tooltip title="Edit rule">
+            <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
+              <AssignmentIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Category Override">
+            <IconButton
+              onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
+              disabled={!creditCardTransaction.overrideCategory}
+            >
+              {creditCardTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
+            </IconButton>
+          </Tooltip>
+        </div>
+        {isExpanded && (
+          <div className="transaction-row-expanded">
             <TextField
               fullWidth
               multiline
@@ -174,12 +177,41 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
             />
             <Button onClick={handleSaveComment}>Save</Button>
             <Button onClick={() => setIsExpanded(false)}>Cancel</Button>
-          </td>
-        </tr>
-      )}
-
+          </div>
+        )}
+      </div>
     </React.Fragment>
   );
 }
 
 export default CreditCardStatementTransactionRow;
+
+/*
+<div className="transaction-row">
+  <div className="transaction-row-main">
+    <div className="transaction-row-cell">
+      <IconButton onClick={() => setIsExpanded(!isExpanded)}>
+        {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+      </IconButton>
+    </div>
+    <div className="transaction-row-cell">{formatDate(transaction.date)}</div>
+    <div className="transaction-row-cell">{formatCurrency(transaction.amount)}</div>
+    <div className="transaction-row-cell">{transaction.description}</div>
+    <div className="transaction-row-cell">{transaction.userDescription}</div>
+    <div className="transaction-row-cell">{comment}</div>
+  </div>
+  {isExpanded && (
+    <div className="transaction-row-expanded">
+      <TextField
+        fullWidth
+        multiline
+        rows={2}
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+      />
+      <Button onClick={handleSaveComment}>Save</Button>
+      <Button onClick={() => setIsExpanded(false)}>Cancel</Button>
+    </div>
+  )}
+</div>
+*/
