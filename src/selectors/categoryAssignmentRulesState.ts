@@ -9,3 +9,8 @@ export const getCategoryAssignmentRules = createSelector(
   [categoryAssignmentRulesState],
   (categoryAssignmentRulesState: CategoryAssignmentRulesState): CategoryAssignmentRule[] => categoryAssignmentRulesState.categoryAssignmentRules,
 );
+
+export const getCategoryAssignmentRuleById = createSelector(
+  [getCategoryAssignmentRules, (_: TrackerState, id: string) => id],
+  (categoryAssignmentRules: CategoryAssignmentRule[], id: string): CategoryAssignmentRule | undefined => categoryAssignmentRules.find(category => category.id === id)
+);

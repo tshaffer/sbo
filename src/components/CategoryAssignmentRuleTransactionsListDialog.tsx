@@ -4,9 +4,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { CreditCardTransaction, useDispatch } from '../types';
+import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector } from '../types';
 import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
 import { formatCurrency, formatDate } from '../utilities';
+import { getCategoryAssignmentRuleById } from '../selectors';
 
 export interface CategoryAssignmentRuleTransactionsListDialogProps {
   open: boolean;
@@ -20,6 +21,7 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
 
   const { open, categoryAssignmentRuleId, onClose } = props;
 
+  const categoryAssignmentRule: CategoryAssignmentRule = useTypedSelector(state => getCategoryAssignmentRuleById(state, categoryAssignmentRuleId))!;
   const [transactions, setTransactions] = React.useState<CreditCardTransaction[]>([]);
 
   if (!open) {
