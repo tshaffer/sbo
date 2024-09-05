@@ -18,6 +18,9 @@ import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
 
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
   transactionSelected: boolean;
@@ -40,6 +43,16 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     ? getCategoryById(state, getOverrideCategoryId(state, props.creditCardTransactionId))!.name
     : '');
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
+
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
+
+  const handleSaveComment = () => {
+    console.log('handleSaveComment: ', comment);
+    // onSaveComment(transaction.id, comment);
+    setIsEditing(false);
+  };
+
 
   const handleEditTransaction = () => {
     setShowEditTransactionDialog(true);
@@ -126,6 +139,29 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.category}</div>
+
+      <div className="credit-card-statement-grid-table-cell">
+        {isEditing ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+              type="text"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <IconButton onClick={handleSaveComment}>
+              <SaveIcon />
+            </IconButton>
+            <IconButton onClick={() => setIsEditing(false)}>
+              <CancelIcon />
+            </IconButton>
+          </div>
+        ) : (
+          <div onClick={() => setIsEditing(true)}>
+            {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
+          </div>
+        )}
+      </div>
+
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
           <AssignmentIcon />

@@ -121,6 +121,7 @@ const CreditCardStatementTable: React.FC = () => {
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('userDescription')}>User Description{renderSortIndicator('userDescription')}</div>
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('category')}>Category from statement{renderSortIndicator('category')}</div>
+          <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('category')}>Comment{renderSortIndicator('comment')}</div>
           <div className="credit-card-statement-grid-table-cell"></div>
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryAssignmentRule')}>Category (rule){renderSortIndicator('categoryNameFromCategoryAssignmentRule')}</div>
           <div className="credit-card-statement-grid-table-cell" onClick={() => handleSort('patternFromCategoryAssignmentRule')}>Pattern{renderSortIndicator('patternFromCategoryAssignmentRule')}</div>

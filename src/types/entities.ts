@@ -23,6 +23,7 @@ export interface Transaction {
   consensusImportance?: number;
   loriImportance?: number;
   tedImportance?: number;
+  comment?: string;
 }
 
 export interface CreditCardTransaction extends Transaction {
