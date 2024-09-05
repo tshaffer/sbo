@@ -298,6 +298,19 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     };
   });
 
+  const getShowCategoryAssignmentRuleTransactionsListDialog = (): JSX.Element | null => {
+    if (showCategoryAssignmentRuleTransactionsListDialog) {
+      return (
+        <CategoryAssignmentRuleTransactionsListDialog
+          open={showCategoryAssignmentRuleTransactionsListDialog}
+          categoryAssignmentRuleId={categoryAssignmentRuleId}
+          onClose={handleCloseCategoryAssignmentRuleTransactionsListDialog}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <React.Fragment>
       <AddCategoryAssignmentRuleDialog
@@ -306,11 +319,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
         onClose={handleCloseAddRuleDialog}
         onSaveRule={handleSaveRule}
       />
-      <CategoryAssignmentRuleTransactionsListDialog
-        open={showCategoryAssignmentRuleTransactionsListDialog}
-        categoryAssignmentRuleId={categoryAssignmentRuleId}
-        onClose={handleCloseCategoryAssignmentRuleTransactionsListDialog}
-      />
+      {getShowCategoryAssignmentRuleTransactionsListDialog()}
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
         <DownloadCategoryAssignmentRules />

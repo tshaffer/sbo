@@ -25,18 +25,34 @@ export interface Transaction {
   tedImportance?: number;
 }
 
-export interface SplitTransaction {
-  id: string;
-  parentTransactionId: string;
-  amount: number;
-  userDescription: string;
-}
-
 export interface CreditCardTransaction extends Transaction {
   postDate: string;
   category: string;
   description: string;
   type: string;
+}
+
+export interface CheckingAccountTransaction extends Transaction {
+  transactionType: string;
+  name: string;
+  memo: string;
+  checkingAccountTransactionType: CheckingAccountTransactionType;
+  isSplit: boolean;
+  parentTransactionId: string;
+}
+
+export interface CheckTransaction extends CheckingAccountTransaction {
+  checkNumber: string;
+  payee: string;
+}
+
+export type BankTransaction = CreditCardTransaction | CheckingAccountTransaction;
+
+export interface SplitTransaction {
+  id: string;
+  parentTransactionId: string;
+  amount: number;
+  userDescription: string;
 }
 
 export interface CreditCardTransactionRowInStatementTableProperties {
@@ -64,22 +80,6 @@ export interface CheckingAccountTransactionRowInStatementTableProperties {
   categorizedTransactionName: string;
   checkingAccountTransaction: CheckingAccountTransaction;
 }
-
-export interface CheckingAccountTransaction extends Transaction {
-  transactionType: string;
-  name: string;
-  memo: string;
-  checkingAccountTransactionType: CheckingAccountTransactionType;
-  isSplit: boolean;
-  parentTransactionId: string;
-}
-
-export interface CheckTransaction extends CheckingAccountTransaction {
-  checkNumber: string;
-  payee: string;
-}
-
-export type BankTransaction = CreditCardTransaction | CheckingAccountTransaction;
 
 export interface CategorizedTransaction {
   bankTransaction: BankTransaction;

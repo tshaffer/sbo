@@ -4,7 +4,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Button, DialogActions, DialogContent } from '@mui/material';
-import { useDispatch } from '../types';
+import { CreditCardTransaction, useDispatch } from '../types';
 import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
 
 export interface CategoryAssignmentRuleTransactionsListDialogProps {
@@ -19,14 +19,18 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
 
   const { open, categoryAssignmentRuleId, onClose } = props;
 
+  const [transactions, setTransactions] = React.useState<CreditCardTransaction[]>([]);
+
   if (!open) {
     return null;
   }
 
   React.useEffect(() => {
-    dispatch(getTransactionsByCategoryAssignmentRuleId(categoryAssignmentRuleId));
+    const promise: Promise<CreditCardTransaction[]> = dispatch(getTransactionsByCategoryAssignmentRuleId(categoryAssignmentRuleId));
+    promise.then((transactions: CreditCardTransaction[]) => {
+      setTransactions(transactions);
+    });
   }, []);
-
 
   const handleClose = () => {
     onClose();

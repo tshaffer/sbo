@@ -256,7 +256,7 @@ export const getTransactionsByCategoryAssignmentRuleId = (categoryAssignmentRule
       .then((response: any) => {
         const transactions: Transaction[] = response.data;
         console.log('getTransactionsByCategoryAssignmentRuleId: ', transactions);
-        return;
+        return transactions;
       })
   }
 };
