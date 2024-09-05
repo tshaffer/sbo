@@ -138,8 +138,6 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       {renderEditIcon()}
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
-      <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.category}</div>
-
       <div className="credit-card-statement-grid-table-cell">
         {isEditing ? (
           <div style={{ display: "flex", alignItems: "center" }}>
@@ -161,15 +159,11 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
           </div>
         )}
       </div>
-
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
           <AssignmentIcon />
         </IconButton>
       </Tooltip>
-      <div className="credit-card-statement-grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
-      <div className="credit-card-statement-grid-table-cell">{patternFromCategoryAssignmentRule}</div>
-      <div className="credit-card-statement-grid-table-cell">{categoryNameFromCategoryOverride}</div>
       <Tooltip title="Category Override">
         <IconButton
           onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
