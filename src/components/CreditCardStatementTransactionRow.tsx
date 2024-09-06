@@ -38,7 +38,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const creditCardTransaction: CreditCardTransaction = useTypedSelector(state => getTransactionById(state, props.creditCardTransactionId)! as CreditCardTransaction);
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
 
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [isEditingComment, setIsEditingComment] = React.useState(false);
   const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
 
   const handleEditTransaction = () => {
@@ -74,7 +74,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     };
     dispatch(updateTransaction(updatedTransaction));
 
-    setIsEditing(false);
+    setIsEditingComment(false);
   };
 
   const handleSaveRule = (pattern: string, categoryId: string): void => {
@@ -123,7 +123,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const renderCommentColumn = (creditCardTransaction: CreditCardTransaction): JSX.Element => {
     return (
       <div className="credit-card-statement-grid-table-cell">
-        {isEditing ? (
+        {isEditingComment ? (
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               type="text"
@@ -133,12 +133,12 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
             <IconButton onClick={() => handleSaveComment(creditCardTransaction)}>
               <SaveIcon />
             </IconButton>
-            <IconButton onClick={() => setIsEditing(false)}>
+            <IconButton onClick={() => setIsEditingComment(false)}>
               <CancelIcon />
             </IconButton>
           </div>
         ) : (
-          <div onClick={() => setIsEditing(true)}>
+          <div onClick={() => setIsEditingComment(true)}>
             {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
           </div>
         )}
