@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import '../styles/Grid.css';
 
-import { isNil } from 'lodash';
+import { cloneDeep, isNil } from 'lodash';
 
-import { CheckingAccountTransactionRowInStatementTableProperties } from '../types';
-import { getCheckingAccountTransactionRowInStatementTableProperties } from '../selectors';
+import { CheckingAccountStatement, CheckingAccountTransactionRowInStatementTableProperties, useDispatch } from '../types';
+import { getCheckingAccountStatements, getCheckingAccountTransactionRowInStatementTableProperties } from '../selectors';
 
 import CheckingAccountStatementTransactionRow from './CheckingAccountStatementTransactionRow';
 
 import { useTypedSelector } from '../types';
+import { loadTransactions } from '../controllers';
+import { Box, Button } from '@mui/material';
 
 const CheckingAccountStatementTable: React.FC = () => {
 
   const { id } = useParams<{ id: string }>();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const checkingAccountStatementId: string = id!;
 
@@ -23,8 +27,29 @@ const CheckingAccountStatementTable: React.FC = () => {
   const [sortColumn, setSortColumn] = useState<string>('transactionDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  if (isNil(checkingAccountStatementId)) {
-    return null;
+  const statements: CheckingAccountStatement[] = useTypedSelector(state => getCheckingAccountStatements(state));
+  let sortedStatements = cloneDeep(statements);
+  sortedStatements = sortedStatements.sort((a, b) => b.endDate.localeCompare(a.endDate));
+
+  function findStatementIndexById(statements: CheckingAccountStatement[], id: string): number {
+    return statements.findIndex(statement => statement.id === id);
+  }
+
+  const indexOfId: number = findStatementIndexById(sortedStatements, id!);
+  if (indexOfId === -1) {
+    throw new Error(`Statement with id ${id} not found`);
+  }
+
+  let nextStatement: CheckingAccountStatement | undefined = undefined;
+  let previousStatement: CheckingAccountStatement | undefined = undefined;
+
+  if (indexOfId === 0) {
+    nextStatement = sortedStatements[indexOfId + 1];
+  } else if (indexOfId === sortedStatements.length - 1) {
+    previousStatement = sortedStatements[indexOfId - 1];
+  } else {
+    previousStatement = sortedStatements[indexOfId - 1];
+    nextStatement = sortedStatements[indexOfId + 1];
   }
 
   const handleSort = (column: string) => {
@@ -54,8 +79,29 @@ const CheckingAccountStatementTable: React.FC = () => {
     return sortOrder === 'asc' ? ' ▲' : ' ▼';
   };
 
+  const navigateToStatement = (checkingAccountStatement: CheckingAccountStatement) => {
+    dispatch(loadTransactions(checkingAccountStatement.startDate, checkingAccountStatement.endDate, false, true))
+      .then(() => {
+        navigate(`/statements/checking-account/${checkingAccountStatement.id}`);
+      });
+  };
+
   return (
     <React.Fragment>
+      <Box display="flex" justifyContent="space-between" mb={2} >
+        <Button
+          onClick={() => navigateToStatement(previousStatement!)}
+          disabled={!previousStatement}
+        >
+          Previous Statement
+        </Button>
+        < Button
+          onClick={() => navigateToStatement(nextStatement!)}
+          disabled={!nextStatement}
+        >
+          Next Statement
+        </Button>
+      </Box>
       <div className="checking-account-statement-grid-table-container">
         <div className="grid-table-header">
           <div className="grid-table-cell"></div>
