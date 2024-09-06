@@ -47,9 +47,14 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const [isEditing, setIsEditing] = React.useState(false);
   const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
 
-  const handleSaveComment = () => {
+  const handleSaveComment = (creditCardTransaction: CreditCardTransaction) => {
     console.log('handleSaveComment: ', comment);
-    // onSaveComment(transaction.id, comment);
+    const updatedTransaction: CreditCardTransaction = {
+      ...creditCardTransaction,
+      comment,
+    };
+    dispatch(updateTransaction(updatedTransaction));
+
     setIsEditing(false);
   };
 
@@ -111,6 +116,32 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     );
   }
 
+  const renderCommentColumn = (creditCardTransaction: CreditCardTransaction): JSX.Element => {
+    return (
+      <div className="credit-card-statement-grid-table-cell">
+        {isEditing ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+              type="text"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <IconButton onClick={() => handleSaveComment(creditCardTransaction)}>
+              <SaveIcon />
+            </IconButton>
+            <IconButton onClick={() => setIsEditing(false)}>
+              <CancelIcon />
+            </IconButton>
+          </div>
+        ) : (
+          <div onClick={() => setIsEditing(true)}>
+            {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <React.Fragment>
       <AddCategoryAssignmentRuleDialog
@@ -138,27 +169,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       {renderEditIcon()}
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
-      <div className="credit-card-statement-grid-table-cell">
-        {isEditing ? (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <input
-              type="text"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <IconButton onClick={handleSaveComment}>
-              <SaveIcon />
-            </IconButton>
-            <IconButton onClick={() => setIsEditing(false)}>
-              <CancelIcon />
-            </IconButton>
-          </div>
-        ) : (
-          <div onClick={() => setIsEditing(true)}>
-            {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
-          </div>
-        )}
-      </div>
+      {renderCommentColumn(creditCardTransaction)}
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
           <AssignmentIcon />
