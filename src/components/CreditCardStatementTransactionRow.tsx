@@ -116,6 +116,18 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     );
   }
 
+  const renderRuleIcon = (): JSX.Element => {
+    return (
+      <div className="credit-card-statement-grid-table-cell">
+        <Tooltip title="Edit rule">
+          <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
+            <AssignmentIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+    );
+  }
+
   const renderCommentColumn = (creditCardTransaction: CreditCardTransaction): JSX.Element => {
     return (
       <div className="credit-card-statement-grid-table-cell">
@@ -166,14 +178,10 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="credit-card-statement-grid-table-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
       <div className="credit-card-statement-grid-table-cell">{formatCurrency(creditCardTransaction.amount)}</div>
       {renderEditIcon()}
+      {renderRuleIcon()}
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
       {renderCommentColumn(creditCardTransaction)}
-      <Tooltip title="Edit rule">
-        <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
-          <AssignmentIcon />
-        </IconButton>
-      </Tooltip>
       <Tooltip title="Category Override">
         <IconButton
           onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
