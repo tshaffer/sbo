@@ -14,6 +14,9 @@ import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
 import { Tooltip, IconButton } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, splitTransaction, updateTransaction } from '../controllers';
 import SplitTransactionDialog from './SplitTransactionDialog';
@@ -35,6 +38,9 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     ? categoryById!.name
     : '';
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(props.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
+
+  const [isEditingComment, setIsEditingComment] = React.useState(false);
+  const [comment, setComment] = React.useState(props.checkingAccountTransaction.comment || "");
 
   const dispatch = useDispatch();
 
@@ -68,6 +74,16 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 
   const handleEditTransaction = () => {
     setShowEditTransactionDialog(true);
+  };
+
+  const handleSaveComment = (checkingAccountTransaction: CheckingAccountTransaction) => {
+    const updatedTransaction: CheckingAccountTransaction = {
+      ...checkingAccountTransaction,
+      comment,
+    };
+    dispatch(updateTransaction(updatedTransaction));
+
+    setIsEditingComment(false);
   };
 
   const handleSaveTransaction = (transaction: Transaction) => {
@@ -150,6 +166,59 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     return null;
   }
 
+  const renderSplitTransactionIcon = (): JSX.Element | null => {
+    return (
+      <div className="grid-table-cell" style={{ marginLeft: '32px' }}>
+        <Tooltip title="Split Transaction" arrow>
+          <span>
+            <IconButton onClick={handleSplitTransaction} disabled={props.checkingAccountTransaction.parentTransactionId !== ''}>
+              <SafetyDividerIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
+      </div>
+
+    );
+  }
+
+  const renderRuleIcon = (): JSX.Element => {
+    return (
+      <div className="credit-card-statement-grid-table-cell">
+        <Tooltip title="Edit rule">
+          <IconButton onClick={() => handleEditRule(props.checkingAccountTransaction)}>
+            <AssignmentIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+    );
+  }
+
+  const renderCommentColumn = (checkingAccountTransaction: CheckingAccountTransaction): JSX.Element => {
+    return (
+      <div className="credit-card-statement-grid-table-cell">
+        {isEditingComment ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+              type="text"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <IconButton onClick={() => handleSaveComment(checkingAccountTransaction)}>
+              <SaveIcon />
+            </IconButton>
+            <IconButton onClick={() => setIsEditingComment(false)}>
+              <CancelIcon />
+            </IconButton>
+          </div>
+        ) : (
+          <div onClick={() => setIsEditingComment(true)}>
+            {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <React.Fragment>
       <SplitTransactionDialog
@@ -172,31 +241,17 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
         onSave={handleSaveTransaction}
       />
 
-      <div className="grid-table-cell" style={{ marginLeft: '32px' }}>
-        <Tooltip title="Split Transaction" arrow>
-          <span>
-            <IconButton onClick={handleSplitTransaction} disabled={props.checkingAccountTransaction.parentTransactionId !== ''}>
-              <SafetyDividerIcon />
-            </IconButton>
-          </span>
-        </Tooltip>
-      </div>
+      {renderSplitTransactionIcon()}
       <div className="grid-table-cell">{formatDate(props.checkingAccountTransaction.transactionDate)}</div>
       <div className="grid-table-cell">{formatCurrency(props.checkingAccountTransaction.amount)}</div>
-      <div className="grid-table-cell">{props.checkingAccountTransaction.name}</div>
       {renderEditIcon()}
+      {renderRuleIcon()}
       <div className="grid-table-cell">{props.checkingAccountTransaction.userDescription}</div>
-      <div className="grid-table-cell">
-        <Tooltip title="Edit rule">
-          <IconButton onClick={() => handleEditRule(props.checkingAccountTransaction)}>
-            <AssignmentIcon />
-          </IconButton>
-        </Tooltip>
-      </div>
       <div className="grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{patternFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{categoryNameFromCategoryOverride}</div>
       <div className="grid-table-cell">{categorizedTransactionName}</div>
+      {renderCommentColumn(props.checkingAccountTransaction)}
       <Tooltip title="Category Override">
         <IconButton
           onClick={() => handleRemoveCategoryOverride(props.checkingAccountTransaction)}
