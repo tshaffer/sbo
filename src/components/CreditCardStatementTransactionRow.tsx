@@ -9,7 +9,7 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 import { CategoryAssignmentRule, CreditCardTransaction, Transaction } from '../types';
-import { getTransactionById, findMatchingRule, MatchingRuleAssignment, categorizeTransaction, getCategories, getCategoryAssignmentRules, getCategoryById, getOverrideCategory, getOverrideCategoryId } from '../selectors';
+import { getTransactionById, categorizeTransaction, getCategories, getCategoryAssignmentRules } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
@@ -36,35 +36,13 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const dispatch = useDispatch();
 
   const creditCardTransaction: CreditCardTransaction = useTypedSelector(state => getTransactionById(state, props.creditCardTransactionId)! as CreditCardTransaction);
-  const matchingRule: MatchingRuleAssignment | null = useTypedSelector(state => findMatchingRule(state, creditCardTransaction));
-  const categoryNameFromCategoryAssignmentRule: string = matchingRule ? matchingRule.category.name : '';
-  const patternFromCategoryAssignmentRule: string | null = matchingRule ? matchingRule.pattern : null;
-  const categoryNameFromCategoryOverride = useTypedSelector(state => getOverrideCategory(state, props.creditCardTransactionId)
-    ? getCategoryById(state, getOverrideCategoryId(state, props.creditCardTransactionId))!.name
-    : '');
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
 
   const [isEditing, setIsEditing] = React.useState(false);
   const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
 
-  const handleSaveComment = (creditCardTransaction: CreditCardTransaction) => {
-    console.log('handleSaveComment: ', comment);
-    const updatedTransaction: CreditCardTransaction = {
-      ...creditCardTransaction,
-      comment,
-    };
-    dispatch(updateTransaction(updatedTransaction));
-
-    setIsEditing(false);
-  };
-
-
   const handleEditTransaction = () => {
     setShowEditTransactionDialog(true);
-  };
-
-  const handleSaveTransaction = (transaction: Transaction) => {
-    dispatch(updateTransaction(transaction));
   };
 
   const handleCloseEditTransactionDialog = () => {
@@ -84,6 +62,20 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     };
     dispatch(updateTransaction(updatedTransaction));
   }
+
+  const handleSaveTransaction = (transaction: Transaction) => {
+    dispatch(updateTransaction(transaction));
+  };
+
+  const handleSaveComment = (creditCardTransaction: CreditCardTransaction) => {
+    const updatedTransaction: CreditCardTransaction = {
+      ...creditCardTransaction,
+      comment,
+    };
+    dispatch(updateTransaction(updatedTransaction));
+
+    setIsEditing(false);
+  };
 
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
