@@ -8,8 +8,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
-import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, Transaction } from '../types';
-import { categorizeTransaction, findMatchingRule, getCategories, getCategoryAssignmentRules, getCategoryById, getOverrideCategory, getOverrideCategoryId, MatchingRuleAssignment } from '../selectors';
+import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, Transaction } from '../types';
+import { categorizeTransaction, getCategories, getCategoryAssignmentRules } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
@@ -30,13 +30,6 @@ export interface CheckingAccountStatementProps {
 
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
 
-  const matchingRule: MatchingRuleAssignment | null = useTypedSelector(state => findMatchingRule(state, props.checkingAccountTransaction));
-  const categoryNameFromCategoryAssignmentRule: string = matchingRule ? matchingRule.category.name : '';
-  const patternFromCategoryAssignmentRule = matchingRule ? matchingRule.pattern : '';
-  const categoryById = useTypedSelector(state => getCategoryById(state, getOverrideCategoryId(state, props.checkingAccountTransaction.id)));
-  const categoryNameFromCategoryOverride = useTypedSelector(state => getOverrideCategory(state, props.checkingAccountTransaction.id))
-    ? categoryById!.name
-    : '';
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(props.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
 
   const [isEditingComment, setIsEditingComment] = React.useState(false);
@@ -247,9 +240,6 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       {renderEditIcon()}
       {renderRuleIcon()}
       <div className="grid-table-cell">{props.checkingAccountTransaction.userDescription}</div>
-      <div className="grid-table-cell">{categoryNameFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{patternFromCategoryAssignmentRule}</div>
-      <div className="grid-table-cell">{categoryNameFromCategoryOverride}</div>
       <div className="grid-table-cell">{categorizedTransactionName}</div>
       {renderCommentColumn(props.checkingAccountTransaction)}
       <Tooltip title="Category Override">

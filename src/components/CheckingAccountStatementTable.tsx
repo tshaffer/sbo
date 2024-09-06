@@ -64,9 +64,6 @@ const CheckingAccountStatementTable: React.FC = () => {
           <div className="grid-table-cell"></div>
           <div className="grid-table-cell"></div>
           <div className="grid-table-cell" onClick={() => handleSort('userDescription')}>Description{renderSortIndicator('userDescription')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryAssignmentRule')}>Category (rule){renderSortIndicator('categoryNameFromCategoryAssignmentRule')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('patternFromCategoryAssignmentRule')}>Pattern{renderSortIndicator('patternFromCategoryAssignmentRule')}</div>
-          <div className="grid-table-cell" onClick={() => handleSort('categoryNameFromCategoryOverride')}>Category (override){renderSortIndicator('categoryNameFromCategoryOverride')}</div>
           <div className="grid-table-cell" onClick={() => handleSort('categorizedTransactionName')}>Category{renderSortIndicator('categorizedTransactionName')}</div>
           <div className="grid-table-cell" onClick={() => handleSort('comment')}>Comment{renderSortIndicator('comment')}</div>
           <div className="grid-table-cell"></div>
