@@ -13,7 +13,7 @@ import { getTransactionById, findMatchingRule, MatchingRuleAssignment, categoriz
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
-import { Tooltip, IconButton, Checkbox } from '@mui/material';
+import { Tooltip, IconButton, Checkbox, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
@@ -46,6 +46,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
 
   const [isEditing, setIsEditing] = React.useState(false);
   const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const handleSaveComment = () => {
     console.log('handleSaveComment: ', comment);
@@ -138,27 +139,34 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       {renderEditIcon()}
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
+
+
       <div className="credit-card-statement-grid-table-cell">
-        {isEditing ? (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <input
-              type="text"
+        <Tooltip title="Edit Comment">
+          <IconButton onClick={() => setIsModalOpen(true)}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          <DialogTitle>Edit Comment</DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-            <IconButton onClick={handleSaveComment}>
-              <SaveIcon />
-            </IconButton>
-            <IconButton onClick={() => setIsEditing(false)}>
-              <CancelIcon />
-            </IconButton>
-          </div>
-        ) : (
-          <div onClick={() => setIsEditing(true)}>
-            {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
-          </div>
-        )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveComment} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
+
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(creditCardTransaction)}>
           <AssignmentIcon />
