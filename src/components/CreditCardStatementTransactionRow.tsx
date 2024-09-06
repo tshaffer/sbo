@@ -18,9 +18,6 @@ import EditTransactionDialog from './EditTransactionDialog';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
 
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
-
 export interface CreditCardStatementProps {
   creditCardTransactionId: string;
   transactionSelected: boolean;
@@ -28,6 +25,18 @@ export interface CreditCardStatementProps {
 }
 
 const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (props: CreditCardStatementProps) => {
+
+  const [transactions, setTransactions] = React.useState([
+    {
+      id: '1',
+      transactionDate: '2023-11-01',
+      amount: 150.00,
+      description: 'Grocery Shopping',
+      userDescription: 'Weekly groceries at Walmart',
+      comment: '', // Initial comment
+    },
+    // other transactions...
+  ]);
 
   const [transactionId, setTransactionId] = React.useState('');
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
@@ -44,14 +53,25 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     : '');
   const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
 
-  const [isEditing, setIsEditing] = React.useState(false);
   const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [selectedTransaction, setSelectedTransaction] = React.useState(null);
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedTransaction(null);
+    setComment('');
+  };
 
   const handleSaveComment = () => {
-    console.log('handleSaveComment: ', comment);
-    // onSaveComment(transaction.id, comment);
-    setIsEditing(false);
+    if (selectedTransaction) {
+      setTransactions(transactions.map(transaction =>
+        transaction.id === (selectedTransaction as any).id
+          ? { ...transaction, comment: comment }
+          : transaction
+      ));
+    }
+    handleCloseDialog();
   };
 
 
@@ -143,28 +163,10 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
 
       <div className="credit-card-statement-grid-table-cell">
         <Tooltip title="Edit Comment">
-          <IconButton onClick={() => setIsModalOpen(true)}>
+          <IconButton onClick={() => setIsDialogOpen(true)}>
             <EditIcon />
           </IconButton>
         </Tooltip>
-        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <DialogTitle>Edit Comment</DialogTitle>
-          <DialogContent>
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSaveComment} color="primary">
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
       </div>
 
       <Tooltip title="Edit rule">
@@ -180,6 +182,29 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
           {creditCardTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
         </IconButton>
       </Tooltip>
+
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>Edit Comment</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Enter your comment"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSaveComment} color="primary" variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </React.Fragment>
   );
 }
