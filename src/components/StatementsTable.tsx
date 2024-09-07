@@ -31,7 +31,8 @@ const StatementsTable = <T extends BaseStatement>({
   const handleStatementClicked = (statement: T) => {
     dispatch(onLoadTransactions(statement.startDate, statement.endDate))
       .then(() => {
-        navigate(`/statements/${statement.id}`);
+        // navigate(`/statements/${statement.id}`);
+        navigate(`/credit-card/${statement.id}`);
       });
   };
 
