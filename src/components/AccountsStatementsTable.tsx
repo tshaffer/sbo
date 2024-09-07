@@ -24,6 +24,7 @@ const CheckingAccountStatementsTable: React.FC = () => {
       statements={statements}
       onLoadTransactions={(startDate, endDate) => loadTransactions(startDate, endDate, false, true)}
       gridTemplateColumns="40px 1fr 1fr 1fr 1fr 1fr 1fr 1fr"
+      additionalColumnHeaders={['# of Checks', '# of ATM Withdrawals']}
       additionalColumns={(statement) => [
         <span key="checkCount">{statement.checkCount}</span>,
         <span key="atmWithdrawalCount">{statement.atmWithdrawalCount}</span>,

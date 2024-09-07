@@ -9,14 +9,16 @@ interface StatementsTableProps<T extends BaseStatement> {
   statements: T[];
   onLoadTransactions: (startDate: string, endDate: string) => TrackerVoidPromiseThunkAction;
   additionalColumns?: (statement: T) => React.ReactNode[];
+  additionalColumnHeaders?: string[];
   gridTemplateColumns: string;
 }
 
-const StatementsTable = <T extends BaseStatement>({ 
-  statements, 
-  onLoadTransactions, 
-  additionalColumns = () => [], 
-  gridTemplateColumns 
+const StatementsTable = <T extends BaseStatement>({
+  statements,
+  onLoadTransactions,
+  additionalColumns = () => [],
+  additionalColumnHeaders = [],
+  gridTemplateColumns
 }: StatementsTableProps<T>) => {
 
   const navigate = useNavigate();
@@ -44,8 +46,8 @@ const StatementsTable = <T extends BaseStatement>({
         <div className="grid-table-cell">End Date</div>
         <div className="grid-table-cell">Transaction Count</div>
         <div className="grid-table-cell">Net Debits</div>
-        {additionalColumns(sortedStatements[0]).map((_, idx) => (
-          <div key={idx} className="grid-table-cell"></div>
+        {additionalColumnHeaders.map((header, idx) => (
+          <div key={idx} className="grid-table-cell">{header}</div>
         ))}
       </div>
       <div className="grid-table-body">
