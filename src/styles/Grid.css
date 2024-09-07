@@ -1,10 +1,12 @@
 .grid-table-container {
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr;
-  border: 1px solid #ccc;
   width: 100%;
-  /* max-width: 600px; */
   margin: 0 auto;
+  border: 1px solid #ccc;
+  position: relative;
+  max-height: 650px;
+  overflow-y: auto;
 }
 
 .checking-account-grid-table-container {
@@ -17,24 +19,23 @@
 }
 
 .grid-table-header {
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #ccc;
   display: contents;
-  /* Make the header part of the grid */
+}
+
+.grid-table-header .grid-table-cell {
+  position: sticky;
+  top: 0;
+  background-color: #f5f5f5;
+  z-index: 2; /* Ensure the header is above the scrolling content */
+  border-bottom: 1px solid #ccc;
 }
 
 .grid-table-body {
   display: contents;
-  /* Make the body part of the grid */
-  max-height: 512px;
-  /* Set a fixed height for the table body */
-  overflow-y: auto;
-  /* Add vertical scrollbar */
 }
 
 .grid-table-row {
   display: contents;
-  /* Make the rows part of the grid */
 }
 
 .grid-table-cell {
@@ -74,9 +75,12 @@
 .checking-account-statement-grid-table-container {
   display: grid;
   grid-template-columns: 60px 90px 100px 45px 45px 1fr 1fr 1fr 1fr;
-  border: 1px solid #ccc;
   width: 100%;
   margin: 0 auto;
+  border: 1px solid #ccc;
+  position: relative;
+  max-height: 650px;
+  overflow-y: auto;
 }
 
 .credit-card-statement-grid-table-container {
