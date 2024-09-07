@@ -6,8 +6,7 @@ import { store } from '../models';
 
 import Layout from './Layout';
 import Statements from './Statements';
-import CheckingAccountStatementsTable from './StatementsTable';
-import CreditCardStatementsTable from './StatementsTable';
+import { CheckingAccountStatementsTable, CreditCardStatementsTable } from './AccountsStatementsTable';
 import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
 import ReportsContent from './ReportsContent';
 import CategoriesContent from './CategoriesContent';
