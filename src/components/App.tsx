@@ -6,13 +6,12 @@ import { store } from '../models';
 
 import Layout from './Layout';
 import Statements from './Statements';
-import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
-import CreditCardStatementsTable from './CreditCardStatementsTable';
-import CreditCardStatementTable from './CreditCardStatementTable';
+import { CheckingAccountStatementsTable, CreditCardStatementsTable } from './AccountsStatementsTable';
 import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
 import ReportsContent from './ReportsContent';
-import CheckingAccountStatementTable from './CheckingAccountStatementTable';
 import CategoriesContent from './CategoriesContent';
+import CreditCardStatementTable from './CreditCardStatementTable';
+import CheckingAccountStatementTable from './CheckingAccountStatementTable';
 
 const router = createBrowserRouter([
   {
