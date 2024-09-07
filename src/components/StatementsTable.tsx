@@ -8,6 +8,7 @@ import { BaseStatement, TrackerVoidPromiseThunkAction, useDispatch } from '../ty
 interface StatementsTableProps<T extends BaseStatement> {
   statements: T[];
   onLoadTransactions: (startDate: string, endDate: string) => TrackerVoidPromiseThunkAction;
+  navigateBasePath: string; // New prop to specify the base path for navigation
   additionalColumns?: (statement: T) => React.ReactNode[];
   additionalColumnHeaders?: string[];
   gridTemplateColumns: string;
@@ -16,6 +17,7 @@ interface StatementsTableProps<T extends BaseStatement> {
 const StatementsTable = <T extends BaseStatement>({
   statements,
   onLoadTransactions,
+  navigateBasePath,
   additionalColumns = () => [],
   additionalColumnHeaders = [],
   gridTemplateColumns
@@ -31,8 +33,7 @@ const StatementsTable = <T extends BaseStatement>({
   const handleStatementClicked = (statement: T) => {
     dispatch(onLoadTransactions(statement.startDate, statement.endDate))
       .then(() => {
-        // navigate(`/statements/${statement.id}`);
-        navigate(`/credit-card/${statement.id}`);
+        navigate(`${navigateBasePath}/${statement.id}`);
       });
   };
 
