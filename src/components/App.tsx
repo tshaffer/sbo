@@ -12,11 +12,6 @@ import ReportsContent from './ReportsContent';
 import CategoriesContent from './CategoriesContent';
 import CreditCardStatementTable from './CreditCardStatementTable';
 import CheckingAccountStatementTable from './CheckingAccountStatementTable';
-import { loadTransactions } from '../controllers/transactions';
-
-const handleLoadTransactions = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): any => {
-  loadTransactions(startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
-}
 
 const router = createBrowserRouter([
   {
@@ -29,7 +24,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: 'credit-card',
-            element: <CreditCardStatementsTable statements={[]} onLoadTransactions={(startDate, endDate) => handleLoadTransactions(startDate, endDate, true, false)} gridTemplateColumns={'40px 1fr 1fr 1fr 1fr 1fr'} />,
+            element: <CreditCardStatementsTable />,
           },
           {
             path: 'credit-card/:id',
@@ -37,7 +32,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'checking-account',
-            element: <CheckingAccountStatementsTable statements={[]} onLoadTransactions={(startDate, endDate) => handleLoadTransactions(startDate, endDate, false, true)} gridTemplateColumns={'40px 1fr 1fr 1fr 1fr 1fr 1fr 1fr'} />,
+            element: <CheckingAccountStatementsTable />,
           },
           {
             path: 'checking-account/:id',
