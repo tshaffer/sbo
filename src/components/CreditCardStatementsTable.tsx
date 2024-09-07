@@ -5,13 +5,12 @@ import '../styles/Grid.css';
 import { cloneDeep, isEmpty } from 'lodash';
 
 import { CreditCardStatement } from '../types';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useTypedSelector } from '../types';
 
 import { formatCurrency, formatDate } from '../utilities';
 import { getCreditCardStatements } from '../selectors';
 import { loadTransactions } from '../controllers/transactions';
-import CreditCardStatementTable from './CreditCardStatementTable';
 
 const CreditCardStatementsTable: React.FC = () => {
 
@@ -69,10 +68,3 @@ const CreditCardStatementsTable: React.FC = () => {
 };
 
 export default CreditCardStatementsTable;
-
-export const CreditCardStatementTableWrapper = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  // return <CreditCardStatementTable creditCardStatementId={id as string} navigate={navigate} />;
-  return <CreditCardStatementTable/>;
-};

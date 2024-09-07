@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../styles/Tracker.css';
+import '../styles/Grid.css';
 
 import { cloneDeep, isEmpty } from 'lodash';
 
@@ -8,9 +8,9 @@ import { CheckingAccountStatement } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useTypedSelector } from '../types';
 
-import { getCheckingAccountStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import { loadTransactions } from '../controllers';
+import { getCheckingAccountStatements } from '../selectors';
+import { loadTransactions } from '../controllers/transactions';
 
 const CheckingAccountStatementsTable: React.FC = () => {
 
@@ -27,7 +27,7 @@ const CheckingAccountStatementsTable: React.FC = () => {
   const handleStatementClicked = (checkingAccountStatement: CheckingAccountStatement) => {
     dispatch(loadTransactions(checkingAccountStatement.startDate, checkingAccountStatement.endDate, false, true))
       .then(() => {
-        navigate(`/statements/checking-account/${checkingAccountStatement.id}`);
+        navigate(`/statements/credit-card/${checkingAccountStatement.id}`);
       });
   }
 
@@ -36,42 +36,40 @@ const CheckingAccountStatementsTable: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div className="table-container">
-        <div className="table-header">
-          <div className="table-row">
-            <div className="table-cell"></div>
-            <div className="table-cell">Name</div>
-            <div className="table-cell">Start Date</div>
-            <div className="table-cell">End Date</div>
-            <div className="table-cell">Transaction Count</div>
-            <div className="table-cell">Net Debits</div>
-            <div className="table-cell"># of checks</div>
-            <div className="table-cell"># of ATM withdrawals</div>
-          </div>
+      <div className="checking-account-grid-table-container">
+        <div className="grid-table-header">
+          <div className="grid-table-cell"></div>
+          <div className="grid-table-cell">Name</div>
+          <div className="grid-table-cell">Start Date</div>
+          <div className="grid-table-cell">End Date</div>
+          <div className="grid-table-cell">Transaction Count</div>
+          <div className="grid-table-cell">Net Debits</div>
+          <div className="grid-table-cell"># of checks</div>
+          <div className="grid-table-cell"># of ATM withdrawals</div>
         </div>
-        <div className="table-body">
+        <div className="grid-table-body">
           {sortedStatements.map((statement: CheckingAccountStatement) => (
             <React.Fragment key={statement.id}>
-              <div className="table-row">
-                <div className="table-cell"></div>
+              <div className="grid-table-row" key={statement.id}>
+                <div className="grid-table-cell"></div>
                 <div
                   className="grid-table-cell-clickable"
                   onClick={() => handleStatementClicked(statement)}
                 >
                   {statement.fileName}
                 </div>
-                <div className="table-cell">{formatDate(statement.startDate)}</div>
-                <div className="table-cell">{formatDate(statement.endDate)}</div>
-                <div className="table-cell">{statement.transactionCount}</div>
-                <div className="table-cell">{formatCurrency(statement.netDebits)}</div>
-                <div className="table-cell">{statement.checkCount}</div>
-                <div className="table-cell">{statement.atmWithdrawalCount}</div>
+                <div className="grid-table-cell">{formatDate(statement.startDate)}</div>
+                <div className="grid-table-cell">{formatDate(statement.endDate)}</div>
+                <div className="grid-table-cell">{statement.transactionCount}</div>
+                <div className="grid-table-cell">{formatCurrency(statement.netDebits)}</div>
+                <div className="grid-table-cell">{statement.checkCount}</div>
+                <div className="grid-table-cell">{statement.atmWithdrawalCount}</div>
               </div>
             </React.Fragment>
           ))}
         </div>
       </div>
-    </React.Fragment >
+    </React.Fragment>
   );
 };
 
