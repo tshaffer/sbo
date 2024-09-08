@@ -235,6 +235,7 @@ const SpendingReportTable: React.FC = () => {
     return flattenRows(sortedRows);
   };
 
+  /*
   const getRows = (allCategoriesExpensesData: CategoryExpensesData[], categoryMenuItems: CategoryMenuItem[]): CategoryExpensesData[] => {
 
     const rows: CategoryExpensesData[] = [];
@@ -314,6 +315,140 @@ const SpendingReportTable: React.FC = () => {
       if (categoryMenuItem.parentId === '' && !processedCategoryIds.has(categoryMenuItem.id)) {
         rows.push(processCategory(categoryMenuItem));
         processedCategoryIds.add(categoryMenuItem.id);
+      }
+    });
+
+    const sortedRows = sortCategoriesRecursively(rows);
+
+    // Flatten the sorted structure for rendering
+    const flattenRows = (sortedRows: CategoryExpensesData[], flatRows: CategoryExpensesData[] = []): CategoryExpensesData[] => {
+      sortedRows.forEach((row) => {
+        flatRows.push(row);
+        if (row.children && row.children.length > 0) {
+          flattenRows(row.children, flatRows);
+        }
+      });
+      return flatRows;
+    };
+
+    return flattenRows(sortedRows);
+  };
+  */
+
+  const getRows = (allCategoriesExpensesData: CategoryExpensesData[], categoryMenuItems: CategoryMenuItem[]): CategoryExpensesData[] => {
+
+    const rows: CategoryExpensesData[] = [];
+    const categoryExpensesMap = new Map<string, number>();
+    let totalTopLevelExpenses = 0;
+
+    // First pass to accumulate the total expenses for each category
+    const getCategoryMenuItemById = (id: string): CategoryMenuItem => {
+      return categoryMenuItems.find(category => category.id === id) as CategoryMenuItem;
+    }
+
+    const getCategoryExpensesDataById = (id: string): CategoryExpensesData => {
+      return allCategoriesExpensesData.find(category => category.id === id) as CategoryExpensesData;
+    }
+
+    const accumulateExpenses = (categoriesExpensesData: CategoryExpensesData): number => {
+      const categoryMenuItem: CategoryMenuItem = getCategoryMenuItemById(categoriesExpensesData.id);
+
+      let totalExpenses = categoriesExpensesData.totalExpenses;
+
+      // Accumulate expenses for child categories
+      categoryMenuItem.children.forEach((subCategory) => {
+        const subCategoryExpensesData = getCategoryExpensesDataById(subCategory.id)
+        totalExpenses += accumulateExpenses(subCategoryExpensesData);
+      });
+
+      // Only add to the map if there are any expenses (direct or from children)
+      // if (totalExpenses > 0 || categoryMenuItem.children.length > 0) {
+      //   categoryExpensesMap.set(categoryMenuItem.id, totalExpenses);
+      // }
+      categoryExpensesMap.set(categoryMenuItem.id, totalExpenses);
+
+      // Accumulate total expenses for top-level categories
+      if (categoryMenuItem.parentId === '') {
+        totalTopLevelExpenses += totalExpenses;
+      }
+
+      return totalExpenses;
+    };
+
+    allCategoriesExpensesData.forEach(categoryExpensesData => accumulateExpenses(categoryExpensesData));
+
+    // Filter out categories with 0 transactions and no descendent transactions
+    const filterCategories = (categoryMenuItem: CategoryMenuItem): boolean => {
+      const categoryTotalExpenses = categoryExpensesMap.get(categoryMenuItem.id) || 0;
+
+      console.log('filterCategories', categoryMenuItem.name, categoryTotalExpenses);
+
+      if (categoryTotalExpenses !== 0) {
+        console.log('categoryTotalExpenses > 0: return true');
+        return true;
+      }
+
+      // Recursively check children
+      for (const subCategory of categoryMenuItem.children) {
+        if (filterCategories(subCategory)) {
+          console.log('recursive call: return true');
+          return true;
+        }
+      }
+
+      console.log('return false');
+      return false;
+    };
+
+    const filteredCategories = categoryMenuItems.filter(categoryMenuItem => filterCategories(categoryMenuItem));
+
+    console.log('filteredCategories', filteredCategories);
+    
+    // Second pass to build rows and calculate percentages
+    const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
+      const transactions = transactionsByCategoryId[category.id] || [];
+      const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
+      const categoryTransactionCount = transactions.length;
+
+      const spaces = '\u00A0'.repeat(level * 8);
+
+      const percentageOfParent = parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0;
+      const percentageOfTotal = parentTotalExpenses === 0 && totalTopLevelExpenses !== 0
+        ? roundTo((categoryTotalExpenses / totalTopLevelExpenses) * 100, 2)
+        : percentageOfParent;
+
+      const categoryRow: CategoryExpensesData = {
+        id: category.id,
+        categoryName: `${spaces}${category.name}`,
+        transactions,
+        totalExpenses: categoryTotalExpenses,
+        transactionCount: categoryTransactionCount,
+        percentageOfTotal: percentageOfTotal,
+        children: []
+      };
+
+      // Process subcategories recursively
+      category.children.forEach((subCategory) => {
+        const subCategoryRow = processCategory(subCategory, level + 1, categoryTotalExpenses);
+        categoryRow.children.push(subCategoryRow);
+      });
+
+      return categoryRow;
+    };
+
+    // // Collect top-level rows, ensuring no duplicate processing of child categories
+    // const processedCategoryIds = new Set<string>();
+    // categoryMenuItems.forEach(categoryMenuItem => {
+    //   if (categoryMenuItem.parentId === '' && !processedCategoryIds.has(categoryMenuItem.id)) {
+    //     rows.push(processCategory(categoryMenuItem));
+    //     processedCategoryIds.add(categoryMenuItem.id);
+    //   }
+    // });
+
+    // Collect top-level rows
+    filteredCategories.forEach(category => {
+      if (category.parentId === '') {
+        rows.push(processCategory(category));
       }
     });
 
