@@ -3,16 +3,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import '../styles/Grid.css';
 
-import { cloneDeep, isNil } from 'lodash';
+import { cloneDeep } from 'lodash';
 
-import { CheckingAccountStatement, CheckingAccountTransactionRowInStatementTableProperties, useDispatch } from '../types';
+import { Box, Button } from '@mui/material';
+
+import { useDispatch } from '../types';
+import { useTypedSelector } from '../types';
+
+import { CheckingAccountStatement, CheckingAccountTransactionRowInStatementTableProperties } from '../types';
+import { loadTransactions } from '../controllers';
 import { getCheckingAccountStatements, getCheckingAccountTransactionRowInStatementTableProperties } from '../selectors';
 
 import CheckingAccountStatementTransactionRow from './CheckingAccountStatementTransactionRow';
-
-import { useTypedSelector } from '../types';
-import { loadTransactions } from '../controllers';
-import { Box, Button } from '@mui/material';
 
 const CheckingAccountStatementTable: React.FC = () => {
 

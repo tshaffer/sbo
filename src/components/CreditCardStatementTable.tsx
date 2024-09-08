@@ -1,14 +1,21 @@
-import { Box, Button } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CreditCardStatement, useDispatch, useTypedSelector } from '../types';
 
-import { CreditCardTransactionRowInStatementTableProperties } from '../types';
-import { getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../selectors';
-import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
-import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
-import { loadTransactions, updateCategoryInTransactions } from '../controllers';
+import '../styles/Grid.css';
+
 import { cloneDeep } from 'lodash';
+
+import { Box, Button } from '@mui/material';
+
+import { useDispatch } from '../types';
+import { useTypedSelector } from '../types';
+
+import { CreditCardStatement, CreditCardTransactionRowInStatementTableProperties } from '../types';
+import { loadTransactions, updateCategoryInTransactions } from '../controllers';
+import { getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../selectors';
+
+import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
+import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
 
 const CreditCardStatementTable: React.FC = (): any => {
 
