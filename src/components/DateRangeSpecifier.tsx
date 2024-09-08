@@ -102,7 +102,7 @@ const DateRangeSpecifier: React.FC = () => {
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
     dispatch(setReportStatementId(event.target.value));
     const statementId = event.target.value;
-    const statement = creditCardStatements.find((statement: CreditCardStatement) => statement.id === statementId) || checkingAccountStatements.find((statement: CheckingAccountStatement) => statement.id === statementId); 
+    const statement = creditCardStatements.find((statement: CreditCardStatement) => statement.id === statementId) || checkingAccountStatements.find((statement: CheckingAccountStatement) => statement.id === statementId);
     if (statement) {
       dispatch(setStartDate(statement.startDate));
       dispatch(setEndDate(statement.endDate));
@@ -183,11 +183,11 @@ const DateRangeSpecifier: React.FC = () => {
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <FormControl component="fieldset">
           <RadioGroup row value={dateRangeType} onChange={handleDateOptionChange}>
-            <FormControlLabel value={DateRangeType.SinceRetirement} control={<Radio />} label="Since Retirement" sx={{ maxHeight: '32px' }} />
-            <FormControlLabel value={DateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
-            <FormControlLabel value={DateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.DateRange} control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={DateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={DateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={DateRangeType.SinceRetirement} control={<Radio />} label="Since Retirement" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
           </RadioGroup>
         </FormControl>

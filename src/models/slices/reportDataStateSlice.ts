@@ -7,7 +7,7 @@ import {
 import { getCurrentDate, getRetirementDate } from '../../utilities';
 
 const initialState: ReportDataState = {
-  dateRangeType: DateRangeType.SinceRetirement,
+  dateRangeType: DateRangeType.YearToDate,
   startDate: getRetirementDate(),
   endDate: getCurrentDate(),
   generatedReportStartDate: new Date().toISOString().split('T')[0],
