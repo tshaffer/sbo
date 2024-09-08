@@ -377,33 +377,57 @@ const SpendingReportTable: React.FC = () => {
 
     allCategoriesExpensesData.forEach(categoryExpensesData => accumulateExpenses(categoryExpensesData));
 
-    // Filter out categories with 0 transactions and no descendent transactions
-    const filterCategories = (categoryMenuItem: CategoryMenuItem): boolean => {
+    // // Filter out categories with 0 transactions and no descendent transactions
+    // const filterCategories = (categoryMenuItem: CategoryMenuItem): boolean => {
+    //   const categoryTotalExpenses = categoryExpensesMap.get(categoryMenuItem.id) || 0;
+
+    //   console.log('filterCategories', categoryMenuItem.name, categoryTotalExpenses);
+
+    //   if (categoryTotalExpenses !== 0) {
+    //     console.log('categoryTotalExpenses > 0: return true');
+    //     return true;
+    //   }
+
+    //   // Recursively check children
+    //   for (const subCategory of categoryMenuItem.children) {
+    //     if (filterCategories(subCategory)) {
+    //       console.log('recursive call: return true');
+    //       return true;
+    //     }
+    //   }
+
+    //   console.log('return false');
+    //   return false;
+    // };
+
+    // const filteredCategories = categoryMenuItems.filter(categoryMenuItem => filterCategories(categoryMenuItem));
+
+    // Filter out categories with 0 transactions and no descendant transactions
+    const filterCategories = (categoryMenuItem: CategoryMenuItem): CategoryMenuItem | null => {
       const categoryTotalExpenses = categoryExpensesMap.get(categoryMenuItem.id) || 0;
 
-      console.log('filterCategories', categoryMenuItem.name, categoryTotalExpenses);
-
       if (categoryTotalExpenses !== 0) {
-        console.log('categoryTotalExpenses > 0: return true');
-        return true;
+        // Recursively filter the children
+        const filteredChildren = categoryMenuItem.children
+          .map(subCategory => filterCategories(subCategory))
+          .filter(subCategory => subCategory !== null) as CategoryMenuItem[];
+
+        return {
+          ...categoryMenuItem,
+          children: filteredChildren,
+        };
       }
 
-      // Recursively check children
-      for (const subCategory of categoryMenuItem.children) {
-        if (filterCategories(subCategory)) {
-          console.log('recursive call: return true');
-          return true;
-        }
-      }
-
-      console.log('return false');
-      return false;
+      // If the category has no transactions and no valid descendants, filter it out
+      return null;
     };
 
-    const filteredCategories = categoryMenuItems.filter(categoryMenuItem => filterCategories(categoryMenuItem));
+    const filteredCategories = categoryMenuItems
+      .map(category => filterCategories(category))
+      .filter(category => category !== null) as CategoryMenuItem[];
 
     console.log('filteredCategories', filteredCategories);
-    
+
     // Second pass to build rows and calculate percentages
     const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
       const transactions = transactionsByCategoryId[category.id] || [];
