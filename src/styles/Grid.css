@@ -71,10 +71,9 @@
   background-color: #e0e0e0; /* Slightly darker gray background on focus */
 }
 
-/*   grid-template-columns: 60px 90px 100px 1fr 40px 1fr 40px 1fr 1fr 1fr 1fr 1fr; */
 .checking-account-statement-grid-table-container {
   display: grid;
-  grid-template-columns: 60px 90px 100px 45px 45px 1fr 1fr 1fr 1fr;
+  grid-template-columns: 60px 90px 100px 45px 45px 1.75fr .5fr .5fr 60px;
   width: 100%;
   margin: 0 auto;
   border: 1px solid #ccc;
