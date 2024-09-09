@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useTypedSelector } from '../types';
+import { Statement, useDispatch, useTypedSelector } from '../types';
 import { useParams } from 'react-router-dom';
 import { getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../selectors';
 import { CreditCardStatement, CreditCardTransactionRowInStatementTableProperties } from '../types';
@@ -11,8 +11,8 @@ const CreditCardTransactionsTable: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
 
-  const statements = useTypedSelector(getCreditCardStatements);
-  const transactions = useTypedSelector(state => getCreditCardTransactionRowInStatementTableProperties(state, id!));
+  const statements: Statement[] = useTypedSelector(getCreditCardStatements);
+  const transactions: CreditCardTransactionRowInStatementTableProperties[] = useTypedSelector(state => getCreditCardTransactionRowInStatementTableProperties(state, id!));
 
   const handleLoadTransactions = (startDate: string, endDate: string) => {
     return dispatch(loadTransactions(startDate, endDate, true, false));

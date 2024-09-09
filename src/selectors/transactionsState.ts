@@ -189,45 +189,53 @@ export const getCategoryByTransactionId = createSelector(
 // Non Memoized selectors
 export const getCreditCardTransactionRowInStatementTableProperties = (state: TrackerState, statementId: string): CreditCardTransactionRowInStatementTableProperties[] => {
   const creditCardTransactions: CreditCardTransaction[] = getTransactionsByStatementId(state, statementId) as CreditCardTransaction[];
-  return creditCardTransactions.map((creditCardTransaction: CreditCardTransaction) => {
-    const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, creditCardTransaction);
-    return {
-      id: creditCardTransaction.id,
-      transactionDate: creditCardTransaction.transactionDate,
-      amount: creditCardTransaction.amount,
-      description: creditCardTransaction.description,
-      userDescription: creditCardTransaction.userDescription,
-      category: creditCardTransaction.category,
-
-      categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
-      patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
-      categoryNameFromCategoryOverride: getOverrideCategory(state, creditCardTransaction.id)
-        ? getCategoryById(state, getOverrideCategoryId(state, creditCardTransaction.id))!.name
-        : '',
-      categorizedTransactionName: categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
-    };
+  const rows: CreditCardTransactionRowInStatementTableProperties[] = [];
+  creditCardTransactions.forEach((creditCardTransaction: CreditCardTransaction) => {
+    if (creditCardTransaction.category.toLowerCase() !== 'false') {
+      const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, creditCardTransaction);
+      rows.push({
+        id: creditCardTransaction.id,
+        transactionDate: creditCardTransaction.transactionDate,
+        amount: creditCardTransaction.amount,
+        description: creditCardTransaction.description,
+        userDescription: creditCardTransaction.userDescription,
+        category: creditCardTransaction.category,
+        categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
+        patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
+        categoryNameFromCategoryOverride: getOverrideCategory(state, creditCardTransaction.id)
+          ? getCategoryById(state, getOverrideCategoryId(state, creditCardTransaction.id))!.name
+          : '',
+        categorizedTransactionName: categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
+      });
+    }
   });
+  return rows;
 }
 
 export const getCheckingAccountTransactionRowInStatementTableProperties = (state: TrackerState, statementId: string): CheckingAccountTransactionRowInStatementTableProperties[] => {
   const checkingAccountTransactions: CheckingAccountTransaction[] = getTransactionsByStatementId(state, statementId) as CheckingAccountTransaction[];
-  return checkingAccountTransactions.map((checkingAccountTransaction: CheckingAccountTransaction) => {
-    const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, checkingAccountTransaction);
-    return {
-      id: checkingAccountTransaction.id,
-      transactionDate: checkingAccountTransaction.transactionDate,
-      amount: checkingAccountTransaction.amount,
-      name: checkingAccountTransaction.name,
-      userDescription: checkingAccountTransaction.userDescription,
-      categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
-      patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
-      categoryNameFromCategoryOverride: getOverrideCategory(state, checkingAccountTransaction.id)
-        ? getCategoryById(state, getOverrideCategoryId(state, checkingAccountTransaction.id))!.name
-        : '',
-      categorizedTransactionName: categorizeTransaction(checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
-      checkingAccountTransaction,
-    };
+  const rows: CheckingAccountTransactionRowInStatementTableProperties[] = [];
+  checkingAccountTransactions.forEach((checkingAccountTransaction: CheckingAccountTransaction) => {
+    const categorizedTransactionName: string = categorizeTransaction(checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '';
+    if (categorizedTransactionName.toLowerCase() !== 'ignore') {
+      const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, checkingAccountTransaction);
+      rows.push({
+        id: checkingAccountTransaction.id,
+        transactionDate: checkingAccountTransaction.transactionDate,
+        amount: checkingAccountTransaction.amount,
+        name: checkingAccountTransaction.name,
+        userDescription: checkingAccountTransaction.userDescription,
+        categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
+        patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
+        categoryNameFromCategoryOverride: getOverrideCategory(state, checkingAccountTransaction.id)
+          ? getCategoryById(state, getOverrideCategoryId(state, checkingAccountTransaction.id))!.name
+          : '',
+        categorizedTransactionName,
+        checkingAccountTransaction,
+      });
+    }
   });
+  return rows;
 }
 
 export const findMatchingRule = (state: TrackerState, transaction: BankTransaction): MatchingRuleAssignment | null => {
