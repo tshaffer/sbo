@@ -236,7 +236,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 
       {renderSplitTransactionIcon()}
       <div className="grid-table-cell">{formatDate(props.checkingAccountTransaction.transactionDate)}</div>
-      <div className="grid-table-cell">{formatCurrency(props.checkingAccountTransaction.amount)}</div>
+      <div className="grid-table-cell">{formatCurrency(-props.checkingAccountTransaction.amount)}</div>
       {renderEditIcon()}
       {renderRuleIcon()}
       <div className="grid-table-cell">{props.checkingAccountTransaction.userDescription}</div>

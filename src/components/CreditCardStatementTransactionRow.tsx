@@ -168,7 +168,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
         />
       </div>
       <div className="credit-card-statement-grid-table-cell">{formatDate(creditCardTransaction.transactionDate)}</div>
-      <div className="credit-card-statement-grid-table-cell">{formatCurrency(creditCardTransaction.amount)}</div>
+      <div className="credit-card-statement-grid-table-cell">{formatCurrency(-creditCardTransaction.amount)}</div>
       {renderEditIcon()}
       {renderRuleIcon()}
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
