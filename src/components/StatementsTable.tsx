@@ -47,7 +47,7 @@ const StatementsTable = <T extends BaseStatement>({
         <div className="grid-table-cell">Start Date</div>
         <div className="grid-table-cell">End Date</div>
         <div className="grid-table-cell">Transaction Count</div>
-        <div className="grid-table-cell">Net Debits</div>
+        <div className="grid-table-cell">Net</div>
         {additionalColumnHeaders.map((header, idx) => (
           <div key={idx} className="grid-table-cell">{header}</div>
         ))}
