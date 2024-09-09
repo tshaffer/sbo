@@ -7,7 +7,7 @@ import { useDispatch, useTypedSelector } from '../types';
 import { setAppInitialized } from '../models';
 import { loadCategories } from '../controllers/category';
 import { loadCheckingAccountStatements, loadCreditCardStatements } from '../controllers/statements';
-import { loadCategoryAssignmentRules, loadMinMaxTransactionDates } from '../controllers';
+import { loadAllTransactions, loadCategoryAssignmentRules, loadMinMaxTransactionDates } from '../controllers';
 
 const Layout: React.FC = () => {
 
@@ -32,6 +32,9 @@ const Layout: React.FC = () => {
         })
         .then(() => {
           dispatch(loadMinMaxTransactionDates())
+        })
+        .then(() => {
+          dispatch(loadAllTransactions())
         })
         .then(() => {
           console.log('invoke onSetAppInitialized');

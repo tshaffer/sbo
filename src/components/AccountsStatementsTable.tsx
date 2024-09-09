@@ -1,13 +1,11 @@
 import React from 'react';
-import { useTypedSelector } from '../types';
+import { CheckingAccountStatement, Statement, useTypedSelector } from '../types';
 import { getCreditCardStatements, getCheckingAccountStatements } from '../selectors';
 import { loadTransactions } from '../controllers/transactions';
 import StatementsTable from './StatementsTable';
 
 const CreditCardStatementsTable: React.FC = () => {
-
-  const statements = useTypedSelector(getCreditCardStatements);
-  
+  const statements: Statement[] = useTypedSelector(getCreditCardStatements); 
   return (
     <StatementsTable
       statements={statements}
@@ -19,7 +17,7 @@ const CreditCardStatementsTable: React.FC = () => {
 };
 
 const CheckingAccountStatementsTable: React.FC = () => {
-  const statements = useTypedSelector(getCheckingAccountStatements);
+  const statements: CheckingAccountStatement[] = useTypedSelector(getCheckingAccountStatements);
   return (
     <StatementsTable
       statements={statements}

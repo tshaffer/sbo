@@ -123,6 +123,32 @@ const getTransactions = async (startDate: string, endDate: string, includeCredit
 
 }
 
+export const loadAllTransactions = (): TrackerVoidPromiseThunkAction => {
+  return async (dispatch: TrackerDispatch, getState: any) => {
+    const transactionsFromDb: Transactions = await getAllTransactions();
+    dispatch(clearTransactions());
+    const { creditCardTransactions, checkingAccountTransactions } = transactionsFromDb;
+    dispatch(addTransactions(creditCardTransactions as Transaction[]));
+    dispatch(addTransactions(checkingAccountTransactions as Transaction[]));
+    return Promise.resolve();
+  };
+}
+
+const getAllTransactions = async (): Promise<Transactions> => {
+
+  let path = serverUrl
+    + apiUrlFragment
+    + 'allTransactions';
+
+  return axios.get(path)
+    .then((transactionsResponse: any) => {
+      const transactions: Transactions = transactionsResponse.data;
+      return Promise.resolve(transactions);
+    });
+
+}
+
+
 export const updateCheckTransaction = (checkTransaction: CheckTransaction): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
