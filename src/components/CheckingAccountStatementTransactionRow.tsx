@@ -30,7 +30,10 @@ export interface CheckingAccountStatementProps {
 
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
 
-  const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(props.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
+  const categorizedTransactionName: string = useTypedSelector(state => categorizeTransaction(props.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
+  console.log('CheckingAccountStatementTransactionRow: ');
+  console.log(props.checkingAccountTransaction);
+  console.log(categorizedTransactionName);
 
   const [isEditingComment, setIsEditingComment] = React.useState(false);
   const [comment, setComment] = React.useState(props.checkingAccountTransaction.comment || "");

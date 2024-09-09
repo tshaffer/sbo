@@ -14,6 +14,13 @@ const CheckingAccountTransactionsTable: React.FC = () => {
   const statements = useTypedSelector(getCheckingAccountStatements);
   const transactions = useTypedSelector(state => getCheckingAccountTransactionRowInStatementTableProperties(state, id!));
 
+  // find transactions where the transaction.categorizedTransactionName is 'ignore'
+  // and set the transaction.categorizedTransactionName to ''
+
+
+  // const transactionsToIgnore = transactions.filter(transaction => transaction.categorizedTransactionName.toLowerCase() === 'ignore');
+  // debugger;
+
   const handleLoadTransactions = (startDate: string, endDate: string) => {
     return dispatch(loadTransactions(startDate, endDate, false, true));
   };
