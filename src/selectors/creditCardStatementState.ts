@@ -12,13 +12,15 @@ const calculateTransactionNet = (creditCardTransaction: CreditCardTransaction): 
   return 0;
 }
 
-const calculateStatementNet = (state: TrackerState, statement: CreditCardStatement): number => {
-  const statementTransactions: CreditCardTransaction[] = getTransactionsByStatementId(state, statement.id) as CreditCardTransaction[];
-  const net: number = statementTransactions.reduce((net: number, transaction: CreditCardTransaction) => {
-    return net + calculateTransactionNet(transaction);
-  }, 0);
-  return net;
-}
+// Memoized selector to calculate the net for a given statement
+const calculateStatementNet = createSelector(
+  [(state: TrackerState, statement: CreditCardStatement) => getTransactionsByStatementId(state, statement.id)],
+  (transactions: Transaction[]): number => {
+    return transactions.reduce((net, transaction) => {
+      return net + calculateTransactionNet(transaction as CreditCardTransaction);
+    }, 0);
+  }
+);
 
 export const getCreditCardStatements = createSelector(
   [creditCardStatementState, (state: TrackerState) => state], // Pass the full state
@@ -27,7 +29,7 @@ export const getCreditCardStatements = createSelector(
       // Adjust properties of each credit card statement here
       const adjustedStatement = {
         ...statement,
-        netDebits: calculateStatementNet(state, statement), // Calculate netDebits using the full state
+        netDebits: calculateStatementNet(state, statement), // Calculate netDebits using the memoized selector
       };
 
       return adjustedStatement;
