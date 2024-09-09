@@ -37,11 +37,10 @@ const TransactionsTable = <T extends Statement,>({
   // Determine the current statement and its index
   const { id } = useParams<{ id: string }>();
   const sortedStatements = cloneDeep(statements).sort((a, b) => b.endDate.localeCompare(a.endDate));
-  const currentIndex = sortedStatements.findIndex(statement => getStatementId(statement) === id);
 
-  const currentStatement = sortedStatements[currentIndex];
-  const previousStatement = sortedStatements[currentIndex + 1];
-  const nextStatement = sortedStatements[currentIndex - 1];
+  const currentIndex: number = sortedStatements.findIndex(statement => statement.id === id);
+  const previousStatement = sortedStatements[currentIndex - 1];
+  const nextStatement = sortedStatements[currentIndex + 1];
 
   // Sort transactions
   const sortedTransactions = [...transactions].sort((a, b) => {
