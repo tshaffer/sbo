@@ -40,8 +40,9 @@ const CreditCardTransactionsTable: React.FC = () => {
           onTransactionSelectedChanged={handleTransactionSelectedChanged}
         />
       )}
-      columnHeaders={['Date', 'Amount', '', '', 'Description', 'Category', 'Comment']}
-      columnKeys={['transactionDate', 'amount', '', '', 'userDescription', 'categorizedTransactionName', 'comment']}
+      columnHeaders={['', 'Date', 'Amount', '', '', 'Description', 'Category', 'Comment', '']}
+      columnKeys={['', 'transactionDate', 'amount', '', '', 'userDescription', 'categorizedTransactionName', 'comment', '']}
+      tableContainerClassName="credit-card-statement-grid-table-container"
     />
   );
 };

@@ -30,8 +30,9 @@ const CheckingAccountTransactionsTable: React.FC = () => {
           checkingAccountTransaction={transaction.checkingAccountTransaction}
         />
       )}
-      columnHeaders={['Date', 'Amount', '', '', 'Description', 'Category', 'Comment']}
-      columnKeys={['transactionDate', 'amount', '', '', 'userDescription', 'categorizedTransactionName', 'comment']}
+      columnHeaders={['', 'Date', 'Amount', '', '', 'Description', 'Category', 'Comment', '']}
+      columnKeys={['', 'transactionDate', 'amount', '', '', 'userDescription', 'categorizedTransactionName', 'comment', '']}
+      tableContainerClassName="checking-account-statement-grid-table-container"
     />
   );
 };

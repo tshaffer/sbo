@@ -14,6 +14,7 @@ interface TransactionsTableProps<T> {
   renderTransactionRow: (transaction: any, selectedTransactionIds: Set<string>, handleTransactionSelectedChanged: (event: React.ChangeEvent<HTMLInputElement>, transactionId: string, checked: boolean) => void) => React.ReactNode;
   columnHeaders: string[];
   columnKeys: string[];
+  tableContainerClassName: string;
 }
 
 const TransactionsTable = <T extends Statement,>({
@@ -26,6 +27,7 @@ const TransactionsTable = <T extends Statement,>({
   renderTransactionRow,
   columnHeaders,
   columnKeys,
+  tableContainerClassName,
 }: TransactionsTableProps<T>) => {
   const navigate = useNavigate();
   const [sortColumn, setSortColumn] = useState<string>(columnKeys[0]);
@@ -107,7 +109,7 @@ const TransactionsTable = <T extends Statement,>({
           Override Selected
         </Button>
       )}
-      <div className="grid-table-container">
+      <div className={tableContainerClassName}>
         <div className="grid-table-header">
           {columnHeaders.map((header, index) => (
             <div
