@@ -9,15 +9,6 @@
   overflow-y: auto;
 }
 
-.checking-account-grid-table-container {
-  display: grid;
-  grid-template-columns: 40px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  border: 1px solid #ccc;
-  width: 100%;
-  /* max-width: 600px; */
-  margin: 0 auto;
-}
-
 .grid-table-header {
   display: contents;
 }
@@ -49,10 +40,6 @@
   justify-content: center;
 }
 
-/* .grid-table-cell:last-child {
-  justify-content: flex-end;
-}
- */
 .grid-table-cell-clickable {
   padding: 8px 16px;
   border-bottom: 1px solid #ccc;
