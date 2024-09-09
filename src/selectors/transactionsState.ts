@@ -189,8 +189,34 @@ export const getCategoryByTransactionId = createSelector(
 // Non Memoized selectors
 export const getCreditCardTransactionRowInStatementTableProperties = (state: TrackerState, statementId: string): CreditCardTransactionRowInStatementTableProperties[] => {
   const creditCardTransactions: CreditCardTransaction[] = getTransactionsByStatementId(state, statementId) as CreditCardTransaction[];
+  const rows: CreditCardTransactionRowInStatementTableProperties[] = [];
+  creditCardTransactions.forEach((creditCardTransaction: CreditCardTransaction) => {
+    if (creditCardTransaction.category.toLowerCase() !== 'false') {
+      const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, creditCardTransaction);
+      rows.push({
+        id: creditCardTransaction.id,
+        transactionDate: creditCardTransaction.transactionDate,
+        amount: creditCardTransaction.amount,
+        description: creditCardTransaction.description,
+        userDescription: creditCardTransaction.userDescription,
+        category: creditCardTransaction.category,
+        categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
+        patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
+        categoryNameFromCategoryOverride: getOverrideCategory(state, creditCardTransaction.id)
+          ? getCategoryById(state, getOverrideCategoryId(state, creditCardTransaction.id))!.name
+          : '',
+        categorizedTransactionName: categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
+      });
+    }
+  });
+  return rows;
+
   return creditCardTransactions.map((creditCardTransaction: CreditCardTransaction) => {
     const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, creditCardTransaction);
+    if (creditCardTransaction.category.toLowerCase() === 'false') {
+      console.log('false category');
+      console.log(creditCardTransaction);
+    }
     return {
       id: creditCardTransaction.id,
       transactionDate: creditCardTransaction.transactionDate,
