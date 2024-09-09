@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { Tabs, Tab } from '@mui/material';
+import { Tabs, Tab, Box, Typography } from '@mui/material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { SidebarMenuButton } from '../types';
 
 const Statements: React.FC = () => {
   const navigate = useNavigate();
@@ -19,13 +20,14 @@ const Statements: React.FC = () => {
   }, [location, navigate]);
 
   return (
-    <div>
+    <Box sx={{ width: '100%' }}>
+      <Typography variant="h5">{SidebarMenuButton.Statements}</Typography>
       <Tabs value={selectedTab} onChange={handleTabChange}>
         <Tab label="Credit Card" value="credit-card" />
         <Tab label="Checking Account" value="checking-account" />
       </Tabs>
       <Outlet />
-    </div>
+    </Box>
   );
 };
 
