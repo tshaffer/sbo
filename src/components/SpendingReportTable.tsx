@@ -41,9 +41,33 @@ const SpendingReportTable: React.FC = () => {
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
+  const getTransactionsByCategoryIdInDateRange = (): StringToTransactionsLUT => {
+
+    const { startDate, endDate } = reportDataState;
+    const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = {};
+    
+    // Iterate over each category in the transactionsByCategoryId
+    Object.keys(transactionsByCategoryId).forEach(categoryId => {
+      // Filter transactions by the date range
+      const filteredTransactions = transactionsByCategoryId[categoryId].filter(transaction => {
+        const transactionDate = new Date(transaction.bankTransaction.transactionDate);
+        return transactionDate >= new Date(startDate) && transactionDate <= new Date(endDate);
+      });
+  
+      // Only add the category to the result if there are transactions within the date range
+      if (filteredTransactions.length > 0) {
+        transactionsByCategoryIdInDateRange[categoryId] = filteredTransactions;
+      }
+    });
+  
+    return transactionsByCategoryIdInDateRange;
+  }
+
   if (isEmpty(transactionsByCategoryId)) {
     return null;
   }
+
+  const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = getTransactionsByCategoryIdInDateRange();
 
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
@@ -167,7 +191,7 @@ const SpendingReportTable: React.FC = () => {
 
     // Second pass to build rows and calculate percentages
     const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
-      const transactions = transactionsByCategoryId[category.id] || [];
+      const transactions = transactionsByCategoryIdInDateRange[category.id] || [];
       const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
       const categoryTransactionCount = transactions.length;
 
@@ -288,7 +312,7 @@ const SpendingReportTable: React.FC = () => {
   };
 
   const buildCategoryExpensesData = (category: Category): CategoryExpensesData => {
-    const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
+    const transactions: CategorizedTransaction[] = transactionsByCategoryIdInDateRange[category.id] || [];
     const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
     const categoryExpensesData: CategoryExpensesData = {
       id: category.id,

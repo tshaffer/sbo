@@ -92,11 +92,8 @@ export const isCategoryIdExcluded = createSelector(
 
 export const getTransactionsInDateRange = createSelector(
   [getStartDate, getEndDate, getTransactionIds, getTransactionsById, ],
-  // [getTransactionIds, getTransactionsById],
   (startDate, endDate, transactionIds, transactionsById): Transaction[] => {
     console.log('getTransactions selector called');
-    // const startDate = "2024-01-01";
-    // const endDate = "2024-090-10";
     return transactionIds
       .map(id => transactionsById[id])
       .filter(
