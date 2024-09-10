@@ -13,10 +13,10 @@ export interface MatchingRuleAssignment {
 }
 
 // Basic selectors
-export const getTransactionIds = (state: TrackerState): string[] => state.transactionsState.allIds;
-export const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
-export const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
-export const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
+const getTransactionIds = (state: TrackerState): string[] => state.transactionsState.allIds;
+const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
+const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
+const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
 
 // Memoized selectors
 export const getTransactions = createSelector(
