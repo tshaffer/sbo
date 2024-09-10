@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import '../styles/Tracker.css';
 import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { getTransactionsInDateRangeByCategory, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate } from '../selectors';
+import { getTransactionsInDateRangeByCategory, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategory } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
@@ -28,7 +28,8 @@ const SpendingReportTable: React.FC = () => {
   const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);
   const startDate: string = useTypedSelector(getStartDate);
   const endDate: string = useTypedSelector(getEndDate);
-  const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsInDateRangeByCategory);
+  // const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsInDateRangeByCategory);
+  const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategory);
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
   const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
   const reportDataState = useTypedSelector(selectReportDataState);
