@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import '../styles/Tracker.css';
 import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { getTransactionsInDateRangeByCategory, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategory } from '../selectors';
+import { getTransactionsInDateRangeByCategory, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategory, getTransactionsByCategoryIdInDateRange } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
@@ -28,7 +28,7 @@ const SpendingReportTable: React.FC = () => {
   const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);
   const startDate: string = useTypedSelector(getStartDate);
   const endDate: string = useTypedSelector(getEndDate);
-  // const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsInDateRangeByCategory);
+  const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategoryIdInDateRange);
   const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategory);
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
   const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
@@ -42,33 +42,33 @@ const SpendingReportTable: React.FC = () => {
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
-  const getTransactionsByCategoryIdInDateRange = (): StringToTransactionsLUT => {
+  // const getTransactionsByCategoryIdInDateRange = (): StringToTransactionsLUT => {
 
-    const { startDate, endDate } = reportDataState;
-    const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = {};
+  //   const { startDate, endDate } = reportDataState;
+  //   const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = {};
     
-    // Iterate over each category in the transactionsByCategoryId
-    Object.keys(transactionsByCategoryId).forEach(categoryId => {
-      // Filter transactions by the date range
-      const filteredTransactions = transactionsByCategoryId[categoryId].filter(transaction => {
-        const transactionDate = new Date(transaction.bankTransaction.transactionDate);
-        return transactionDate >= new Date(startDate) && transactionDate <= new Date(endDate);
-      });
+  //   // Iterate over each category in the transactionsByCategoryId
+  //   Object.keys(transactionsByCategoryId).forEach(categoryId => {
+  //     // Filter transactions by the date range
+  //     const filteredTransactions = transactionsByCategoryId[categoryId].filter(transaction => {
+  //       const transactionDate = new Date(transaction.bankTransaction.transactionDate);
+  //       return transactionDate >= new Date(startDate) && transactionDate <= new Date(endDate);
+  //     });
   
-      // Only add the category to the result if there are transactions within the date range
-      if (filteredTransactions.length > 0) {
-        transactionsByCategoryIdInDateRange[categoryId] = filteredTransactions;
-      }
-    });
+  //     // Only add the category to the result if there are transactions within the date range
+  //     if (filteredTransactions.length > 0) {
+  //       transactionsByCategoryIdInDateRange[categoryId] = filteredTransactions;
+  //     }
+  //   });
   
-    return transactionsByCategoryIdInDateRange;
-  }
+  //   return transactionsByCategoryIdInDateRange;
+  // }
 
   if (isEmpty(transactionsByCategoryId)) {
     return null;
   }
 
-  const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = getTransactionsByCategoryIdInDateRange();
+  // const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = getTransactionsByCategoryIdInDateRange();
 
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
