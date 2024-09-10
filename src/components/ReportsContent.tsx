@@ -1,17 +1,18 @@
 import React from 'react';
 
+import { isNil } from 'lodash';
+
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 
-import { setGeneratedReportEndDate, setGeneratedReportStartDate } from '../models';
+import { useDispatch, useTypedSelector } from '../types';
+import { DateRangeType, ReportTypes, SidebarMenuButton, StatementType } from '../types';
+
 import { getStartDate, getEndDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import { loadTransactions } from '../controllers';
 
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
-import { DateRangeType, ReportTypes, SidebarMenuButton, StatementType } from '../types';
-import { isNil } from 'lodash';
 import ReportFiltersDialog from './ReportFiltersDialog';
-import { useDispatch, useTypedSelector } from '../types';
 
 export interface ReportsContentProps {
   activeTab: number;
@@ -46,9 +47,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
   };
 
   const handleGenerateReport = () => {
-
-    dispatch(setGeneratedReportStartDate(startDate));
-    dispatch(setGeneratedReportEndDate(endDate));
 
     let includeCreditCardTransactions = true;
     let includeCheckingAccountTransactions = true;

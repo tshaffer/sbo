@@ -27,16 +27,6 @@ export const getEndDate = createSelector(
   (reportDataState: ReportDataState): string => reportDataState.endDate
 );
 
-export const getGeneratedReportStartDate = createSelector(
-  [selectReportDataState],
-  (reportDataState: ReportDataState): string => reportDataState.generatedReportStartDate
-);
-
-export const getGeneratedReportEndDate = createSelector(
-  [selectReportDataState],
-  (reportDataState: ReportDataState): string => reportDataState.generatedReportEndDate
-);
-
 export const getTotal = createSelector(
   [selectReportDataState],
   (reportDataState: ReportDataState): number => reportDataState.total

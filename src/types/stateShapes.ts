@@ -28,8 +28,6 @@ export interface ReportDataState {
   dateRangeType: DateRangeType;
   startDate: string;
   endDate: string;
-  generatedReportStartDate: string;
-  generatedReportEndDate: string;
   transactionsByCategory: StringToTransactionsLUT;
   total: number;
   minMaxTransactionDates: MinMaxDates;

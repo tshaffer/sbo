@@ -8,7 +8,7 @@ import { isNil } from 'lodash';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { formatDate, getCurrentDate, getISODateString, getRetirementDate } from '../utilities';
+import { formatDate, getCurrentDate, getFirstDayOfCurrentYear, getISODateString, getRetirementDate } from '../utilities';
 
 import { useDispatch, useTypedSelector } from '../types';
 
@@ -28,12 +28,6 @@ const DateRangeSpecifier: React.FC = () => {
     dispatch(setStartDate(getStartDateFromDateRangeType(dateRangeType)));
     dispatch(setEndDate(getEndDateFromDateRangeType(dateRangeType)));
   }, []);
-
-  const getFirstDayOfCurrentYear = (): string => {
-    const now = new Date();
-    const firstDayOfCurrentYear = new Date(now.getFullYear(), 0, 1);
-    return getISODateString(firstDayOfCurrentYear);
-  };
 
   const getFirstDayOfLastYear = (): string => {
     const now = new Date();
