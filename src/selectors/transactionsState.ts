@@ -6,7 +6,6 @@ import { getCategories, getCategoryById } from './categoryState';
 
 import { roundTo } from '../utilities';
 import { getCategoryAssignmentRules } from './categoryAssignmentRulesState';
-import { getStartDate, getEndDate } from './reportDataState';
 
 export interface MatchingRuleAssignment {
   category: Category;
@@ -14,41 +13,21 @@ export interface MatchingRuleAssignment {
 }
 
 // Basic selectors
-const getTransactionIds = (state: TrackerState): string[] => state.transactionsState.allIds;
-const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
-const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
-const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
+export const getTransactionIds = (state: TrackerState): string[] => state.transactionsState.allIds;
+export const getAllCategories = (state: TrackerState): Category[] => state.categoryState.categories;
+export const getIgnoreCategory = (state: TrackerState): Category | undefined => getAllCategories(state).find(category => category.name === 'Ignore');
+export const getTransactionsById = (state: TrackerState): { [id: string]: Transaction } => state.transactionsState.byId;
 
 // Memoized selectors
 export const getTransactions = createSelector(
   [getTransactionIds, getTransactionsById],
   (transactionIds, transactionsById): Transaction[] => {
-    console.log('getTransactions selector called');
     return transactionIds
       .map(id => transactionsById[id])
       .filter(
         (transaction): transaction is Transaction =>
           transaction.bankTransactionType === BankTransactionType.CreditCard ||
           !(transaction as CheckingAccountTransaction).isSplit
-      );
-  }
-);
-
-export const getTransactionsInDateRange = createSelector(
-  // [getTransactionIds, getTransactionsById, getStartDate, getEndDate],
-  [getTransactionIds, getTransactionsById],
-  (transactionIds, transactionsById): Transaction[] => {
-    console.log('getTransactions selector called');
-    const startDate = "2024-01-01";
-    const endDate = "2024-090-10";
-    return transactionIds
-      .map(id => transactionsById[id])
-      .filter(
-        (transaction): transaction is Transaction =>
-          (transaction.bankTransactionType === BankTransactionType.CreditCard ||
-          !(transaction as CheckingAccountTransaction).isSplit) &&
-          transaction.transactionDate >= startDate &&
-          transaction.transactionDate <= endDate
       );
   }
 );
@@ -140,65 +119,8 @@ const categorizeTransactions = createSelector(
   }
 );
 
-const categorizeTransactionsInDateRange = createSelector(
-  [getTransactionsInDateRange, getAllCategories, getIgnoreCategory, getCategoryAssignmentRules],
-  (transactions, categories, ignoreCategory, categoryAssignmentRules): ReviewedTransactions => {
-    const categorizedTransactions: CategorizedTransaction[] = [];
-    const uncategorizedTransactions: BankTransaction[] = [];
-    const ignoredTransactions: BankTransaction[] = [];
-
-    const bankTransactions: BankTransaction[] = transactions as BankTransaction[];
-    bankTransactions.forEach(transaction => {
-      if ((transaction as CheckingAccountTransaction).excludeFromReportCalculations) {
-        return;
-      }
-
-      const category = categorizeTransaction(transaction, categories, categoryAssignmentRules);
-      if (!isNil(category)) {
-        if (category.id === ignoreCategory?.id) {
-          ignoredTransactions.push(transaction);
-        } else {
-          const categorizedTransaction: CategorizedTransaction = {
-            bankTransaction: transaction,
-            categoryId: category.id,
-          };
-          categorizedTransactions.push(categorizedTransaction);
-
-        }
-      } else {
-        uncategorizedTransactions.push(transaction);
-      }
-    });
-
-    return {
-      categorizedTransactions,
-      uncategorizedTransactions,
-      ignoredTransactions,
-    };
-  }
-);
-
 const getCategorizedStatementData = createSelector(
   [categorizeTransactions],
-  (reviewedTransactions): CategorizedStatementData => {
-    const { categorizedTransactions } = reviewedTransactions;
-
-    const transactions = categorizedTransactions.map(transaction => ({
-      bankTransaction: transaction.bankTransaction,
-      categoryId: transaction.categoryId,
-    }));
-
-    const netDebits = roundTo(-transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
-
-    return {
-      transactions,
-      netDebits,
-    };
-  }
-);
-
-const getCategorizedStatementDataForDateRange = createSelector(
-  [categorizeTransactionsInDateRange],
   (reviewedTransactions): CategorizedStatementData => {
     const { categorizedTransactions } = reviewedTransactions;
 
@@ -233,24 +155,6 @@ export const getOverrideCategoryId = createSelector(
 
 export const getTransactionsByCategory = createSelector(
   [getCategorizedStatementData],
-  (categorizedStatementData) => {
-    const { transactions } = categorizedStatementData;
-
-    const transactionsByCategoryId: StringToTransactionsLUT = {};
-    transactions.forEach((transaction: CategorizedTransaction) => {
-      const categoryId: string = transaction.categoryId;
-      if (!transactionsByCategoryId[categoryId]) {
-        transactionsByCategoryId[categoryId] = [];
-      }
-      transactionsByCategoryId[categoryId].push(transaction);
-    });
-
-    return transactionsByCategoryId;
-  }
-);
-
-export const getTransactionsInDateRangeByCategory = createSelector(
-  [getCategorizedStatementDataForDateRange],
   (categorizedStatementData) => {
     const { transactions } = categorizedStatementData;
 
