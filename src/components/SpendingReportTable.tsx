@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import '../styles/Tracker.css';
 import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState } from '../selectors';
+import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategory, getTransactionsByCategoryIdInDateRange } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
@@ -26,9 +26,9 @@ const SpendingReportTable: React.FC = () => {
 
   const categories: Category[] = useTypedSelector(getCategories);
   const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);
-  const generatedReportStartDate: string = useTypedSelector(getGeneratedReportStartDate);
-  const generatedReportEndDate: string = useTypedSelector(getGeneratedReportEndDate);
-  const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategory);
+  const startDate: string = useTypedSelector(getStartDate);
+  const endDate: string = useTypedSelector(getEndDate);
+  const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategoryIdInDateRange);
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
   const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
   const reportDataState = useTypedSelector(selectReportDataState);
@@ -41,7 +41,7 @@ const SpendingReportTable: React.FC = () => {
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
-  if (isEmpty(transactionsByCategoryId)) {
+  if (isEmpty(transactionsByCategoryIdInDateRange)) {
     return null;
   }
 
@@ -163,11 +163,9 @@ const SpendingReportTable: React.FC = () => {
       .map(category => filterCategories(category))
       .filter(category => category !== null) as CategoryMenuItem[];
 
-    console.log('filteredCategories', filteredCategories);
-
     // Second pass to build rows and calculate percentages
     const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
-      const transactions = transactionsByCategoryId[category.id] || [];
+      const transactions = transactionsByCategoryIdInDateRange[category.id] || [];
       const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
       const categoryTransactionCount = transactions.length;
 
@@ -288,7 +286,7 @@ const SpendingReportTable: React.FC = () => {
   };
 
   const buildCategoryExpensesData = (category: Category): CategoryExpensesData => {
-    const transactions: CategorizedTransaction[] = transactionsByCategoryId[category.id] || [];
+    const transactions: CategorizedTransaction[] = transactionsByCategoryIdInDateRange[category.id] || [];
     const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
     const categoryExpensesData: CategoryExpensesData = {
       id: category.id,
@@ -465,7 +463,6 @@ const SpendingReportTable: React.FC = () => {
   const allCategoriesExpensesData: CategoryExpensesData[] = generateCategoryExpensesData(categoryMenuItems, categoriesExpensesData);
 
   // Get rows
-  // const rows: CategoryExpensesData[] = old_getRows(categoryMenuItems);
   const rows: CategoryExpensesData[] = getRows(allCategoriesExpensesData, categoryMenuItems);
 
   // Calculate total amount
@@ -491,9 +488,9 @@ const SpendingReportTable: React.FC = () => {
         onClose={handleCloseEditTransactionDialog}
         onSave={handleSaveTransaction}
       />
-      <h4>Date Range {formatDate(generatedReportStartDate)} - {formatDate(generatedReportEndDate)}</h4>
+      <h4>Date Range {formatDate(startDate)} - {formatDate(endDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
-      <h4>Per Month: {expensesPerMonth(totalAmount, generatedReportStartDate, generatedReportEndDate)}</h4>
+      <h4>Per Month: {expensesPerMonth(totalAmount, startDate, endDate)}</h4>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">

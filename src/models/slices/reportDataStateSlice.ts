@@ -4,14 +4,12 @@ import {
   MinMaxDates,
   ReportDataState,
 } from '../../types';
-import { getCurrentDate, getRetirementDate } from '../../utilities';
+import { getCurrentDate, getFirstDayOfCurrentYear } from '../../utilities';
 
 const initialState: ReportDataState = {
   dateRangeType: DateRangeType.YearToDate,
-  startDate: getRetirementDate(),
+  startDate: getFirstDayOfCurrentYear(),
   endDate: getCurrentDate(),
-  generatedReportStartDate: new Date().toISOString().split('T')[0],
-  generatedReportEndDate: new Date().toISOString().split('T')[0],
   transactionsByCategory: {},
   total: 0,
   minMaxTransactionDates: { minDate: '', maxDate: '' },
@@ -39,12 +37,6 @@ const reportDataSlice = createSlice({
     },
     setEndDate: (state, action: PayloadAction<string>) => {
       state.endDate = action.payload;
-    },
-    setGeneratedReportStartDate: (state, action: PayloadAction<string>) => {
-      state.generatedReportStartDate = action.payload;
-    },
-    setGeneratedReportEndDate: (state, action: PayloadAction<string>) => {
-      state.generatedReportEndDate = action.payload;
     },
     setMinMaxTransactionDates: (
       state,
@@ -94,8 +86,6 @@ export const {
   setDateRangeType,
   setStartDate,
   setEndDate,
-  setGeneratedReportStartDate,
-  setGeneratedReportEndDate,
   setMinMaxTransactionDates,
   setReportStatementId,
   addCategoryIdToExclude,

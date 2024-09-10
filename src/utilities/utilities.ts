@@ -52,4 +52,10 @@ export const getCurrentDate = (): string => {
   return getISODateString(now);
 };
 
+export const getFirstDayOfCurrentYear = (): string => {
+  const now = new Date();
+  const firstDayOfCurrentYear = new Date(now.getFullYear(), 0, 1);
+  return getISODateString(firstDayOfCurrentYear);
+};
+
 

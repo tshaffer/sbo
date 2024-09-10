@@ -8,10 +8,10 @@ import {
   StringToTransactionsLUT,
   Statement,
   TrackerState,
-  CategorizedTransaction
-} from "../types";
+  CategorizedTransaction} from "../types";
 import { getCheckingAccountStatementById } from "./checkingAccountStatementState";
 import { getCreditCardStatementById } from "./creditCardStatementState";
+import { getTransactionsByCategory } from './transactionsState';
 
 // Input selectors
 export const selectReportDataState = (state: TrackerState): ReportDataState => state.reportDataState;
@@ -25,16 +25,6 @@ export const getStartDate = createSelector(
 export const getEndDate = createSelector(
   [selectReportDataState],
   (reportDataState: ReportDataState): string => reportDataState.endDate
-);
-
-export const getGeneratedReportStartDate = createSelector(
-  [selectReportDataState],
-  (reportDataState: ReportDataState): string => reportDataState.generatedReportStartDate
-);
-
-export const getGeneratedReportEndDate = createSelector(
-  [selectReportDataState],
-  (reportDataState: ReportDataState): string => reportDataState.generatedReportEndDate
 );
 
 export const getTotal = createSelector(
@@ -91,3 +81,27 @@ export const isCategoryIdExcluded = createSelector(
   [getCategoryIdsToExclude, (_: TrackerState, categoryId: string) => categoryId],
   (categoryIdsToExclude: string[], categoryId: string): boolean => categoryIdsToExclude.includes(categoryId)
 );
+
+export const getTransactionsByCategoryIdInDateRange = createSelector(
+  [getStartDate, getEndDate, getTransactionsByCategory],
+  (startDate, endDate, transactionsByCategoryId): StringToTransactionsLUT => {
+    const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = {};
+    
+    // Iterate over each category in the transactionsByCategoryId
+    Object.keys(transactionsByCategoryId).forEach(categoryId => {
+      // Filter transactions by the date range
+      const filteredTransactions = transactionsByCategoryId[categoryId].filter(transaction => {
+        const transactionDate = new Date(transaction.bankTransaction.transactionDate);
+        return transactionDate >= new Date(startDate) && transactionDate <= new Date(endDate);
+      });
+  
+      // Only add the category to the result if there are transactions within the date range
+      if (filteredTransactions.length > 0) {
+        transactionsByCategoryIdInDateRange[categoryId] = filteredTransactions;
+      }
+    });
+  
+    return transactionsByCategoryIdInDateRange;
+  }
+);
+

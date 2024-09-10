@@ -7,7 +7,6 @@ import { BaseStatement, TrackerVoidPromiseThunkAction, useDispatch } from '../ty
 
 interface StatementsTableProps<T extends BaseStatement> {
   statements: T[];
-  onLoadTransactions: (startDate: string, endDate: string) => TrackerVoidPromiseThunkAction;
   navigateBasePath: string; // New prop to specify the base path for navigation
   additionalColumns?: (statement: T) => React.ReactNode[];
   additionalColumnHeaders?: string[];
@@ -16,7 +15,6 @@ interface StatementsTableProps<T extends BaseStatement> {
 
 const StatementsTable = <T extends BaseStatement>({
   statements,
-  onLoadTransactions,
   navigateBasePath,
   additionalColumns = () => [],
   additionalColumnHeaders = [],
@@ -31,10 +29,7 @@ const StatementsTable = <T extends BaseStatement>({
   }
 
   const handleStatementClicked = (statement: T) => {
-    dispatch(onLoadTransactions(statement.startDate, statement.endDate))
-      .then(() => {
-        navigate(`${navigateBasePath}/${statement.id}`);
-      });
+    navigate(`${navigateBasePath}/${statement.id}`);
   };
 
   const sortedStatements = cloneDeep(statements).sort((a, b) => b.endDate.localeCompare(a.endDate));
