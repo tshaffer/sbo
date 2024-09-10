@@ -65,7 +65,7 @@ const StatementsTable = <T extends BaseStatement>({
             <div className="grid-table-cell">{formatDate(statement.startDate)}</div>
             <div className="grid-table-cell">{formatDate(statement.endDate)}</div>
             <div className="grid-table-cell">{statement.transactionCount}</div>
-            <div className="grid-table-cell">{formatCurrency(statement.netDebits)}</div>
+            <div className="grid-table-cell">{formatCurrency(-statement.netDebits)}</div>
             {additionalColumns(statement).map((content, idx) => (
               <div key={idx} className="grid-table-cell">{content}</div>
             ))}
