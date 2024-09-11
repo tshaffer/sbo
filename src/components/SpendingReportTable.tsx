@@ -488,9 +488,14 @@ const SpendingReportTable: React.FC = () => {
         onClose={handleCloseEditTransactionDialog}
         onSave={handleSaveTransaction}
       />
-      <h4>Date Range {formatDate(startDate)} - {formatDate(endDate)}</h4>
-      <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
-      <h4>Per Month: {expensesPerMonth(totalAmount, startDate, endDate)}</h4>
+      <h4>
+        <span>
+          Total Amount: {formatCurrency(totalAmount)}
+        </span>
+        <span style={{ marginLeft: '32px' }}>
+          Per Month: {expensesPerMonth(totalAmount, startDate, endDate)}
+        </span>
+      </h4>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
