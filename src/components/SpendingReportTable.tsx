@@ -217,7 +217,8 @@ const SpendingReportTable: React.FC = () => {
       return flatRows;
     };
 
-    return flattenRows(sortedRows);
+    const flattenedRows = flattenRows(sortedRows);
+    return flattenedRows;
   };
 
   const getSortedBankTransactions = (categorizedTransactions: CategorizedTransaction[]): CategorizedTransaction[] => {
