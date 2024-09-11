@@ -14,15 +14,10 @@ const CheckingAccountTransactionsTable: React.FC = () => {
   const statements = useTypedSelector(getCheckingAccountStatements);
   const transactions = useTypedSelector(state => getCheckingAccountTransactionRowInStatementTableProperties(state, id!));
 
-  const handleLoadTransactions = (startDate: string, endDate: string) => {
-    return dispatch(loadTransactions(startDate, endDate, false, true));
-  };
-
   return (
     <TransactionsTable
       statements={statements}
       transactions={transactions}
-      onLoadTransactions={handleLoadTransactions}
       getTransactionId={(transaction: CheckingAccountTransactionRowInStatementTableProperties) => transaction.id}
       getStatementId={(statement: CheckingAccountStatement) => `checking-account/${statement.id}`}
       renderTransactionRow={(transaction, selectedTransactionIds, handleTransactionSelectedChanged) => (

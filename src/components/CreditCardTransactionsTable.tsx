@@ -14,10 +14,6 @@ const CreditCardTransactionsTable: React.FC = () => {
   const statements: Statement[] = useTypedSelector(getCreditCardStatements);
   const transactions: CreditCardTransactionRowInStatementTableProperties[] = useTypedSelector(state => getCreditCardTransactionRowInStatementTableProperties(state, id!));
 
-  const handleLoadTransactions = (startDate: string, endDate: string) => {
-    return dispatch(loadTransactions(startDate, endDate, true, false));
-  };
-
   const handleOverrideTransactionCategories = (selectedTransactionIds: Set<string>) => {
     dispatch(updateCategoryInTransactions(
       'someCategoryId', // Replace with the actual category ID
@@ -29,7 +25,6 @@ const CreditCardTransactionsTable: React.FC = () => {
     <TransactionsTable
       statements={statements}
       transactions={transactions}
-      onLoadTransactions={handleLoadTransactions}
       onOverrideTransactionCategories={handleOverrideTransactionCategories}
       getTransactionId={(transaction: CreditCardTransactionRowInStatementTableProperties) => transaction.id}
       getStatementId={(statement: CreditCardStatement) => `credit-card/${statement.id}`}

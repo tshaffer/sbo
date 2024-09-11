@@ -7,7 +7,6 @@ import { Statement } from '../types';
 interface TransactionsTableProps<T> {
   statements: T[];
   transactions: any[];
-  onLoadTransactions: (startDate: string, endDate: string) => Promise<void>;
   onOverrideTransactionCategories?: (selectedTransactionIds: Set<string>) => void;
   getTransactionId: (transaction: any) => string;
   getStatementId: (statement: T) => string;
@@ -20,7 +19,6 @@ interface TransactionsTableProps<T> {
 const TransactionsTable = <T extends Statement,>({
   statements,
   transactions,
-  onLoadTransactions,
   onOverrideTransactionCategories,
   getTransactionId,
   getStatementId,
@@ -79,8 +77,7 @@ const TransactionsTable = <T extends Statement,>({
 
   const navigateToStatement = (statement: T | undefined) => {
     if (statement) {
-      onLoadTransactions(statement.startDate, statement.endDate)
-        .then(() => navigate(`/statements/${getStatementId(statement)}`));
+      navigate(`/statements/${getStatementId(statement)}`);
     }
   };
 
