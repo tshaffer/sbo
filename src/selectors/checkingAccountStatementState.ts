@@ -4,40 +4,52 @@ import { categorizeTransaction, getTransactionsByStatementId } from './transacti
 import { getCategories } from './categoryState';
 import { getCategoryAssignmentRules } from './categoryAssignmentRulesState';
 
+interface RevisedStatementProperties {
+  net: number;
+  transactionCount: number;
+}
+
 // Input selector: extracts the CheckingAccountStatementState slice from the state
 const checkingAccountStatementState = (state: TrackerState): CheckingAccountStatementState => state.checkingAccountStatementState;
 
 const calculateTransactionNet = (state: TrackerState, checkingAccountTransaction: CheckingAccountTransaction): number => {
   const categorizedTransactionName: string = categorizeTransaction(checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '';
   if (categorizedTransactionName.toLowerCase() !== 'ignore') {
-
     return checkingAccountTransaction.amount;
   }
   return 0;
 }
 
-// Memoized selector to calculate the net for a given statement
-const calculateStatementNet = createSelector(
+const calculateStatementProperties = createSelector(
   [(state: TrackerState, statement: CheckingAccountStatement) => getTransactionsByStatementId(state, statement.id), (state: TrackerState) => state],
-  (transactions: Transaction[], state: TrackerState): number => {
-    return transactions.reduce((net, transaction) => {
-      return net + calculateTransactionNet(state, transaction as CheckingAccountTransaction);
-    }, 0);
+  (transactions: Transaction[], state: TrackerState): RevisedStatementProperties => {
+    let net = 0;
+    let transactionCount = 0;
+    transactions.forEach((transaction) => {
+      const amountForTransaction = calculateTransactionNet(state, transaction as CheckingAccountTransaction);
+      if (amountForTransaction !== 0) {
+        transactionCount++;
+        net += amountForTransaction;
+      }
+    });
+    return { net, transactionCount };
   }
 );
 
 export const getCheckingAccountStatements = createSelector(
   [checkingAccountStatementState, (state: TrackerState) => state], // Pass the full state
   (checkingAccountStatementState: CheckingAccountStatementState, state: TrackerState): CheckingAccountStatement[] => {
-    return checkingAccountStatementState.checkingAccountStatements.map(statement => {
-      // Adjust properties of each credit card statement here
+    const checkingAccountStatements: CheckingAccountStatement[] = [];
+    checkingAccountStatementState.checkingAccountStatements.forEach(statement => {
+      const revisedStatementProperties: RevisedStatementProperties = calculateStatementProperties(state, statement);
       const adjustedStatement = {
         ...statement,
-        netDebits: calculateStatementNet(state, statement), // Calculate netDebits using the memoized selector
+        netDebits: revisedStatementProperties.net, // Calculate netDebits using the memoized selector,
+        transactionCount: revisedStatementProperties.transactionCount,
       };
-
-      return adjustedStatement;
+      checkingAccountStatements.push(adjustedStatement);
     });
+    return checkingAccountStatements;
   }
 );
 
