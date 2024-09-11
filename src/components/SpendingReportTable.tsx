@@ -9,7 +9,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 
 import '../styles/Tracker.css';
-import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { BankTransaction, CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategory, getTransactionsByCategoryIdInDateRange } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
@@ -43,6 +43,9 @@ const SpendingReportTable: React.FC = () => {
 
   const [categorySortColumn, setCategorySortColumn] = useState<string>('totalExpenses');
   const [categorySortOrder, setCategorySortOrder] = useState<'asc' | 'desc'>('desc');
+
+  const [transactionsSortColumn, setTransactionsSortColumn] = useState<string>('transactionDate');
+  const [transactionsSortOrder, setTransactionsSortOrder] = useState<'asc' | 'desc'>('desc');
 
   if (isEmpty(transactionsByCategoryIdInDateRange)) {
     return null;
@@ -89,8 +92,42 @@ const SpendingReportTable: React.FC = () => {
   };
 
 
+  const sortTransactionsCallback = (a: CategorizedTransaction, b: CategorizedTransaction) => {
+
+    const aValue = a.bankTransaction[transactionsSortColumn as keyof BankTransaction]!;
+    const bValue = b.bankTransaction[transactionsSortColumn as keyof BankTransaction]!;
+
+    if (aValue < bValue) {
+      return transactionsSortOrder === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return transactionsSortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  }
+
+  const getSortedBankTransactions = (categorizedTransactions: CategorizedTransaction[]): CategorizedTransaction[] => {
+    const sortedTransactions = [...categorizedTransactions].sort((a, b) => sortTransactionsCallback(a, b));
+    return sortedTransactions;
+  }
+
+  const handleSortTransactions = (column: string) => {
+    if (transactionsSortColumn === column) {
+      setTransactionsSortOrder(transactionsSortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setTransactionsSortColumn(column);
+      setTransactionsSortOrder('asc');
+    }
+  };
+
+  const renderSortTransactionsIndicator = (column: string) => {
+    if (transactionsSortColumn !== column) return null;
+    return transactionsSortOrder === 'asc' ? ' ▲' : ' ▼';
+  };
+
+
   const sortCategoriesCallback = (a: CategoryExpensesData, b: CategoryExpensesData) => {
-    
+
     const aValue = a[categorySortColumn as keyof CategoryExpensesData];
     const bValue = b[categorySortColumn as keyof CategoryExpensesData];
 
@@ -103,7 +140,7 @@ const SpendingReportTable: React.FC = () => {
     return 0;
   }
 
-const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
+  const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
 
     // Sort top-level categories by total expenses
     const sortedCategories = [...categories].sort((a, b) => sortCategoriesCallback(a, b));
@@ -248,11 +285,6 @@ const sortCategoriesRecursively = (categories: CategoryExpensesData[]): Category
 
     return flattenRows(sortedRows);
   };
-
-  const getSortedBankTransactions = (categorizedTransactions: CategorizedTransaction[]): CategorizedTransaction[] => {
-    const sortedCategorizedTransactions: CategorizedTransaction[] = categorizedTransactions.sort((a, b) => b.bankTransaction.transactionDate.localeCompare(a.bankTransaction.transactionDate));
-    return sortedCategorizedTransactions;
-  }
 
   const matches = (importanceFilter: string, categoryImportanceValue: number, reportSpecImportanceValue: number): boolean => {
     if (importanceFilter === 'lower' && categoryImportanceValue < reportSpecImportanceValue) {
@@ -538,7 +570,7 @@ const sortCategoriesRecursively = (categories: CategoryExpensesData[]): Category
           </div>
         </div>
         <div className="spending-report-table-body">
-          {rows.map((categoryExpenses: CategoryExpensesData ) => (
+          {rows.map((categoryExpenses: CategoryExpensesData) => (
             <React.Fragment key={categoryExpenses.id}>
               <div className="table-row">
                 <div className="table-cell">
@@ -556,9 +588,9 @@ const sortCategoriesRecursively = (categories: CategoryExpensesData[]): Category
                   <div className="table-header">
                     <div className="table-row">
                       <div className="table-cell"></div>
-                      <div className="table-cell">Date</div>
-                      <div className="table-cell">Amount</div>
-                      <div className="table-cell">Description</div>
+                      <div className="table-cell" onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
+                      <div className="table-cell" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
+                      <div className="table-cell" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
                     </div>
                   </div>
                   <div className="table-body">
