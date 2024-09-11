@@ -1,14 +1,8 @@
 import React from 'react';
 
-import { isNil } from 'lodash';
-
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 
-import { useDispatch, useTypedSelector } from '../types';
-import { DateRangeType, ReportTypes, SidebarMenuButton, StatementType } from '../types';
-
-import { getStartDate, getEndDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
-import { loadTransactions } from '../controllers';
+import { ReportTypes, SidebarMenuButton } from '../types';
 
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
@@ -19,13 +13,6 @@ export interface ReportsContentProps {
 }
 
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
-
-  const dispatch = useDispatch();
-
-  const startDate = useTypedSelector(state => getStartDate(state));
-  const endDate = useTypedSelector(state => getEndDate(state));
-  const dateRangeType = useTypedSelector(state => getDateRangeType(state));
-  const reportStatement = useTypedSelector(state => getReportStatement(state, getReportStatementId(state)));
 
   const [tabIndex, setTabIndex] = React.useState(props.activeTab);
   const [reportFiltersDialogOpen, setReportFiltersDialogOpen] = React.useState(false);
@@ -46,20 +33,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     setReportFiltersDialogOpen(false);
   };
 
-  const handleGenerateReport = () => {
-
-    let includeCreditCardTransactions = true;
-    let includeCheckingAccountTransactions = true;
-    if (dateRangeType === DateRangeType.Statement) {
-      if (!isNil(reportStatement)) {
-        includeCreditCardTransactions = reportStatement.type === StatementType.CreditCard;
-        includeCheckingAccountTransactions = reportStatement.type === StatementType.Checking;
-      }
-    }
-
-    dispatch(loadTransactions(startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions));
-  };
-
   const renderReportButtons = (tabIndex: number): JSX.Element => {
     return (
       <Box sx={{ mt: 3 }}>
@@ -73,9 +46,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             Filters
           </Button>
         }
-        <Button variant="contained" color="primary" onClick={handleGenerateReport}>
-          Generate Report
-        </Button>
       </Box>
     )
   }
