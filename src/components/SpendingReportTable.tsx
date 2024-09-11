@@ -41,6 +41,9 @@ const SpendingReportTable: React.FC = () => {
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
+  const [categorySortColumn, setCategorySortColumn] = useState<string>('totalExpenses');
+  const [categorySortOrder, setCategorySortOrder] = useState<'asc' | 'desc'>('desc');
+
   if (isEmpty(transactionsByCategoryIdInDateRange)) {
     return null;
   }
@@ -86,10 +89,24 @@ const SpendingReportTable: React.FC = () => {
   };
 
 
-  const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
+  const sortCategoriesCallback = (a: CategoryExpensesData, b: CategoryExpensesData) => {
+    
+    const aValue = a[categorySortColumn as keyof CategoryExpensesData];
+    const bValue = b[categorySortColumn as keyof CategoryExpensesData];
+
+    if (aValue < bValue) {
+      return categorySortOrder === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return categorySortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  }
+
+const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
 
     // Sort top-level categories by total expenses
-    const sortedCategories = [...categories].sort((a, b) => b.totalExpenses - a.totalExpenses);
+    const sortedCategories = [...categories].sort((a, b) => sortCategoriesCallback(a, b));
 
     // Recursively sort children
     sortedCategories.forEach((category) => {
@@ -99,6 +116,20 @@ const SpendingReportTable: React.FC = () => {
     });
 
     return sortedCategories;
+  };
+
+  const handleSortCategories = (column: string) => {
+    if (categorySortColumn === column) {
+      setCategorySortOrder(categorySortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setCategorySortColumn(column);
+      setCategorySortOrder('asc');
+    }
+  };
+
+  const renderSortCategoriesIndicator = (column: string) => {
+    if (categorySortColumn !== column) return null;
+    return categorySortOrder === 'asc' ? ' ▲' : ' ▼';
   };
 
   const getRows = (allCategoriesExpensesData: CategoryExpensesData[], categoryMenuItems: CategoryMenuItem[]): CategoryExpensesData[] => {
@@ -500,14 +531,14 @@ const SpendingReportTable: React.FC = () => {
         <div className="table-header">
           <div className="table-row">
             <div className="table-cell"></div>
-            <div className="table-cell">Category</div>
-            <div className="table-cell">Transaction Count</div>
-            <div className="table-cell">Total Amount</div>
-            <div className="table-cell">Percentage of Total</div>
+            <div className="table-cell" onClick={() => handleSortCategories('categoryName')}>Category{renderSortCategoriesIndicator('categoryName')}</div>
+            <div className="table-cell" onClick={() => handleSortCategories('transactionCount')}>Transaction Count{renderSortCategoriesIndicator('transactionCount')}</div>
+            <div className="table-cell" onClick={() => handleSortCategories('totalExpenses')}>Total Amount{renderSortCategoriesIndicator('totalExpenses')}</div>
+            <div className="table-cell" onClick={() => handleSortCategories('percentageOfTotal')}>Percentage of Total{renderSortCategoriesIndicator('percentageOfTotal')}</div>
           </div>
         </div>
         <div className="spending-report-table-body">
-          {rows.map((categoryExpenses: { id: React.Key | null | undefined; categoryName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; transactionCount: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; totalExpenses: number; percentageOfTotal: number; transactions: any[]; }) => (
+          {rows.map((categoryExpenses: CategoryExpensesData ) => (
             <React.Fragment key={categoryExpenses.id}>
               <div className="table-row">
                 <div className="table-cell">
