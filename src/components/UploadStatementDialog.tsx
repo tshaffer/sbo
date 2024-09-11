@@ -5,7 +5,7 @@ import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
 import { getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
-import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
+import { loadAllTransactions, loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
 import { CheckingAccountStatement, CreditCardStatement } from '../types';
 
 import { useDispatch, useTypedSelector } from '../types';
@@ -75,6 +75,9 @@ const UploadStatementDialog: React.FC<UploadStatementDialogProps> = (props: Uplo
         })
         .then(() => {
           return dispatch(loadMinMaxTransactionDates());
+        })
+        .then(() => {
+          return dispatch(loadAllTransactions());
         });
 
     }).catch((err: any) => {
