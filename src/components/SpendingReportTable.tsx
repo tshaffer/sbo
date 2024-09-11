@@ -41,6 +41,9 @@ const SpendingReportTable: React.FC = () => {
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
+  const [sortColumn, setSortColumn] = useState<string>('totalExpenses');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
   if (isEmpty(transactionsByCategoryIdInDateRange)) {
     return null;
   }
@@ -86,10 +89,24 @@ const SpendingReportTable: React.FC = () => {
   };
 
 
+  const sortCallback = (a: CategoryExpensesData, b: CategoryExpensesData) => {
+    
+    const aValue = a[sortColumn as keyof CategoryExpensesData];
+    const bValue = b[sortColumn as keyof CategoryExpensesData];
+
+    if (aValue < bValue) {
+      return sortOrder === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  }
+
   const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
 
     // Sort top-level categories by total expenses
-    const sortedCategories = [...categories].sort((a, b) => b.totalExpenses - a.totalExpenses);
+    const sortedCategories = [...categories].sort((a, b) => sortCallback(a, b));
 
     // Recursively sort children
     sortedCategories.forEach((category) => {
@@ -99,6 +116,20 @@ const SpendingReportTable: React.FC = () => {
     });
 
     return sortedCategories;
+  };
+
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const renderSortIndicator = (column: string) => {
+    if (sortColumn !== column) return null;
+    return sortOrder === 'asc' ? ' ▲' : ' ▼';
   };
 
   const getRows = (allCategoriesExpensesData: CategoryExpensesData[], categoryMenuItems: CategoryMenuItem[]): CategoryExpensesData[] => {
@@ -498,10 +529,10 @@ const SpendingReportTable: React.FC = () => {
         <div className="table-header">
           <div className="table-row">
             <div className="table-cell"></div>
-            <div className="table-cell">Category</div>
-            <div className="table-cell">Transaction Count</div>
-            <div className="table-cell">Total Amount</div>
-            <div className="table-cell">Percentage of Total</div>
+            <div className="table-cell" onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
+            <div className="table-cell" onClick={() => handleSort('transactionCount')}>Transaction Count{renderSortIndicator('transactionCount')}</div>
+            <div className="table-cell" onClick={() => handleSort('totalExpenses')}>Total Amount{renderSortIndicator('totalExpenses')}</div>
+            <div className="table-cell" onClick={() => handleSort('percentageOfTotal')}>Percentage of Total{renderSortIndicator('percentageOfTotal')}</div>
           </div>
         </div>
         <div className="spending-report-table-body">
