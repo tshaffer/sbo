@@ -40,9 +40,13 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
     setShowAddCategoryAssignmentRuleDialog(true);
   };
 
-  const handleClickTransaction = (transaction: Transaction) => {
+  const handleClickTransaction = (e: any, transaction: Transaction) => {
     console.log('handleClickTransaction');
-    navigate(`/statements/credit-card/${transaction.statementId}`);
+    console.log(e.target.id);
+    // console.log(e);
+    if (e.target.id !== 'comment') {
+      navigate(`/statements/credit-card/${transaction.statementId}`);
+    }
   };
 
   const handleEditTransaction = (transaction: Transaction) => {
@@ -88,6 +92,12 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
     setIsEditingComment(isEditing);
   }
 
+  const handleCommentChanged = (event: any, comment: string) => {
+    console.log('handleCommentChanged: ', comment);
+    event.stopPropagation();
+    setComment(comment);
+  }
+
   const renderCommentColumn = (transaction: Transaction): JSX.Element => {
     return (
       <div className="credit-card-statement-grid-table-cell">
@@ -95,8 +105,9 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               type="text"
+              id="comment"
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={(e) => handleCommentChanged(e, e.target.value)}
             />
             <IconButton onClick={() => handleSaveComment(transaction)}>
               <SaveIcon />
@@ -131,7 +142,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
       <div
         className="table-row-clickable"
         key={props.transaction.id}
-        onClick={() => handleClickTransaction(props.transaction)}
+        onClick={(e) => handleClickTransaction(e, props.transaction)}
       >
         <div className="table-cell">
           <IconButton onClick={(event: any) => {
@@ -155,7 +166,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
         <div className="table-cell">{formatCurrency(-props.transaction.amount)}</div>
         <div className="table-cell">{props.transaction.userDescription}</div>
         {renderCommentColumn(props.transaction)}
-        </div>
+      </div>
     </React.Fragment>);
 };
 
