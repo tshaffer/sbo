@@ -591,6 +591,7 @@ const SpendingReportTable: React.FC = () => {
                       <div className="table-cell" onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
                       <div className="table-cell" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
                       <div className="table-cell" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
+                      <div className="table-cell" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
                     </div>
                   </div>
                   <div className="table-body">
@@ -621,6 +622,7 @@ const SpendingReportTable: React.FC = () => {
                         <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
                         <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
                         <div className="table-cell">{transaction.bankTransaction.userDescription}</div>
+                        <div className="table-cell">{transaction.bankTransaction.comment}</div>
                       </div>
                     ))}
                   </div>
