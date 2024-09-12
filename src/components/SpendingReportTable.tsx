@@ -5,22 +5,18 @@ import { v4 as uuidv4 } from 'uuid';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import EditIcon from '@mui/icons-material/Edit';
 
 import '../styles/Tracker.css';
 import { BankTransaction, CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
-import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategory, getTransactionsByCategoryIdInDateRange } from '../selectors';
+import { formatCurrency, formatPercentage, expensesPerMonth, roundTo } from '../utilities';
+import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategoryIdInDateRange } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
-import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import EditTransactionDialog from './EditTransactionDialog';
 
 import { useDispatch, useTypedSelector } from '../types';
-import { Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import SpendingReportTableRow from './SpendingReportTableRow';
 
 const SpendingReportTable: React.FC = () => {
 
@@ -37,9 +33,6 @@ const SpendingReportTable: React.FC = () => {
   const navigate = useNavigate();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const [transactionId, setTransactionId] = React.useState('');
-  const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
-  const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
   const [categorySortColumn, setCategorySortColumn] = useState<string>('totalExpenses');
   const [categorySortOrder, setCategorySortOrder] = useState<'asc' | 'desc'>('desc');
@@ -54,43 +47,6 @@ const SpendingReportTable: React.FC = () => {
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
-
-  const handleClickTransaction = (transaction: Transaction) => {
-    navigate(`/statements/credit-card/${transaction.statementId}`);
-  };
-
-  const handleEditTransaction = (transaction: Transaction) => {
-    setTransactionId(transaction.id);
-    setShowEditTransactionDialog(true);
-  };
-
-  const handleSaveTransaction = (transaction: Transaction) => {
-    dispatch(updateTransaction(transaction));
-  };
-
-  const handleCloseEditTransactionDialog = () => {
-    setShowEditTransactionDialog(false);
-  }
-
-  const handleAssignCategory = (transaction: Transaction) => {
-    setTransactionId(transaction.id);
-    setShowAddCategoryAssignmentRuleDialog(true);
-  };
-
-  const handleSaveRule = (pattern: string, categoryId: string): void => {
-    const id: string = uuidv4();
-    const categoryAssignmentRule: CategoryAssignmentRule = {
-      id,
-      pattern,
-      categoryId
-    };
-    dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
-  }
-
-  const handleCloseAddRuleDialog = () => {
-    setShowAddCategoryAssignmentRuleDialog(false);
-  };
-
 
   const sortTransactionsCallback = (a: CategorizedTransaction, b: CategorizedTransaction) => {
 
@@ -539,18 +495,6 @@ const SpendingReportTable: React.FC = () => {
 
   return (
     <React.Fragment>
-      <AddCategoryAssignmentRuleDialog
-        open={showAddCategoryAssignmentRuleDialog}
-        onSaveRule={handleSaveRule}
-        onClose={handleCloseAddRuleDialog}
-        transactionId={transactionId}
-      />
-      <EditTransactionDialog
-        open={showEditTransactionDialog}
-        transactionId={transactionId}
-        onClose={handleCloseEditTransactionDialog}
-        onSave={handleSaveTransaction}
-      />
       <h4>
         <span>
           Total Amount: {formatCurrency(totalAmount)}
@@ -596,34 +540,7 @@ const SpendingReportTable: React.FC = () => {
                   </div>
                   <div className="table-body">
                     {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
-                      <div
-                        className="table-row-clickable"
-                        key={transaction.bankTransaction.id}
-                        onClick={() => handleClickTransaction(transaction.bankTransaction)}
-                      >
-                        <div className="table-cell">
-                          <IconButton onClick={(event: any) => {
-                            event.stopPropagation();
-                            handleAssignCategory(transaction.bankTransaction)
-                          }
-                          }>
-                            <AssignmentIcon />
-                          </IconButton>
-                          <Tooltip title="Edit transaction">
-                            <IconButton onClick={(event: any) => {
-                              event.stopPropagation();
-                              handleEditTransaction(transaction.bankTransaction)
-                            }
-                            }>
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
-                        </div>
-                        <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
-                        <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
-                        <div className="table-cell">{transaction.bankTransaction.userDescription}</div>
-                        <div className="table-cell">{transaction.bankTransaction.comment}</div>
-                      </div>
+                      <SpendingReportTableRow transaction={transaction.bankTransaction} />
                     ))}
                   </div>
                 </div>
