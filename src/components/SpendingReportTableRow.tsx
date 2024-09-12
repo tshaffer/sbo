@@ -8,6 +8,8 @@ import { Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import '../styles/Tracker.css';
 import { useDispatch } from '../types';
@@ -28,6 +30,8 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   const navigate = useNavigate();
 
   const [transactionId, setTransactionId] = React.useState('');
+  const [isEditingComment, setIsEditingComment] = React.useState(false);
+  const [comment, setComment] = React.useState(props.transaction.comment || "");
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
@@ -37,6 +41,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   };
 
   const handleClickTransaction = (transaction: Transaction) => {
+    console.log('handleClickTransaction');
     navigate(`/statements/credit-card/${transaction.statementId}`);
   };
 
@@ -53,6 +58,16 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
     setShowEditTransactionDialog(false);
   }
 
+  const handleSaveComment = (transaction: Transaction) => {
+    const updatedTransaction: Transaction = {
+      ...transaction,
+      comment,
+    };
+    dispatch(updateTransaction(updatedTransaction));
+
+    setIsEditingComment(false);
+  };
+
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -66,6 +81,38 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   const handleCloseAddRuleDialog = () => {
     setShowAddCategoryAssignmentRuleDialog(false);
   };
+
+  const handleSetIsEditingComment = (event: React.MouseEvent<HTMLElement, MouseEvent>, isEditing: boolean) => {
+    console.log('handleSetIsEditingCommentEvent: ', isEditing);
+    event.stopPropagation();
+    setIsEditingComment(isEditing);
+  }
+
+  const renderCommentColumn = (transaction: Transaction): JSX.Element => {
+    return (
+      <div className="credit-card-statement-grid-table-cell">
+        {isEditingComment ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+              type="text"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <IconButton onClick={() => handleSaveComment(transaction)}>
+              <SaveIcon />
+            </IconButton>
+            <IconButton onClick={(event) => handleSetIsEditingComment(event, false)}>
+              <CancelIcon />
+            </IconButton>
+          </div>
+        ) : (
+          <div onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleSetIsEditingComment(event, true)}>
+            {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -107,8 +154,8 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
         <div className="table-cell">{formatDate(props.transaction.transactionDate)}</div>
         <div className="table-cell">{formatCurrency(-props.transaction.amount)}</div>
         <div className="table-cell">{props.transaction.userDescription}</div>
-        <div className="table-cell">{props.transaction.comment}</div>
-      </div>
+        {renderCommentColumn(props.transaction)}
+        </div>
     </React.Fragment>);
 };
 
