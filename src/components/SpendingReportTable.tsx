@@ -540,7 +540,9 @@ const SpendingReportTable: React.FC = () => {
                   </div>
                   <div className="table-body">
                     {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
-                      <SpendingReportTableRow transaction={transaction.bankTransaction} />
+                      <React.Fragment key={transaction.bankTransaction.id}>
+                        <SpendingReportTableRow transaction={transaction.bankTransaction} />
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>
