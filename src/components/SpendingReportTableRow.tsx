@@ -35,15 +35,15 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
-  const commentIdsToIgnore = ['commentDiv', 'commentInput', 'save', 'cancel', 'assign', 'edit'];
-
   const handleAssignCategory = (transaction: Transaction) => {
     setTransactionId(transaction.id);
     setShowAddCategoryAssignmentRuleDialog(true);
   };
 
   const handleClickTransaction = (e: any, transaction: Transaction) => {
-    navigate(`/statements/credit-card/${transaction.statementId}`);
+    if (e.target.id !== 'commentInput') {
+      navigate(`/statements/credit-card/${transaction.statementId}`);
+    }
   };
 
   const handleEditTransaction = (transaction: Transaction) => {
