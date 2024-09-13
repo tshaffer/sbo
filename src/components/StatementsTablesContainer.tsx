@@ -8,7 +8,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import { SidebarMenuButton } from '../types';
 import UploadStatementDialog from './UploadStatementDialog';
 
-const Statements: React.FC = () => {
+const StatementsTablesContainer: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,4 +56,4 @@ const Statements: React.FC = () => {
   );
 };
 
-export default Statements;
+export default StatementsTablesContainer;

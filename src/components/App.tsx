@@ -5,7 +5,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { store } from '../models';
 
 import Layout from './Layout';
-import Statements from './Statements';
+import StatementsTablesContainer from './StatementsTablesContainer';
 import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
 import ReportsContent from './ReportsContent';
 import CategoriesContent from './CategoriesContent';
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'statements',
-        element: <Statements />,
+        element: <StatementsTablesContainer />,
         children: [
           {
             path: 'credit-card',
