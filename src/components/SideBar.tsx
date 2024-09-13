@@ -54,15 +54,6 @@ const SideBar: React.FC = () => {
             sx={buttonStyle}
             onClick={() => handleClose('List')}
             component={NavLink}
-            to="/statements"
-          >
-            <span>{SidebarMenuButton.Statements}</span><ChevronRightIcon />
-          </Button>
-
-          <Button
-            sx={buttonStyle}
-            onClick={() => handleClose('List')}
-            component={NavLink}
             to="/categories"
           >
             <span>{SidebarMenuButton.Categories}</span><ChevronRightIcon />
@@ -84,6 +75,14 @@ const SideBar: React.FC = () => {
             to="/reports"
           >
             <span>{SidebarMenuButton.Reports}</span><ChevronRightIcon />
+          </Button>
+          <Button
+            sx={buttonStyle}
+            onClick={() => handleClose('List')}
+            component={NavLink}
+            to="/statements"
+          >
+            <span>{SidebarMenuButton.Statements}</span><ChevronRightIcon />
           </Button>
         </AccordionDetails>
       </Accordion>
