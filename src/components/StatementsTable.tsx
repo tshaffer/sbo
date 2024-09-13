@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { cloneDeep, isEmpty } from 'lodash';
 import '../styles/Grid.css';
 import { formatCurrency, formatDate } from '../utilities';
-import { BaseStatement, TrackerVoidPromiseThunkAction, useDispatch } from '../types';
+import { Statement, useDispatch } from '../types';
 
-interface StatementsTableProps<T extends BaseStatement> {
+interface StatementsTableProps<T extends Statement> {
   statements: T[];
   navigateBasePath: string; // New prop to specify the base path for navigation
   additionalColumns?: (statement: T) => React.ReactNode[];
@@ -13,7 +13,7 @@ interface StatementsTableProps<T extends BaseStatement> {
   gridTemplateColumns: string;
 }
 
-const StatementsTable = <T extends BaseStatement>({
+const StatementsTable = <T extends Statement>({
   statements,
   navigateBasePath,
   additionalColumns = () => [],

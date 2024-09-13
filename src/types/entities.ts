@@ -87,23 +87,14 @@ export interface CategorizedTransaction {
   categoryId: string;
 }
 
-export interface BaseStatement {
-  id: string;
-  startDate: string;
-  endDate: string;
-  transactionCount: number;
-  netDebits: number;
-  fileName?: string;
-}
-
 export interface Statement {
   id: string;
-  fileName: string;
-  type: StatementType;
   startDate: string;
   endDate: string;
   transactionCount: number;
   netDebits: number;
+  fileName: string;
+  type: StatementType;
 }
 
 export type CreditCardStatement = Statement;
