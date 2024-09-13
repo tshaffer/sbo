@@ -43,11 +43,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   };
 
   const handleClickTransaction = (e: any, transaction: Transaction) => {
-    console.log('handleClickTransaction');
-    console.log(e.target.id);
-    if (!commentIdsToIgnore.includes(e.target.id)) {
-      navigate(`/statements/credit-card/${transaction.statementId}`);
-    }
+    navigate(`/statements/credit-card/${transaction.statementId}`);
   };
 
   const handleEditTransaction = (transaction: Transaction) => {
@@ -88,14 +84,10 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   };
 
   const handleSetIsEditingComment = (event: React.MouseEvent<HTMLElement, MouseEvent>, isEditing: boolean) => {
-    console.log('handleSetIsEditingCommentEvent: ', isEditing);
-    // event.stopPropagation();
     setIsEditingComment(isEditing);
   }
 
   const handleCommentChanged = (event: any, comment: string) => {
-    console.log('handleCommentChanged: ', comment);
-    // event.stopPropagation();
     setComment(comment);
   }
 
@@ -126,15 +118,17 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
               handleSetIsEditingComment(event, false)
             }
             }>
-              <CancelIcon
-                id='cancel'
-              />
+              <CancelIcon />
             </IconButton>
           </div>
         ) : (
           <div
             id='commentDiv'
-            onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleSetIsEditingComment(event, true)}>
+            onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              event.stopPropagation();
+              handleSetIsEditingComment(event, true)
+            }
+            }>
             {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
           </div>
         )}
