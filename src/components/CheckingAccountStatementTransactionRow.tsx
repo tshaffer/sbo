@@ -243,12 +243,14 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       <div className="grid-table-cell">{categorizedTransactionName}</div>
       {renderCommentColumn(props.checkingAccountTransaction)}
       <Tooltip title="Category Override">
-        <IconButton
-          onClick={() => handleRemoveCategoryOverride(props.checkingAccountTransaction)}
-          disabled={!props.checkingAccountTransaction.overrideCategory}
-        >
-          {props.checkingAccountTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
-        </IconButton>
+        <span>
+          <IconButton
+            onClick={() => handleRemoveCategoryOverride(props.checkingAccountTransaction)}
+            disabled={!props.checkingAccountTransaction.overrideCategory}
+          >
+            {props.checkingAccountTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
+          </IconButton>
+        </span>
       </Tooltip>
     </React.Fragment>
   );

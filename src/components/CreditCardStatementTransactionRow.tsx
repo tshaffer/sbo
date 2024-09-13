@@ -175,12 +175,14 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
       {renderCommentColumn(creditCardTransaction)}
       <Tooltip title="Category Override">
-        <IconButton
-          onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
-          disabled={!creditCardTransaction.overrideCategory}
-        >
-          {creditCardTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
-        </IconButton>
+        <span>
+          <IconButton
+            onClick={() => handleRemoveCategoryOverride(creditCardTransaction)}
+            disabled={!creditCardTransaction.overrideCategory}
+          >
+            {creditCardTransaction.overrideCategory ? <ToggleOnIcon /> : <ToggleOffIcon />}
+          </IconButton>
+        </span>
       </Tooltip>
     </React.Fragment>
   );
