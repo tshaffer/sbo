@@ -35,6 +35,8 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
+  const commentIdsToIgnore = ['commentDiv', 'commentInput', 'save', 'cancel', 'assign', 'edit'];
+
   const handleAssignCategory = (transaction: Transaction) => {
     setTransactionId(transaction.id);
     setShowAddCategoryAssignmentRuleDialog(true);
@@ -43,8 +45,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   const handleClickTransaction = (e: any, transaction: Transaction) => {
     console.log('handleClickTransaction');
     console.log(e.target.id);
-    // console.log(e);
-    if (e.target.id !== 'comment') {
+    if (!commentIdsToIgnore.includes(e.target.id)) {
       navigate(`/statements/credit-card/${transaction.statementId}`);
     }
   };
@@ -88,13 +89,13 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
 
   const handleSetIsEditingComment = (event: React.MouseEvent<HTMLElement, MouseEvent>, isEditing: boolean) => {
     console.log('handleSetIsEditingCommentEvent: ', isEditing);
-    event.stopPropagation();
+    // event.stopPropagation();
     setIsEditingComment(isEditing);
   }
 
   const handleCommentChanged = (event: any, comment: string) => {
     console.log('handleCommentChanged: ', comment);
-    event.stopPropagation();
+    // event.stopPropagation();
     setComment(comment);
   }
 
@@ -105,19 +106,35 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               type="text"
-              id="comment"
+              id="commentInput"
               value={comment}
-              onChange={(e) => handleCommentChanged(e, e.target.value)}
+              onChange={(e: any) => {
+                e.stopPropagation();
+                handleCommentChanged(e, e.target.value)
+              }
+              }
             />
-            <IconButton onClick={() => handleSaveComment(transaction)}>
+            <IconButton id='save' onClick={(event: any) => {
+              event.stopPropagation();
+              handleSaveComment(transaction)
+            }
+            }>
               <SaveIcon />
             </IconButton>
-            <IconButton onClick={(event) => handleSetIsEditingComment(event, false)}>
-              <CancelIcon />
+            <IconButton id='cancel' onClick={(event: any) => {
+              event.stopPropagation();
+              handleSetIsEditingComment(event, false)
+            }
+            }>
+              <CancelIcon
+                id='cancel'
+              />
             </IconButton>
           </div>
         ) : (
-          <div onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleSetIsEditingComment(event, true)}>
+          <div
+            id='commentDiv'
+            onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => handleSetIsEditingComment(event, true)}>
             {comment || <span style={{ color: "#aaa" }}>Add comment...</span>}
           </div>
         )}
@@ -145,7 +162,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
         onClick={(e) => handleClickTransaction(e, props.transaction)}
       >
         <div className="table-cell">
-          <IconButton onClick={(event: any) => {
+          <IconButton id='assign' onClick={(event: any) => {
             event.stopPropagation();
             handleAssignCategory(props.transaction)
           }
@@ -153,7 +170,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
             <AssignmentIcon />
           </IconButton>
           <Tooltip title="Edit transaction">
-            <IconButton onClick={(event: any) => {
+            <IconButton id='edit' onClick={(event: any) => {
               event.stopPropagation();
               handleEditTransaction(props.transaction)
             }
