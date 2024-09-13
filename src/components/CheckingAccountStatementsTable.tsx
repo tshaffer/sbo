@@ -1,23 +1,12 @@
 import React from 'react';
-import { CheckingAccountStatement, Statement, useTypedSelector } from '../types';
-import { getCreditCardStatements, getCheckingAccountStatements } from '../selectors';
-import StatementsTable from './StatementsTable';
-
-const CreditCardStatementsTable: React.FC = () => {
-  const statements: Statement[] = useTypedSelector(getCreditCardStatements); 
-  return (
-    <StatementsTable
-      statements={statements}
-      navigateBasePath="/statements/credit-card"  // Set the base path for credit card statements
-      gridTemplateColumns="40px 1fr 1fr 1fr 1fr 1fr"
-    />
-  );
-};
+import { CheckingAccountStatement, useTypedSelector } from '../types';
+import { getCheckingAccountStatements } from '../selectors';
+import BaseStatementsTable from './BaseStatementsTable';
 
 const CheckingAccountStatementsTable: React.FC = () => {
   const statements: CheckingAccountStatement[] = useTypedSelector(getCheckingAccountStatements);
   return (
-    <StatementsTable
+    <BaseStatementsTable
       statements={statements}
       navigateBasePath="/statements/checking-account"  // Set the base path for checking account statements
       gridTemplateColumns="40px 1fr 1fr 1fr 1fr 1fr 1fr 1fr"
@@ -30,4 +19,4 @@ const CheckingAccountStatementsTable: React.FC = () => {
   );
 };
 
-export { CreditCardStatementsTable, CheckingAccountStatementsTable };
+export { CheckingAccountStatementsTable };
