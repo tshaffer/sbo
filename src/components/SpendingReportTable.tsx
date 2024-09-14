@@ -490,7 +490,7 @@ const SpendingReportTable: React.FC = () => {
     }
     return null;
   };
-  
+
   const renderExpandIcon = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
     if (!isParentCategory(categoryExpenses)) {
       return null;
@@ -520,17 +520,19 @@ const SpendingReportTable: React.FC = () => {
 
     return (
       <React.Fragment key={categoryExpenses.id}>
-        <div className="table-row">
-          <div className="table-cell">
+        <div className="fixed-table-row">
+          <div className="fixed-width-table-cell-column-0">
             {renderExpandIcon(categoryExpenses)}
+          </div>
+          <div className="fixed-width-table-cell-column-1">
             <IconButton onClick={() => handleSelectRow(categoryExpenses.id as string)}>
               {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
             </IconButton>
           </div>
-          <div className="table-cell">{categoryExpenses.categoryName}</div>
-          <div className="table-cell">{categoryExpenses.transactionCount}</div>
-          <div className="table-cell">{formatCurrency(categoryExpenses.totalExpenses)}</div>
-          <div className="table-cell">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
+          <div className="fixed-width-table-cell-column-2">{categoryExpenses.categoryName}</div>
+          <div className="fixed-width-table-cell-column-3">{categoryExpenses.transactionCount}</div>
+          <div className="fixed-width-table-cell-column-4">{formatCurrency(categoryExpenses.totalExpenses)}</div>
+          <div className="fixed-width-table-cell-column-5">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
         </div>
         {selectedRowId === categoryExpenses.id && (
           <div className="details-table-container">
@@ -603,14 +605,15 @@ const SpendingReportTable: React.FC = () => {
           Per Month: {expensesPerMonth(totalAmount, startDate, endDate)}
         </span>
       </h4>
-      <div className="table-container">
-        <div className="table-header">
-          <div className="table-row">
-            <div className="table-cell"></div>
-            <div className="table-cell" onClick={() => handleSortCategories('categoryName')}>Category{renderSortCategoriesIndicator('categoryName')}</div>
-            <div className="table-cell" onClick={() => handleSortCategories('transactionCount')}>Transaction Count{renderSortCategoriesIndicator('transactionCount')}</div>
-            <div className="table-cell" onClick={() => handleSortCategories('totalExpenses')}>Total Amount{renderSortCategoriesIndicator('totalExpenses')}</div>
-            <div className="table-cell" onClick={() => handleSortCategories('percentageOfTotal')}>Percentage of Total{renderSortCategoriesIndicator('percentageOfTotal')}</div>
+      <div className="fixed-table-container">
+        <div className="fixed-table-header">
+          <div className="fixed-table-row">
+            <div className="fixed-width-table-cell-column-0"></div>
+            <div className="fixed-width-table-cell-column-1"></div>
+            <div className="fixed-width-table-cell-column-2" onClick={() => handleSortCategories('categoryName')}>Category{renderSortCategoriesIndicator('categoryName')}</div>
+            <div className="fixed-width-table-cell-column-3" onClick={() => handleSortCategories('transactionCount')}>Transaction Count{renderSortCategoriesIndicator('transactionCount')}</div>
+            <div className="fixed-width-table-cell-column-4" onClick={() => handleSortCategories('totalExpenses')}>Total Amount{renderSortCategoriesIndicator('totalExpenses')}</div>
+            <div className="fixed-width-table-cell-column-5" onClick={() => handleSortCategories('percentageOfTotal')}>Percentage of Total{renderSortCategoriesIndicator('percentageOfTotal')}</div>
           </div>
         </div>
         <div className="spending-report-table-body">
