@@ -178,7 +178,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
         <div className="details-table-cell-column-2">{formatDate(props.transaction.transactionDate)}</div>
         <div className="details-table-cell-column-3">{formatCurrency(-props.transaction.amount)}</div>
         <div className="details-table-cell-column-4">{props.transaction.userDescription}</div>
-        {/* {renderCommentColumn(props.transaction)} */}
+        {renderCommentColumn(props.transaction)}
       </div>
     </React.Fragment>);
 };
