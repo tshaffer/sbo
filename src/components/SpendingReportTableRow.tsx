@@ -93,7 +93,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
 
   const renderCommentColumn = (transaction: Transaction): JSX.Element => {
     return (
-      <div className="credit-card-statement-grid-table-cell">
+      <div className="details-table-cell-column-5">
         {isEditingComment ? (
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
