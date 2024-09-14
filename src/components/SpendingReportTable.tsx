@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import '../styles/Tracker.css';
 import { BankTransaction, CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
@@ -17,6 +19,7 @@ import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
 import { useDispatch, useTypedSelector } from '../types';
 import { useNavigate } from 'react-router-dom';
 import SpendingReportTableRow from './SpendingReportTableRow';
+import { ExpandLess } from '@mui/icons-material';
 
 const SpendingReportTable: React.FC = () => {
 
@@ -33,6 +36,7 @@ const SpendingReportTable: React.FC = () => {
   const navigate = useNavigate();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const [categorySortColumn, setCategorySortColumn] = useState<string>('totalExpenses');
   const [categorySortOrder, setCategorySortOrder] = useState<'asc' | 'desc'>('desc');
@@ -44,9 +48,23 @@ const SpendingReportTable: React.FC = () => {
     return null;
   }
 
-  const handleButtonClick = (rowId: string) => {
+  const handleSelectRow = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
+
+  const handleToggleCategoryExpand = (categoryId: string) => {
+    setExpandedCategories(prevExpandedCategories => {
+      const newExpandedCategories = new Set(prevExpandedCategories);
+      if (newExpandedCategories.has(categoryId)) {
+        newExpandedCategories.delete(categoryId);
+      } else {
+        newExpandedCategories.add(categoryId);
+      }
+      return newExpandedCategories;
+    });
+  };
+
+  const isCategoryExpanded = (categoryId: string) => expandedCategories.has(categoryId);
 
   const sortTransactionsCallback = (a: CategorizedTransaction, b: CategorizedTransaction) => {
 
@@ -456,6 +474,65 @@ const SpendingReportTable: React.FC = () => {
     return result;
   };
 
+  const isSubCategory = (categoryExpenses: CategoryExpensesData): boolean => {
+    return categoryExpenses.categoryName.startsWith('\u00A0');
+  }
+
+  const isParentCategory = (categoryExpenses: CategoryExpensesData): boolean => {
+    return categoryExpenses.children.length > 0;
+  }
+
+  const renderExpandIcon = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
+    if (!isParentCategory(categoryExpenses)) {
+      return null;
+    }
+    return (
+      <IconButton onClick={() => handleToggleCategoryExpand(categoryExpenses.id as string)}>
+        {isCategoryExpanded(categoryExpenses.id) ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+      </IconButton>
+    );
+  }
+
+  const renderRow = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
+
+    return (
+      <React.Fragment key={categoryExpenses.id}>
+        <div className="table-row">
+          <div className="table-cell">
+            {renderExpandIcon(categoryExpenses)}
+            <IconButton onClick={() => handleSelectRow(categoryExpenses.id as string)}>
+              {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
+            </IconButton>
+          </div>
+          <div className="table-cell">{categoryExpenses.categoryName}</div>
+          <div className="table-cell">{categoryExpenses.transactionCount}</div>
+          <div className="table-cell">{formatCurrency(categoryExpenses.totalExpenses)}</div>
+          <div className="table-cell">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
+        </div>
+        {selectedRowId === categoryExpenses.id && (
+          <div className="details-table-container">
+            <div className="table-header">
+              <div className="table-row">
+                <div className="table-cell"></div>
+                <div className="table-cell" onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
+                <div className="table-cell" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
+                <div className="table-cell" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
+                <div className="table-cell" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
+              </div>
+            </div>
+            <div className="table-body">
+              {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
+                <React.Fragment key={transaction.bankTransaction.id}>
+                  <SpendingReportTableRow transaction={transaction.bankTransaction} />
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        )}
+      </React.Fragment>
+    );
+  }
+
   // Filter out categories that have been excluded
   // Trim categories based on importance
   // Get category expenses data for trimmed categories
@@ -515,39 +592,7 @@ const SpendingReportTable: React.FC = () => {
         </div>
         <div className="spending-report-table-body">
           {rows.map((categoryExpenses: CategoryExpensesData) => (
-            <React.Fragment key={categoryExpenses.id}>
-              <div className="table-row">
-                <div className="table-cell">
-                  <IconButton onClick={() => handleButtonClick(categoryExpenses.id as string)}>
-                    {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
-                  </IconButton>
-                </div>
-                <div className="table-cell">{categoryExpenses.categoryName}</div>
-                <div className="table-cell">{categoryExpenses.transactionCount}</div>
-                <div className="table-cell">{formatCurrency(categoryExpenses.totalExpenses)}</div>
-                <div className="table-cell">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
-              </div>
-              {selectedRowId === categoryExpenses.id && (
-                <div className="details-table-container">
-                  <div className="table-header">
-                    <div className="table-row">
-                      <div className="table-cell"></div>
-                      <div className="table-cell" onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
-                      <div className="table-cell" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
-                      <div className="table-cell" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
-                      <div className="table-cell" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
-                    </div>
-                  </div>
-                  <div className="table-body">
-                    {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
-                      <React.Fragment key={transaction.bankTransaction.id}>
-                        <SpendingReportTableRow transaction={transaction.bankTransaction} />
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </React.Fragment>
+            renderRow(categoryExpenses)
           ))}
         </div>
       </div>
