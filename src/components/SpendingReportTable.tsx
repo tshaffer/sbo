@@ -474,12 +474,30 @@ const SpendingReportTable: React.FC = () => {
     return result;
   };
 
+  // Hack
   const isSubCategory = (categoryExpenses: CategoryExpensesData): boolean => {
     return categoryExpenses.categoryName.startsWith('\u00A0');
   }
 
   const isParentCategory = (categoryExpenses: CategoryExpensesData): boolean => {
     return categoryExpenses.children.length > 0;
+  }
+
+  // Hack
+  const getParentCategory = (allCategoriesExpensesData: CategoryExpensesData[], categoryExpenses: CategoryExpensesData): CategoryExpensesData | null => {
+
+    for (const categoryExpensesData of allCategoriesExpensesData) {
+      if (categoryExpensesData.children.length > 0) {
+        for (const subCategoryExpensesData of categoryExpensesData.children) {
+          if (subCategoryExpensesData.id === categoryExpenses.id) {
+            return categoryExpensesData;
+          }
+        }
+      }
+    }
+    
+    return null;
+
   }
 
   const renderExpandIcon = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
@@ -494,6 +512,20 @@ const SpendingReportTable: React.FC = () => {
   }
 
   const renderRow = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
+
+    // display a row if it is a top-level category or a sub-category and its parent is expanded
+    const isTopLevelCategory: boolean = !isSubCategory(categoryExpenses);
+    if (!isTopLevelCategory) {
+      const parentCategory: CategoryExpensesData | null = getParentCategory(rows, categoryExpenses);
+      if (!parentCategory) {
+        // this should not happen
+        debugger;
+        return null;
+      }
+      if (!isCategoryExpanded(parentCategory.id as string)) {
+        return null;
+      }
+    }
 
     return (
       <React.Fragment key={categoryExpenses.id}>

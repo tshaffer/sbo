@@ -148,7 +148,7 @@ export type CategoryExpensesData = {
   transactionCount: number,
   totalExpenses: number,
   percentageOfTotal: number,
-  children: any,
+  children: CategoryExpensesData[],
 }
 
 export interface CategoryMenuItem extends Category {
