@@ -93,7 +93,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
 
   const renderCommentColumn = (transaction: Transaction): JSX.Element => {
     return (
-      <div className="credit-card-statement-grid-table-cell">
+      <div className="fixed-width-base-table-cell details-table-cell-comment">
         {isEditingComment ? (
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
@@ -151,11 +151,11 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
         onSave={handleSaveTransaction}
       />
       <div
-        className="table-row-clickable"
+        className="details-table-row-clickable"
         key={props.transaction.id}
         onClick={(e) => handleClickTransaction(e, props.transaction)}
       >
-        <div className="table-cell">
+        <div className="fixed-width-base-table-cell details-table-cell-icon">
           <IconButton id='assign' onClick={(event: any) => {
             event.stopPropagation();
             handleAssignCategory(props.transaction)
@@ -163,6 +163,8 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
           }>
             <AssignmentIcon />
           </IconButton>
+        </div>
+        <div className="fixed-width-base-table-cell details-table-cell-icon">
           <Tooltip title="Edit transaction">
             <IconButton id='edit' onClick={(event: any) => {
               event.stopPropagation();
@@ -173,9 +175,9 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
             </IconButton>
           </Tooltip>
         </div>
-        <div className="table-cell">{formatDate(props.transaction.transactionDate)}</div>
-        <div className="table-cell">{formatCurrency(-props.transaction.amount)}</div>
-        <div className="table-cell">{props.transaction.userDescription}</div>
+        <div className="fixed-width-base-table-cell details-table-cell-date" style={{ marginLeft: '36px' }}>{formatDate(props.transaction.transactionDate)}</div>
+        <div className="fixed-width-base-table-cell details-table-cell-amount">{formatCurrency(-props.transaction.amount)}</div>
+        <div className="fixed-width-base-table-cell details-table-cell-description">{props.transaction.userDescription}</div>
         {renderCommentColumn(props.transaction)}
       </div>
     </React.Fragment>);
