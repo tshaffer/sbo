@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { v4 as uuidv4 } from 'uuid';
 
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
@@ -9,17 +8,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import '../styles/Tracker.css';
-import { BankTransaction, CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { BankTransaction, CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, expensesPerMonth, roundTo } from '../utilities';
 import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategoryIdInDateRange } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
-import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
-
 import { useDispatch, useTypedSelector } from '../types';
 import { useNavigate } from 'react-router-dom';
 import SpendingReportTableRow from './SpendingReportTableRow';
-import { ExpandLess } from '@mui/icons-material';
 
 const SpendingReportTable: React.FC = () => {
 
@@ -31,9 +27,6 @@ const SpendingReportTable: React.FC = () => {
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
   const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
   const reportDataState = useTypedSelector(selectReportDataState);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
@@ -98,7 +91,6 @@ const SpendingReportTable: React.FC = () => {
     if (transactionsSortColumn !== column) return null;
     return transactionsSortOrder === 'asc' ? ' ▲' : ' ▼';
   };
-
 
   const sortCategoriesCallback = (a: CategoryExpensesData, b: CategoryExpensesData) => {
 
@@ -483,30 +475,29 @@ const SpendingReportTable: React.FC = () => {
     return categoryExpenses.children.length > 0;
   }
 
-  // Hack
-  const getParentCategory = (allCategoriesExpensesData: CategoryExpensesData[], categoryExpenses: CategoryExpensesData): CategoryExpensesData | null => {
-
+  // Hack - a category doesn't have any direct indicator of its parent
+  const getParentCategory = (
+    allCategoriesExpensesData: CategoryExpensesData[],
+    categoryExpenses: CategoryExpensesData
+  ): CategoryExpensesData | null => {
     for (const categoryExpensesData of allCategoriesExpensesData) {
-      if (categoryExpensesData.children.length > 0) {
-        for (const subCategoryExpensesData of categoryExpensesData.children) {
-          if (subCategoryExpensesData.id === categoryExpenses.id) {
-            return categoryExpensesData;
-          }
-        }
+      const parentCategory = categoryExpensesData.children.find(
+        (subCategoryExpensesData) => subCategoryExpensesData.id === categoryExpenses.id
+      );
+      if (parentCategory) {
+        return categoryExpensesData;
       }
     }
-    
     return null;
-
-  }
-
+  };
+  
   const renderExpandIcon = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
     if (!isParentCategory(categoryExpenses)) {
       return null;
     }
     return (
       <IconButton onClick={() => handleToggleCategoryExpand(categoryExpenses.id as string)}>
-        {isCategoryExpanded(categoryExpenses.id) ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+        {isCategoryExpanded(categoryExpenses.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
       </IconButton>
     );
   }
