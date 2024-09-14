@@ -536,13 +536,14 @@ const SpendingReportTable: React.FC = () => {
         </div>
         {selectedRowId === categoryExpenses.id && (
           <div className="details-table-container">
-            <div className="table-header">
-              <div className="table-row">
-                <div className="table-cell"></div>
-                <div className="table-cell" onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
-                <div className="table-cell" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
-                <div className="table-cell" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
-                <div className="table-cell" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
+            <div className="details-table-header">
+              <div className="details-table-row">
+                <div className="details-table-cell-column-0"></div>
+                <div className="details-table-cell-column-1"></div>
+                <div className="details-table-cell-column-2" onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
+                <div className="details-table-cell-column-3" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
+                <div className="details-table-cell-column-4" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
+                {/* <div className="details-table-cell-column-4" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div> */}
               </div>
             </div>
             <div className="table-body">

@@ -151,11 +151,11 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
         onSave={handleSaveTransaction}
       />
       <div
-        className="table-row-clickable"
+        className="details-table-row-clickable"
         key={props.transaction.id}
         onClick={(e) => handleClickTransaction(e, props.transaction)}
       >
-        <div className="table-cell">
+        <div className="details-table-cell-column-0">
           <IconButton id='assign' onClick={(event: any) => {
             event.stopPropagation();
             handleAssignCategory(props.transaction)
@@ -163,6 +163,8 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
           }>
             <AssignmentIcon />
           </IconButton>
+        </div>
+        <div className="details-table-cell-column-1">
           <Tooltip title="Edit transaction">
             <IconButton id='edit' onClick={(event: any) => {
               event.stopPropagation();
@@ -173,10 +175,10 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
             </IconButton>
           </Tooltip>
         </div>
-        <div className="table-cell">{formatDate(props.transaction.transactionDate)}</div>
-        <div className="table-cell">{formatCurrency(-props.transaction.amount)}</div>
-        <div className="table-cell">{props.transaction.userDescription}</div>
-        {renderCommentColumn(props.transaction)}
+        <div className="details-table-cell-column-2">{formatDate(props.transaction.transactionDate)}</div>
+        <div className="details-table-cell-column-3">{formatCurrency(-props.transaction.amount)}</div>
+        <div className="details-table-cell-column-4">{props.transaction.userDescription}</div>
+        {/* {renderCommentColumn(props.transaction)} */}
       </div>
     </React.Fragment>);
 };
