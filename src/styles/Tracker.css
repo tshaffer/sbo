@@ -59,47 +59,31 @@
   max-width: 800px;
 }
 
-.fixed-width-table-cell-column-0 {
-  width: 25px;
+.fixed-width-base-table-cell {
   text-align: left;
   display: flex;
   align-items: center;
 }
 
-.fixed-width-table-cell-column-1 {
+.fixed-width-table-cell-icon {
   width: 25px;
-  text-align: left;
-  display: flex;
-  align-items: center;
 }
 
-.fixed-width-table-cell-column-2 {
+.fixed-width-table-cell-category {
   width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
   margin-left: 18px;
 }
 
-.fixed-width-table-cell-column-3 {
+.fixed-width-table-cell-transaction-count {
   width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
 }
 
-.fixed-width-table-cell-column-4 {
+.fixed-width-table-cell-total-amount {
   width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
 }
 
-.fixed-width-table-cell-column-5 {
+.fixed-width-table-cell-percentage-of-total {
   width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
 }
 
 .details-table-container {
