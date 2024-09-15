@@ -79,6 +79,11 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setIsEditingComment(false);
   };
 
+  const handleCancelComment = (checkingAccountTransaction: CheckingAccountTransaction) => {
+    setComment(checkingAccountTransaction.comment || "");
+    setIsEditingComment(false);
+  }
+
   const handleSaveTransaction = (transaction: Transaction) => {
     dispatch(updateTransaction(transaction));
   };
@@ -199,7 +204,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
             <IconButton onClick={() => handleSaveComment(checkingAccountTransaction)}>
               <SaveIcon />
             </IconButton>
-            <IconButton onClick={() => setIsEditingComment(false)}>
+            <IconButton onClick={() => handleCancelComment(checkingAccountTransaction)}>
               <CancelIcon />
             </IconButton>
           </div>

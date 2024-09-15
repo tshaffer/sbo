@@ -77,6 +77,11 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     setIsEditingComment(false);
   };
 
+  const handleCancelComment = () => {
+    setComment(creditCardTransaction.comment || "");
+    setIsEditingComment(false);
+  }
+  
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -133,7 +138,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
             <IconButton onClick={() => handleSaveComment(creditCardTransaction)}>
               <SaveIcon />
             </IconButton>
-            <IconButton onClick={() => setIsEditingComment(false)}>
+            <IconButton onClick={() => handleCancelComment()}>
               <CancelIcon />
             </IconButton>
           </div>

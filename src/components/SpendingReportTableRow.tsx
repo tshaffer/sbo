@@ -69,6 +69,11 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
     setIsEditingComment(false);
   };
 
+  const handleCancelComment = () => {
+    setComment(props.transaction.comment || "");
+    setIsEditingComment(false);
+  }
+  
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -115,7 +120,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
             </IconButton>
             <IconButton id='cancel' onClick={(event: any) => {
               event.stopPropagation();
-              handleSetIsEditingComment(event, false)
+              handleCancelComment()
             }
             }>
               <CancelIcon />
