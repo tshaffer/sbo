@@ -70,24 +70,7 @@
 }
 
 .fixed-width-table-cell-property {
-  width: 200px;
-}
-
-.fixed-width-table-cell-category {
-  width: 200px;
-  margin-left: 36px;
-}
-
-.fixed-width-table-cell-transaction-count {
-  width: 200px;
-}
-
-.fixed-width-table-cell-total-amount {
-  width: 200px;
-}
-
-.fixed-width-table-cell-percentage-of-total {
-  width: 200px;
+  width: 274px;
 }
 
 .details-table-container {
