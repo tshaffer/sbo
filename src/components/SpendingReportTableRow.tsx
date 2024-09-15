@@ -93,7 +93,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
 
   const renderCommentColumn = (transaction: Transaction): JSX.Element => {
     return (
-      <div className="fixed-width-base-table-cell details-table-cell-property">
+      <div className="fixed-width-base-table-cell details-table-cell-comment">
         {isEditingComment ? (
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
@@ -175,9 +175,9 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
             </IconButton>
           </Tooltip>
         </div>
-        <div className="fixed-width-base-table-cell details-table-cell-property" style={{ marginLeft: '36px' }}>{formatDate(props.transaction.transactionDate)}</div>
-        <div className="fixed-width-base-table-cell details-table-cell-property">{formatCurrency(-props.transaction.amount)}</div>
-        <div className="fixed-width-base-table-cell details-table-cell-property">{props.transaction.userDescription}</div>
+        <div className="fixed-width-base-table-cell details-table-cell-date" style={{ marginLeft: '36px' }}>{formatDate(props.transaction.transactionDate)}</div>
+        <div className="fixed-width-base-table-cell details-table-cell-amount">{formatCurrency(-props.transaction.amount)}</div>
+        <div className="fixed-width-base-table-cell details-table-cell-description">{props.transaction.userDescription}</div>
         {renderCommentColumn(props.transaction)}
       </div>
     </React.Fragment>);

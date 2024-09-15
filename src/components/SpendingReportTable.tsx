@@ -539,10 +539,10 @@ const SpendingReportTable: React.FC = () => {
               <div className="details-table-row">
                 <div className="fixed-width-base-table-cell details-table-cell-icon"></div>
                 <div className="fixed-width-base-table-cell details-table-cell-icon"></div>
-                <div className="fixed-width-base-table-cell details-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
-                <div className="fixed-width-base-table-cell details-table-cell-property" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
-                <div className="fixed-width-base-table-cell details-table-cell-property" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
-                <div className="fixed-width-base-table-cell details-table-cell-property" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-date" style={{ marginLeft: '36px' }} onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-amount" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-description" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-comment" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
               </div>
             </div>
             <div className="table-body">

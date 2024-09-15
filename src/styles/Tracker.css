@@ -110,54 +110,27 @@
   width: 25px;
 }
 
-.details-table-cell-property {
-  width: 198px;
+/* .details-table-cell-property {
+  width: 240px;
+} */
+
+/* the widths of the following should add up to 960px */
+.details-table-cell-date {
+  width: 120px;
 }
 
-/*
-.details-table-cell-column-0 {
-  width: 25px;
-  text-align: left;
-  display: flex;
-  align-items: center;
+.details-table-cell-amount {
+  width: 120px;
 }
 
-.details-table-cell-column-1 {
-  width: 25px;
-  text-align: left;
-  display: flex;
-  align-items: center;
+.details-table-cell-description {
+  width: 400px;
 }
 
-.details-table-cell-column-2 {
-  width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  margin-left: 18px;
+.details-table-cell-comment {
+  width: 320px;
 }
 
-.details-table-cell-column-3 {
-  width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
-}
-
-.details-table-cell-column-4 {
-  width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
-}
-
-.details-table-cell-column-5 {
-  width: 150px;
-  text-align: left;
-  display: flex;
-  align-items: center;
-}
-*/
 
 .table-cell {
   flex: 1;
