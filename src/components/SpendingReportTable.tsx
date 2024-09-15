@@ -537,12 +537,12 @@ const SpendingReportTable: React.FC = () => {
           <div className="details-table-container">
             <div className="details-table-header">
               <div className="details-table-row">
-                <div className="details-table-cell-column-0"></div>
-                <div className="details-table-cell-column-1"></div>
-                <div className="details-table-cell-column-2" onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
-                <div className="details-table-cell-column-3" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
-                <div className="details-table-cell-column-4" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
-                <div className="details-table-cell-column-5" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-icon"></div>
+                <div className="fixed-width-base-table-cell details-table-cell-icon"></div>
+                <div className="fixed-width-base-table-cell details-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-property" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-property" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
+                <div className="fixed-width-base-table-cell details-table-cell-property" onClick={() => handleSortTransactions('comment')}>Comment{renderSortTransactionsIndicator('comment')}</div>
               </div>
             </div>
             <div className="table-body">
