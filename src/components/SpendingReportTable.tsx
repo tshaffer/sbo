@@ -528,10 +528,10 @@ const SpendingReportTable: React.FC = () => {
               {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
             </IconButton>
           </div>
-          <div className="fixed-width-base-table-cell fixed-width-table-cell-category">{categoryExpenses.categoryName}</div>
-          <div className="fixed-width-base-table-cell fixed-width-table-cell-transaction-count">{categoryExpenses.transactionCount}</div>
-          <div className="fixed-width-base-table-cell fixed-width-table-cell-total-amount">{formatCurrency(categoryExpenses.totalExpenses)}</div>
-          <div className="fixed-width-base-table-cell fixed-width-table-cell-percentage-of-total">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
+          <div className="fixed-width-base-table-cell fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{categoryExpenses.categoryName}</div>
+          <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{categoryExpenses.transactionCount}</div>
+          <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{formatCurrency(categoryExpenses.totalExpenses)}</div>
+          <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
         </div>
         {selectedRowId === categoryExpenses.id && (
           <div className="details-table-container">
@@ -610,10 +610,10 @@ const SpendingReportTable: React.FC = () => {
           <div className="fixed-table-row">
             <div className="fixed-width-base-table-cell fixed-width-table-cell-icon"></div>
             <div className="fixed-width-base-table-cell fixed-width-table-cell-icon"></div>
-            <div className="fixed-width-base-table-cell fixed-width-table-cell-category" onClick={() => handleSortCategories('categoryName')}>Category{renderSortCategoriesIndicator('categoryName')}</div>
-            <div className="fixed-width-base-table-cell fixed-width-table-cell-transaction-count" onClick={() => handleSortCategories('transactionCount')}>Transaction Count{renderSortCategoriesIndicator('transactionCount')}</div>
-            <div className="fixed-width-base-table-cell fixed-width-table-cell-total-amount" onClick={() => handleSortCategories('totalExpenses')}>Total Amount{renderSortCategoriesIndicator('totalExpenses')}</div>
-            <div className="fixed-width-base-table-cell fixed-width-table-cell-percentage-of-total" onClick={() => handleSortCategories('percentageOfTotal')}>Percentage of Total{renderSortCategoriesIndicator('percentageOfTotal')}</div>
+            <div className="fixed-width-base-table-cell fixed-width-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSortCategories('categoryName')}>Category{renderSortCategoriesIndicator('categoryName')}</div>
+            <div className="fixed-width-base-table-cell fixed-width-table-cell-property" onClick={() => handleSortCategories('transactionCount')}>Transaction Count{renderSortCategoriesIndicator('transactionCount')}</div>
+            <div className="fixed-width-base-table-cell fixed-width-table-cell-property" onClick={() => handleSortCategories('totalExpenses')}>Total Amount{renderSortCategoriesIndicator('totalExpenses')}</div>
+            <div className="fixed-width-base-table-cell fixed-width-table-cell-property" onClick={() => handleSortCategories('percentageOfTotal')}>Percentage of Total{renderSortCategoriesIndicator('percentageOfTotal')}</div>
           </div>
         </div>
         <div className="spending-report-table-body">
