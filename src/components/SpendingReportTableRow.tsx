@@ -151,7 +151,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
         onSave={handleSaveTransaction}
       />
       <div
-        className="details-table-row-clickable"
+        className="details-table-row"
         key={props.transaction.id}
       >
         <div className="fixed-width-base-table-cell details-table-cell-icon">

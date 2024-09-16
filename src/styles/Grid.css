@@ -29,6 +29,11 @@
   display: contents;
 }
 
+.grid-table-row-clickable {
+  display: contents;
+  cursor: pointer; /* Change cursor to pointer */
+}
+
 .grid-table-cell {
   padding: 8px 16px;
   border-bottom: 1px solid #ccc;

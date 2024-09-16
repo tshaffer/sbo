@@ -9,7 +9,7 @@ const CheckingAccountStatementsTable: React.FC = () => {
     <BaseStatementsTable
       statements={statements}
       navigateBasePath="/statements/checking-account"  // Set the base path for checking account statements
-      gridTemplateColumns="40px 1fr 1fr 1fr 1fr 1fr 1fr 1fr"
+      gridTemplateColumns="40px 1fr 1fr 1fr 1fr 1fr 1fr"
       additionalColumnHeaders={['# of Checks', '# of ATM Withdrawals']}
       additionalColumns={(statement) => [
         <span key="checkCount">{statement.checkCount}</span>,

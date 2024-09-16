@@ -73,6 +73,7 @@ const transactionsSlice = createSlice({
             parentTransactionId,
           };
           state.byId[splitTransaction.id] = newTransaction;
+          state.allIds.push(splitTransaction.id);
         });
       }
     },

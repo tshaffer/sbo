@@ -5,7 +5,7 @@ import '../styles/Grid.css';
 import { formatCurrency, formatDate } from '../utilities';
 import { Statement } from '../types';
 
-interface BaesStatementsTableProps<T extends Statement> {
+interface BaseStatementsTableProps<T extends Statement> {
   statements: T[];
   navigateBasePath: string; // New prop to specify the base path for navigation
   additionalColumns?: (statement: T) => React.ReactNode[];
@@ -19,7 +19,7 @@ const BaseStatementsTable = <T extends Statement>({
   additionalColumns = () => [],
   additionalColumnHeaders = [],
   gridTemplateColumns
-}: BaesStatementsTableProps<T>) => {
+}: BaseStatementsTableProps<T>) => {
 
   const navigate = useNavigate();
 
@@ -37,9 +37,8 @@ const BaseStatementsTable = <T extends Statement>({
     <div className="grid-table-container" style={{ gridTemplateColumns }}>
       <div className="grid-table-header">
         <div className="grid-table-cell"></div>
-        <div className="grid-table-cell">Name</div>
-        <div className="grid-table-cell">Start Date</div>
         <div className="grid-table-cell">End Date</div>
+        <div className="grid-table-cell">Start Date</div>
         <div className="grid-table-cell">Transaction Count</div>
         <div className="grid-table-cell">Net</div>
         {additionalColumnHeaders.map((header, idx) => (
@@ -48,16 +47,14 @@ const BaseStatementsTable = <T extends Statement>({
       </div>
       <div className="grid-table-body">
         {sortedStatements.map(statement => (
-          <div className="grid-table-row" key={statement.id}>
+          <div
+            className="grid-table-row-clickable"
+            key={statement.id}
+            onClick={() => handleStatementClicked(statement)}
+          >
             <div className="grid-table-cell"></div>
-            <div
-              className="grid-table-cell-clickable"
-              onClick={() => handleStatementClicked(statement)}
-            >
-              {statement.fileName}
-            </div>
-            <div className="grid-table-cell">{formatDate(statement.startDate)}</div>
             <div className="grid-table-cell">{formatDate(statement.endDate)}</div>
+            <div className="grid-table-cell">{formatDate(statement.startDate)}</div>
             <div className="grid-table-cell">{statement.transactionCount}</div>
             <div className="grid-table-cell">{formatCurrency(-statement.netDebits)}</div>
             {additionalColumns(statement).map((content, idx) => (

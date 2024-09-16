@@ -28,8 +28,8 @@ const TransactionsTable = <T extends Statement,>({
   tableContainerClassName,
 }: TransactionsTableProps<T>) => {
   const navigate = useNavigate();
-  const [sortColumn, setSortColumn] = useState<string>(columnKeys[0]);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = useState<string>(columnKeys[1]);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedTransactionIds, setSelectedTransactionIds] = useState<Set<string>>(new Set());
 
   // Determine the current statement and its index
@@ -37,8 +37,8 @@ const TransactionsTable = <T extends Statement,>({
   const sortedStatements = cloneDeep(statements).sort((a, b) => b.endDate.localeCompare(a.endDate));
 
   const currentIndex: number = sortedStatements.findIndex(statement => statement.id === id);
-  const previousStatement = sortedStatements[currentIndex - 1];
-  const nextStatement = sortedStatements[currentIndex + 1];
+  const previousStatement = sortedStatements[currentIndex + 1];
+  const nextStatement = sortedStatements[currentIndex - 1];
 
   // Sort transactions
   const sortedTransactions = [...transactions].sort((a, b) => {

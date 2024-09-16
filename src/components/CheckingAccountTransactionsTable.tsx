@@ -1,15 +1,13 @@
 import React from 'react';
-import { useDispatch, useTypedSelector } from '../types';
+import { useTypedSelector } from '../types';
 import { useParams } from 'react-router-dom';
 import { getCheckingAccountStatements, getCheckingAccountTransactionRowInStatementTableProperties } from '../selectors';
 import { CheckingAccountStatement, CheckingAccountTransactionRowInStatementTableProperties } from '../types';
-import { loadTransactions } from '../controllers';
 import CheckingAccountStatementTransactionRow from './CheckingAccountStatementTransactionRow';
 import TransactionsTable from './TransactionsTable';
 
 const CheckingAccountTransactionsTable: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const dispatch = useDispatch();
 
   const statements = useTypedSelector(getCheckingAccountStatements);
   const transactions = useTypedSelector(state => getCheckingAccountTransactionRowInStatementTableProperties(state, id!));

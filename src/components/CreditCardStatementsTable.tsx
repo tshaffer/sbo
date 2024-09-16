@@ -9,7 +9,7 @@ const CreditCardStatementsTable: React.FC = () => {
     <BaseStatementsTable
       statements={statements}
       navigateBasePath="/statements/credit-card"  // Set the base path for credit card statements
-      gridTemplateColumns="40px 1fr 1fr 1fr 1fr 1fr"
+      gridTemplateColumns="40px 1fr 1fr 1fr 1fr"
     />
   );
 };
