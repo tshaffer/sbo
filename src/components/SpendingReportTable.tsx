@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -15,6 +14,8 @@ import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 import { useTypedSelector } from '../types';
 import SpendingReportTableRow from './SpendingReportTableRow';
+import { Box, Button } from '@mui/material';
+import ReportFiltersDialog from './ReportFiltersDialog';
 
 const SpendingReportTable: React.FC = () => {
 
@@ -36,9 +37,19 @@ const SpendingReportTable: React.FC = () => {
   const [transactionsSortColumn, setTransactionsSortColumn] = useState<string>('transactionDate');
   const [transactionsSortOrder, setTransactionsSortOrder] = useState<'asc' | 'desc'>('desc');
 
+  const [reportFiltersDialogOpen, setReportFiltersDialogOpen] = React.useState(false);
+
   if (isEmpty(transactionsByCategoryIdInDateRange)) {
     return null;
   }
+
+  const handleOpenReportFiltersDialog = () => {
+    setReportFiltersDialogOpen(true);
+  };
+
+  const handleCloseReportFiltersDialog = () => {
+    setReportFiltersDialogOpen(false);
+  };
 
   const handleSelectRow = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
@@ -598,14 +609,24 @@ const SpendingReportTable: React.FC = () => {
 
   return (
     <React.Fragment>
-      <h4>
-        <span>
-          Total Amount: {formatCurrency(totalAmount)}
-        </span>
-        <span style={{ marginLeft: '32px' }}>
-          Per Month: {expensesPerMonth(totalAmount, startDate, endDate)}
-        </span>
-      </h4>
+      <ReportFiltersDialog
+        open={reportFiltersDialogOpen}
+        onClose={handleCloseReportFiltersDialog}
+      />
+      <Box sx={{ mt: 3, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h4 style={{ margin: 0 }}>
+          <span>Total Amount: {formatCurrency(totalAmount)}</span>
+          <span style={{ marginLeft: '32px' }}>Per Month: {expensesPerMonth(totalAmount, startDate, endDate)}</span>
+        </h4>
+        <Button
+          sx={{ ml: 'auto' }} // Ensures the button is aligned to the right
+          variant="contained"
+          color="secondary"
+          onClick={handleOpenReportFiltersDialog}
+        >
+          Filters
+        </Button>
+      </Box>
       <div className="fixed-table-container">
         <div className="fixed-table-header">
           <div className="fixed-table-row">

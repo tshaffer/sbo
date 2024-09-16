@@ -51,7 +51,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'reports',
-        element: <ReportsContent activeTab={0} />,
+        element: <ReportsContent/>,
       },
     ],
   },
