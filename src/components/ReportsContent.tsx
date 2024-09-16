@@ -65,10 +65,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
         onClose={handleCloseReportFiltersDialog}
       />
       <Box sx={{ width: '100%' }}>
-        <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
-        <Tabs value={tabIndex} onChange={handleTabChange}>
-          <Tab label={ReportTypes.Spending} />
-        </Tabs>
+        <Typography variant="h5">Spending Report</Typography>
         <Box sx={{ padding: '20px' }}>
           <Box>
             <DateRangeSpecifier />
