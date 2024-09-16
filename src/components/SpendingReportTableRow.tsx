@@ -10,6 +10,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 import '../styles/Tracker.css';
 import { useDispatch } from '../types';
@@ -35,15 +36,13 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
-  const handleAssignCategory = (transaction: Transaction) => {
+  const handleAssignCategoryRule = (transaction: Transaction) => {
     setTransactionId(transaction.id);
     setShowAddCategoryAssignmentRuleDialog(true);
   };
 
-  const handleClickTransaction = (e: any, transaction: Transaction) => {
-    if (e.target.id !== 'commentInput') {
-      navigate(`/statements/credit-card/${transaction.statementId}`);
-    }
+  const handleNavigateToStatement = (transaction: Transaction) => {
+    navigate(`/statements/credit-card/${transaction.statementId}`);
   };
 
   const handleEditTransaction = (transaction: Transaction) => {
@@ -73,7 +72,7 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
     setComment(props.transaction.comment || "");
     setIsEditingComment(false);
   }
-  
+
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -106,23 +105,20 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
               id="commentInput"
               value={comment}
               onChange={(e: any) => {
-                e.stopPropagation();
                 handleCommentChanged(e, e.target.value)
               }
               }
             />
-            <IconButton id='save' onClick={(event: any) => {
-              event.stopPropagation();
+            <IconButton id='save' onClick={() => {
               handleSaveComment(transaction)
             }
             }>
               <SaveIcon />
             </IconButton>
-            <IconButton id='cancel' onClick={(event: any) => {
-              event.stopPropagation();
-              handleCancelComment()
-            }
-            }>
+            <IconButton
+              id='cancel'
+              onClick={handleCancelComment}
+            >
               <CancelIcon />
             </IconButton>
           </div>
@@ -130,7 +126,6 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
           <div
             id='commentDiv'
             onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-              event.stopPropagation();
               handleSetIsEditingComment(event, true)
             }
             }>
@@ -158,25 +153,34 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
       <div
         className="details-table-row-clickable"
         key={props.transaction.id}
-        onClick={(e) => handleClickTransaction(e, props.transaction)}
       >
         <div className="fixed-width-base-table-cell details-table-cell-icon">
-          <IconButton id='assign' onClick={(event: any) => {
-            event.stopPropagation();
-            handleAssignCategory(props.transaction)
-          }
-          }>
-            <AssignmentIcon />
-          </IconButton>
+          <Tooltip title="Assign Rule">
+            <IconButton id='assign' onClick={() => {
+              handleAssignCategoryRule(props.transaction)
+            }
+            }>
+              <AssignmentIcon />
+            </IconButton>
+          </Tooltip>
         </div>
         <div className="fixed-width-base-table-cell details-table-cell-icon">
           <Tooltip title="Edit transaction">
-            <IconButton id='edit' onClick={(event: any) => {
-              event.stopPropagation();
+            <IconButton id='edit' onClick={() => {
               handleEditTransaction(props.transaction)
             }
             }>
               <EditIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
+        <div className="fixed-width-base-table-cell details-table-cell-icon">
+          <Tooltip title="Statement">
+            <IconButton id='edit' onClick={() => {
+              handleNavigateToStatement(props.transaction)
+            }
+            }>
+              <AccountBalanceIcon />
             </IconButton>
           </Tooltip>
         </div>

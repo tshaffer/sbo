@@ -116,11 +116,11 @@
 
 /* the widths of the following should add up to 960px */
 .details-table-cell-date {
-  width: 120px;
+  width: 114px;
 }
 
 .details-table-cell-amount {
-  width: 120px;
+  width: 114px;
 }
 
 .details-table-cell-description {
@@ -128,7 +128,7 @@
 }
 
 .details-table-cell-comment {
-  width: 320px;
+  width: 308px;
 }
 
 
