@@ -8,7 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
-import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, Transaction } from '../types';
+import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, SplitTransactionUI, Transaction } from '../types';
 import { categorizeTransaction, getCategories, getCategoryAssignmentRules } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
@@ -116,8 +116,18 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setShowAddCategoryAssignmentRuleDialog(false);
   }
 
-  const handleSaveSplitTransaction = (splitTransactions: any[]): void => {
-    console.log('handleSaveSplitTransaction: ', splitTransactions);
+  const handleSaveSplitTransaction = (splitTransactionsUI: SplitTransactionUI[]): void => {
+    console.log('handleSaveSplitTransaction: ', splitTransactionsUI);
+    const splitTransactions: SplitTransaction[] = splitTransactionsUI.map((splitTransactionUI: SplitTransactionUI) => {
+      const splitTransaction: SplitTransaction = {
+        ...splitTransactionUI,
+        amount: parseFloat(splitTransactionUI.amount),
+        id: '',
+        parentTransactionId: '',
+      };
+      return splitTransaction;
+    });
+
     dispatch(splitTransaction(props.checkingAccountTransaction.id, splitTransactions));
   }
 

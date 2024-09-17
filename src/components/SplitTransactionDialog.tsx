@@ -4,21 +4,16 @@ import {
   Button, TextField, Box, IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CheckingAccountTransaction } from '../types';
+import { CheckingAccountTransaction, SplitTransactionUI } from '../types';
 import { getTransactionById } from '../selectors';
 
 import { useTypedSelector } from '../types';
-
-interface SplitTransaction {
-  amount: string;
-  userDescription: string;
-}
 
 interface SplitTransactionDialogProps {
   open: boolean;
   onClose: () => void;
   transactionId: string;
-  onSave: (splits: SplitTransaction[]) => any;
+  onSave: (splits: SplitTransactionUI[]) => any;
 }
 
 const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: SplitTransactionDialogProps) => {
@@ -27,7 +22,7 @@ const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: Sp
 
   const { open, onClose, onSave } = props;
 
-  const [splits, setSplits] = React.useState<SplitTransaction[]>([
+  const [splits, setSplits] = React.useState<SplitTransactionUI[]>([
     { amount: Math.abs(transaction.amount).toString(), userDescription: 'Remainder' },
   ]);
   const amountRefs = React.useRef<(HTMLInputElement | null)[]>([]);
@@ -98,7 +93,7 @@ const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: Sp
     }
   };
 
-  const adjustRemainderAmount = (newSplits: SplitTransaction[]) => {
+  const adjustRemainderAmount = (newSplits: SplitTransactionUI[]) => {
     const totalSplitAmount = newSplits.slice(0, -1).reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
     const remainderAmount = Math.abs(transaction.amount) - totalSplitAmount;
 

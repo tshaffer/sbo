@@ -56,6 +56,11 @@ export interface SplitTransaction {
   userDescription: string;
 }
 
+export interface SplitTransactionUI {
+  amount: string;
+  userDescription: string;
+}
+
 export interface CreditCardTransactionRowInStatementTableProperties {
   id: string;
   transactionDate: string;
