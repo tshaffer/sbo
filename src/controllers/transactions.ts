@@ -257,15 +257,14 @@ export const splitTransaction = (
       newTransactions,
     };
 
-    console.log('splitTransaction: ', splitTransactionBody);
     return axios.post(
       path,
       splitTransactionBody
     ).then((response) => {
-      console.log('splitTransaction');
+      console.log('splitTransaction response');
       console.log(response);
       console.log(response.data);
-      dispatch(splitTransactionRedux( { parentTransactionId, splitTransactions } ));
+      dispatch(splitTransactionRedux( { parentTransactionId, splitTransactions: newTransactions } ));
       return Promise.resolve();
     }).catch((error) => {
       console.log('error');

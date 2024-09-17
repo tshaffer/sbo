@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TransactionsState, Transaction, SplitTransaction, CheckingAccountTransaction } from '../../types';
+import { cloneDeep } from 'lodash';
 const initialState: TransactionsState = {
   byId: {},
   allIds: [],
@@ -58,23 +59,20 @@ const transactionsSlice = createSlice({
     },
     splitTransactionRedux: (
       state,
-      action: PayloadAction<{ parentTransactionId: string; splitTransactions: SplitTransaction[] }>
+      action: PayloadAction<{ parentTransactionId: string; splitTransactions: CheckingAccountTransaction[] }>
     ) => {
       const { parentTransactionId, splitTransactions } = action.payload;
       const parentTransaction: CheckingAccountTransaction = state.byId[
         parentTransactionId
       ] as CheckingAccountTransaction;
       if (parentTransaction) {
-        parentTransaction.isSplit = true;
         splitTransactions.forEach((splitTransaction) => {
-          const newTransaction: CheckingAccountTransaction = {
-            ...parentTransaction,
-            ...splitTransaction,
-            parentTransactionId,
-          };
-          state.byId[splitTransaction.id] = newTransaction;
+          state.byId[splitTransaction.id] = splitTransaction;
           state.allIds.push(splitTransaction.id);
         });
+        const newParentTransaction: CheckingAccountTransaction = cloneDeep(state.byId[parentTransactionId] as CheckingAccountTransaction);
+        newParentTransaction.isSplit = true;
+        state.byId[newParentTransaction.id] = newParentTransaction;
       }
     },
   },
