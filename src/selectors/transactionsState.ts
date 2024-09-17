@@ -65,8 +65,9 @@ export const categorizeTransaction = (
     if (category) return category;
   }
 
+  const userDescription = transaction.userDescription.toLowerCase();
   for (const categoryAssignmentRule of categoryAssignmentRules) {
-    if (transaction.userDescription.includes(categoryAssignmentRule.pattern)) {
+    if (userDescription.includes(categoryAssignmentRule.pattern.toLowerCase())) {
       const category = categories.find(cat => cat.id === categoryAssignmentRule.categoryId);
       if (category) return category;
     }
@@ -243,7 +244,8 @@ export const findMatchingRule = (state: TrackerState, transaction: BankTransacti
   const categories: Category[] = getCategories(state);
   const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(state);
 
-  const categoryAssignmentRule = categoryAssignmentRules.find(rule => transaction.userDescription.includes(rule.pattern));
+  const userDescription = transaction.userDescription.toLowerCase();
+  const categoryAssignmentRule = categoryAssignmentRules.find(rule => userDescription.includes(rule.pattern.toLowerCase()));
   if (categoryAssignmentRule) {
     const category: Category | null = categories.find(category => category.id === categoryAssignmentRule.categoryId) || null;
     if (!isNil(category)) {

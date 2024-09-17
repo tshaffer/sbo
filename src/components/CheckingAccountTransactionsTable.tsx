@@ -9,8 +9,8 @@ import TransactionsTable from './TransactionsTable';
 const CheckingAccountTransactionsTable: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const statements = useTypedSelector(getCheckingAccountStatements);
-  const transactions = useTypedSelector(state => getCheckingAccountTransactionRowInStatementTableProperties(state, id!));
+  const statements: CheckingAccountStatement[] = useTypedSelector(getCheckingAccountStatements);
+  const transactions: CheckingAccountTransactionRowInStatementTableProperties[] = useTypedSelector(state => getCheckingAccountTransactionRowInStatementTableProperties(state, id!));
 
   return (
     <TransactionsTable
