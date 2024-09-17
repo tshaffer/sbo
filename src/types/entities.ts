@@ -151,9 +151,15 @@ export type CategoryExpensesData = {
   categoryName: string;
   transactions: CategorizedTransaction[];
   transactionCount: number,
+  allTransactionsCount: number;
   totalExpenses: number,
   percentageOfTotal: number,
   children: CategoryExpensesData[],
+}
+
+export interface DescendentCategoryProperties {
+  transactionCount: number;
+  totalExpenses: number;
 }
 
 export interface CategoryMenuItem extends Category {

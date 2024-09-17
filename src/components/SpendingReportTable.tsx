@@ -7,7 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import '../styles/Tracker.css';
-import { BankTransaction, CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { BankTransaction, CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, DescendentCategoryProperties, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, expensesPerMonth, roundTo } from '../utilities';
 import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategoryIdInDateRange } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
@@ -148,7 +148,7 @@ const SpendingReportTable: React.FC = () => {
   const getRows = (allCategoriesExpensesData: CategoryExpensesData[], categoryMenuItems: CategoryMenuItem[]): CategoryExpensesData[] => {
 
     const rows: CategoryExpensesData[] = [];
-    const categoryExpensesMap = new Map<string, number>();
+    const categoryExpensesMap = new Map<string, DescendentCategoryProperties>();
     let totalTopLevelExpenses = 0;
 
     // First pass to accumulate the total expenses for each category
@@ -160,28 +160,34 @@ const SpendingReportTable: React.FC = () => {
       return allCategoriesExpensesData.find(category => category.id === id) as CategoryExpensesData;
     }
 
-    const accumulateExpenses = (categoriesExpensesData: CategoryExpensesData): number => {
+    const accumulateDescendentProperties = (categoriesExpensesData: CategoryExpensesData): DescendentCategoryProperties => {
+
       const categoryMenuItem: CategoryMenuItem = getCategoryMenuItemById(categoriesExpensesData.id);
 
       let totalExpenses = categoriesExpensesData.totalExpenses;
+      let transactionCount = categoriesExpensesData.transactionCount;
 
-      // Accumulate expenses for child categories
+      // Accumulate properties for child categories
       categoryMenuItem.children.forEach((subCategory) => {
-        const subCategoryExpensesData = getCategoryExpensesDataById(subCategory.id)
-        totalExpenses += accumulateExpenses(subCategoryExpensesData);
+        const subCategoryData = getCategoryExpensesDataById(subCategory.id)
+        const properties: DescendentCategoryProperties = accumulateDescendentProperties(subCategoryData);
+        totalExpenses += properties.totalExpenses;
+        transactionCount += properties.transactionCount;
       });
 
-      categoryExpensesMap.set(categoryMenuItem.id, totalExpenses);
+      const descendentCategoryProperties: DescendentCategoryProperties = { totalExpenses, transactionCount };
+
+      categoryExpensesMap.set(categoryMenuItem.id, descendentCategoryProperties);
 
       // Accumulate total expenses for top-level categories
       if (categoryMenuItem.parentId === '') {
         totalTopLevelExpenses += totalExpenses;
       }
 
-      return totalExpenses;
+      return descendentCategoryProperties;
     };
 
-    allCategoriesExpensesData.forEach(categoryExpensesData => accumulateExpenses(categoryExpensesData));
+    allCategoriesExpensesData.forEach(categoryExpensesData => accumulateDescendentProperties(categoryExpensesData));
 
     // Filter out categories with 0 transactions and no descendant transactions
     const filterCategories = (categoryMenuItem: CategoryMenuItem): CategoryMenuItem | null => {
@@ -210,29 +216,30 @@ const SpendingReportTable: React.FC = () => {
     // Second pass to build rows and calculate percentages
     const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): CategoryExpensesData => {
       const transactions = transactionsByCategoryIdInDateRange[category.id] || [];
-      const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
+      const categoryTotalExpenses: DescendentCategoryProperties = categoryExpensesMap.get(category.id)!;
       const categoryTransactionCount = transactions.length;
 
       const spaces = '\u00A0'.repeat(level * 8);
 
-      const percentageOfParent = parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0;
+      const percentageOfParent = parentTotalExpenses ? roundTo((categoryTotalExpenses.totalExpenses / parentTotalExpenses) * 100, 2) : 0;
       const percentageOfTotal = parentTotalExpenses === 0 && totalTopLevelExpenses !== 0
-        ? roundTo((categoryTotalExpenses / totalTopLevelExpenses) * 100, 2)
+        ? roundTo((categoryTotalExpenses.totalExpenses / totalTopLevelExpenses) * 100, 2)
         : percentageOfParent;
 
       const categoryRow: CategoryExpensesData = {
         id: category.id,
         categoryName: `${spaces}${category.name}`,
         transactions,
-        totalExpenses: categoryTotalExpenses,
+        totalExpenses: categoryTotalExpenses.totalExpenses,
         transactionCount: categoryTransactionCount,
+        allTransactionsCount: categoryTotalExpenses.transactionCount,
         percentageOfTotal: percentageOfTotal,
         children: []
       };
 
       // Process subcategories recursively
       category.children.forEach((subCategory) => {
-        const subCategoryRow = processCategory(subCategory, level + 1, categoryTotalExpenses);
+        const subCategoryRow = processCategory(subCategory, level + 1, categoryTotalExpenses.totalExpenses);
         categoryRow.children.push(subCategoryRow);
       });
 
@@ -246,7 +253,10 @@ const SpendingReportTable: React.FC = () => {
       }
     });
 
-    const sortedRows = sortCategoriesRecursively(rows);
+    console.log('rows');
+    console.log(rows);
+
+    const sortedRows: CategoryExpensesData[] = sortCategoriesRecursively(rows);
 
     // Flatten the sorted structure for rendering
     const flattenRows = (sortedRows: CategoryExpensesData[], flatRows: CategoryExpensesData[] = []): CategoryExpensesData[] => {
@@ -333,6 +343,7 @@ const SpendingReportTable: React.FC = () => {
       transactions,
       totalExpenses: categoryTotalExpenses,
       transactionCount: transactions.length,
+      allTransactionsCount: 0,
       percentageOfTotal: 0,
       children: []
     };
@@ -341,6 +352,10 @@ const SpendingReportTable: React.FC = () => {
 
   const buildCategoriesExpensesData = (categories: Category[]): CategoryExpensesData[] => {
     const categoryExpensesData: CategoryExpensesData[] = categories.map(category => buildCategoryExpensesData(category));
+
+    console.log('buildCategoriesExpensesData');
+    console.log(categoryExpensesData);
+
     return categoryExpensesData;
   }
 
@@ -434,6 +449,7 @@ const SpendingReportTable: React.FC = () => {
           categoryName: categoryMenuItem.name,
           transactions: [],
           transactionCount: 0,
+          allTransactionsCount: 0,
           totalExpenses: 0,
           percentageOfTotal: 0,
           children: []
@@ -512,6 +528,19 @@ const SpendingReportTable: React.FC = () => {
     );
   }
 
+  const renderTransactionCount = (categoryExpenses: CategoryExpensesData): JSX.Element => {
+    const isParentCategory: boolean = categoryExpenses.children.length > 0;
+    if (isParentCategory) {
+      return (
+        <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{categoryExpenses.allTransactionsCount} ({categoryExpenses.transactionCount})</div>
+      );
+    } else {
+      return (
+        <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{categoryExpenses.transactionCount}</div>
+      );
+    }
+  }
+
   const renderRow = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
 
     // display a row if it is a top-level category or a sub-category and its parent is expanded
@@ -540,7 +569,7 @@ const SpendingReportTable: React.FC = () => {
             </IconButton>
           </div>
           <div className="fixed-width-base-table-cell fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{categoryExpenses.categoryName}</div>
-          <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{categoryExpenses.transactionCount}</div>
+          <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{renderTransactionCount(categoryExpenses)}</div>
           <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{formatCurrency(categoryExpenses.totalExpenses)}</div>
           <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
         </div>
