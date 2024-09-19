@@ -1,13 +1,16 @@
 import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, TextField, Box, IconButton
+  Button, TextField, Box, IconButton,
+  Autocomplete
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CheckingAccountTransaction, SplitTransactionUI } from '../types';
-import { getTransactionById } from '../selectors';
+import { CategoryAssignmentRule, CheckingAccountTransaction, SplitTransactionUI } from '../types';
+import { getCategoryAssignmentRules, getTransactionById } from '../selectors';
 
 import { useTypedSelector } from '../types';
+
+import SplitTransactionDescription from './SplitTransactionDescription';
 
 interface SplitTransactionDialogProps {
   open: boolean;
@@ -16,9 +19,15 @@ interface SplitTransactionDialogProps {
   onSave: (splits: SplitTransactionUI[]) => any;
 }
 
+interface CategoryAssignmentRuleOption {
+  value: CategoryAssignmentRule | null;
+  label: string;
+}
+
 const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: SplitTransactionDialogProps) => {
 
   const transaction = useTypedSelector(state => getTransactionById(state, props.transactionId)) as CheckingAccountTransaction;
+  const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
 
   const { open, onClose, onSave } = props;
 
@@ -43,11 +52,43 @@ const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: Sp
     return null;
   }
 
+  let categoryAssignmentRuleOptions: CategoryAssignmentRuleOption[] = [];
+
+  if (open) {
+    categoryAssignmentRuleOptions = categoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => {
+      return {
+        value: categoryAssignmentRule,
+        label: categoryAssignmentRule.pattern,
+      };
+    });
+    categoryAssignmentRuleOptions.sort((a: any, b: any) => {
+      const nameA = a.label.toUpperCase(); // ignore upper and lowercase
+      const nameB = b.label.toUpperCase(); // ignore upper and lowercase
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    });
+  }
+
   const handleSplitChange = (index: number, field: string, value: string) => {
     const newSplits = [...splits];
     newSplits[index] = { ...newSplits[index], [field]: value };
     setSplits(newSplits);
   };
+
+  const handleDescriptionChange = (index: number, value: string) => {
+    console.log('handleDescriptionChange', index, value);
+    const newSplits = [...splits];
+    newSplits[index] = { ...newSplits[index], userDescription: value };
+    setSplits(newSplits);
+    console.log('newSplit', newSplits);
+  }
 
   const handleAmountBlur = (index: number) => {
     const newSplits = [...splits];
@@ -86,13 +127,6 @@ const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: Sp
     adjustRemainderAmount(newSplits);
   };
 
-  const handleDescriptionKeyDown = (index: number, event: React.KeyboardEvent) => {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      handleAddSplit();
-    }
-  };
-
   const adjustRemainderAmount = (newSplits: SplitTransactionUI[]) => {
     const totalSplitAmount = newSplits.slice(0, -1).reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
     const remainderAmount = Math.abs(transaction.amount) - totalSplitAmount;
@@ -120,6 +154,46 @@ const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: Sp
     onClose();
   };
 
+  const renderCategoryAssignmentRuleSelect = (index: number, description: string): JSX.Element => {
+    return (
+      <SplitTransactionDescription
+        splitIndex={index}
+        description={description}
+        onDescriptionChange={(index: number, val: string) => handleDescriptionChange(index, val)}
+      />
+    );
+  };
+
+  const renderPlaceholderSelect = (index: number): JSX.Element => {
+    return (
+      <SplitTransactionDescription
+        splitIndex={index}
+        description={''}
+        onDescriptionChange={(index: number, val: string) => handleDescriptionChange(index, val)}
+      />
+    );
+  };
+
+  const renderRemainder = (index: number): JSX.Element => {
+    return (
+      <SplitTransactionDescription
+        splitIndex={index}
+        description={'Remainder'}
+        onDescriptionChange={(index: number, val: string) => handleDescriptionChange(index, val)}
+      />
+    );
+  };
+
+  const renderSplitDescription = (index: number, split: SplitTransactionUI): JSX.Element => {
+    if (split.userDescription === '') {
+      return renderPlaceholderSelect(index);
+    } else if (split.userDescription === 'Remainder') {
+      return renderRemainder(index)
+    } else {
+      return renderCategoryAssignmentRuleSelect(index, split.userDescription);
+    }
+  }
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Split Transaction</DialogTitle>
@@ -139,16 +213,7 @@ const SplitTransactionDialog: React.FC<SplitTransactionDialogProps> = (props: Sp
                 InputLabelProps={{ shrink: true }}
                 style={{ marginRight: '8px' }}
               />
-              <TextField
-                label="Description"
-                value={split.userDescription}
-                onChange={(e) => handleSplitChange(index, 'userDescription', e.target.value)}
-                onKeyDown={(e) => handleDescriptionKeyDown(index, e)}
-                onFocus={(e) => e.target.select()}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                style={{ marginRight: '8px' }}
-              />
+              {renderSplitDescription(index, split)}
               {split.userDescription !== 'Remainder' && (
                 <IconButton onClick={() => handleDeleteSplit(index)}>
                   <DeleteIcon />

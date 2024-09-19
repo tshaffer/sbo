@@ -1,4 +1,4 @@
-import { CategorizedTransaction } from "./entities";
+import { CategorizedTransaction, Category } from "./entities";
 
 export const serverUrl = 'http://localhost:8000';
 // export const serverUrl = 'https://tsmealwheel.herokuapp.com';
