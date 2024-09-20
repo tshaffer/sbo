@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { cloneDeep, isEmpty } from 'lodash';
+import { cloneDeep, isArray, isEmpty, isNil } from 'lodash';
 
 import { Box, Button, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
@@ -11,9 +11,10 @@ import AddIcon from '@mui/icons-material/Add';
 import ViewListIcon from '@mui/icons-material/ViewList';
 
 import '../styles/Tracker.css';
+import '../styles/CategoryAssignmentRulesTable.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
-import { getCategories, getCategoryAssignmentRules } from '../selectors';
+import { getCategories, getCategoryAssignmentRules, getTransactionsByCategoryAssignmentRules } from '../selectors';
 import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
@@ -36,6 +37,9 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
   const categories: Category[] = useTypedSelector(state => getCategories(state));
+
+  const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
+  console.log('transactionsByCategoryAssignmentRules', transactionsByCategoryAssignmentRules);
 
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
@@ -311,6 +315,13 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     return null;
   };
 
+  const getTransactionCountForRule = (categoryAssignmentRuleId: string): number => {
+    if (!isArray(transactionsByCategoryAssignmentRules[categoryAssignmentRuleId])) {
+      return 0;
+    }
+    return transactionsByCategoryAssignmentRules[categoryAssignmentRuleId].length;
+  }
+
   return (
     <React.Fragment>
       <AddCategoryAssignmentRuleDialog
@@ -332,30 +343,38 @@ const CategoryAssignmentRulesTable: React.FC = () => {
             Add Rule
           </Button>
         </Box>
-        <div className="table-container">
-          <div className="table-header">
-            <div className="table-row">
-              <div className="table-cell-category-assignment-rule" onClick={() => handleSort('pattern')}>Pattern{renderSortIndicator('pattern')}</div>
-              <div className="table-cell-category-assignment-rule" onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
-              <div className="table-cell"></div>
+        <div className="car-t-container">
+          <div className="car-t-header">
+            <div className="car-t-base-row">
+              <div className="car-t-b-t-cell car-t-c-pattern" onClick={() => handleSort('pattern')}>Pattern{renderSortIndicator('pattern')}</div>
+              <div className="car-t-b-t-cell car-t-c-category" onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
+              <div className="car-t-b-t-cell car-t-c-transaction-count">Transaction Count</div>
+              <div className="car-t-b-t-cell car-t-c-icons"></div>
             </div>
           </div>
-          <div className="category-assignment-rules-table-body">
+          <div className="car-t-body">
             {sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
-              <div className="table-row" key={categoryAssignmentRule.id}>
-                <div className="table-cell-category-assignment-rule">
+              <div className="car-t-base-row car-t-body-row" key={categoryAssignmentRule.id}>
+                <div className="car-t-b-t-cell car-t-c-pattern">
                   <TextField
                     value={categoryAssignmentRuleById[categoryAssignmentRule.id].pattern}
                     onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
                     style={{ minWidth: '400px' }}
-                    helperText="Edit the pattern"
+                    // helperText="Edit the pattern"
                   />
                 </div>
-                <SelectCategory
-                  selectedCategoryId={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
-                  onSetCategoryId={(categoryId: string) => handleCategoryChange(categoryAssignmentRule.id, categoryId)}
-                />
-                <div className="table-cell-category-assignment-rule" style={{ marginLeft: '32px' }}>
+                <div
+                  className="car-t-b-t-cell car-t-c-category"
+                >
+                  <SelectCategory
+                    selectedCategoryId={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
+                    onSetCategoryId={(categoryId: string) => handleCategoryChange(categoryAssignmentRule.id, categoryId)}
+                  />
+                </div>
+                <div className="car-t-b-t-cell car-t-c-transaction-count">
+                  {getTransactionCountForRule(categoryAssignmentRule.id)}
+                </div>
+                <div className="car-t-b-t-cell car-t-c-icons">
                   <Tooltip title="Transactions" arrow>
                     <IconButton onClick={() => handleShowCategoryAssignmentRuleTransactionsListDialog(categoryAssignmentRule.id)}>
                       <ViewListIcon />

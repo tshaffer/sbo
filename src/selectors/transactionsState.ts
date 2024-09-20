@@ -258,3 +258,19 @@ export const findMatchingRule = (state: TrackerState, transaction: BankTransacti
   return null;
 }
 
+export const getTransactionsByCategoryAssignmentRules = (state: TrackerState): any => {
+
+  const transactions: Transaction[] = getTransactions(state);
+  const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(state);
+
+  const transactionsByCategoryAssignmentRules: any = {};
+  categoryAssignmentRules.forEach(categoryAssignmentRule => {
+    transactionsByCategoryAssignmentRules[categoryAssignmentRule.id] = transactions.filter(transaction => {
+      const userDescription = transaction.userDescription.toLowerCase();
+      return userDescription.includes(categoryAssignmentRule.pattern.toLowerCase());
+    });
+  });
+
+  console.log('transactionsByCategoryAssignmentRules', transactionsByCategoryAssignmentRules);
+  return transactionsByCategoryAssignmentRules;
+}

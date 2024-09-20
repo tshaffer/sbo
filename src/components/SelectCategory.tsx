@@ -153,12 +153,12 @@ const SelectCategory = (props: SelectCategoryProps) => {
   return (
     <React.Fragment>
       <FormControl fullWidth>
-        <InputLabel id="category-label">Category</InputLabel>
+        {/* <InputLabel id="category-label">Category</InputLabel> */}
         <Select
           labelId="category-label"
           value={selectedCategoryId}
           onChange={handleCategoryChange}
-          label="Category"
+          // label="Category"
           renderValue={(selected) => {
             if (!selected) {
               return <em>Select the associated category</em>;
