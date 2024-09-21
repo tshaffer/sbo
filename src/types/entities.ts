@@ -1,4 +1,4 @@
-import { BankTransactionType, CheckingAccountTransactionType, StatementType } from "./enums";
+import { BankTransactionType, CheckingAccountTransactionType, SourceOfTheDisplayedCategoryForATransactionType, StatementType } from "./enums";
 
 export interface CategorizedStatementData {
   transactions: CategorizedTransaction[];
@@ -174,3 +174,9 @@ export type StringToCategoryMenuItemLUT = {
 export type StringToCategoryLUT = {
   [key: string]: Category;
 }
+
+export interface CategorizedTransactionProperties {
+  categoryName: string;
+  source: SourceOfTheDisplayedCategoryForATransactionType;
+}
+

@@ -32,3 +32,10 @@ export enum SidebarMenuButton {
 export enum ReportTypes {
   Spending = 'Spending',
 }
+
+export enum SourceOfTheDisplayedCategoryForATransactionType {
+  Statement = <any>'Statement',
+  CategoryAssignmentRule = <any>'Rule',
+  Override = <any>'Override',
+  None = <any>'None',
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useTypedSelector } from '../types';
+import { CategorizedTransactionProperties, SourceOfTheDisplayedCategoryForATransactionType, useDispatch, useTypedSelector } from '../types';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,7 +9,7 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 import { CategoryAssignmentRule, CreditCardTransaction, Transaction } from '../types';
-import { getTransactionById, categorizeTransaction, getCategories, getCategoryAssignmentRules } from '../selectors';
+import { getTransactionById, getCategorizedTransactionProperties } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
@@ -36,7 +36,9 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const dispatch = useDispatch();
 
   const creditCardTransaction: CreditCardTransaction = useTypedSelector(state => getTransactionById(state, props.creditCardTransactionId)! as CreditCardTransaction);
-  const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
+  const categorizedTransactionProperties: CategorizedTransactionProperties = useTypedSelector(state => getCategorizedTransactionProperties(state, creditCardTransaction.id));
+  const categorizedTransactionName: string = categorizedTransactionProperties.categoryName;
+  const categorizedTransactionSource: SourceOfTheDisplayedCategoryForATransactionType = categorizedTransactionProperties.source;
 
   const [isEditingComment, setIsEditingComment] = React.useState(false);
   const [comment, setComment] = React.useState(creditCardTransaction.comment || "");
@@ -81,7 +83,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     setComment(creditCardTransaction.comment || "");
     setIsEditingComment(false);
   }
-  
+
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -178,6 +180,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       {renderRuleIcon()}
       <div className="credit-card-statement-grid-table-cell">{creditCardTransaction.userDescription}</div>
       <div className="credit-card-statement-grid-table-cell">{categorizedTransactionName}</div>
+      <div className="credit-card-statement-grid-table-cell">{categorizedTransactionSource}</div>
       {renderCommentColumn(creditCardTransaction)}
       <Tooltip title="Category Override">
         <span>

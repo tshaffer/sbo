@@ -1,7 +1,7 @@
 import { isNil } from 'lodash';
 import { createSelector } from 'reselect';
 
-import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
+import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, CategorizedTransactionProperties, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, ReviewedTransactions, SourceOfTheDisplayedCategoryForATransactionType, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
 import { getCategories, getCategoryById } from './categoryState';
 
 import { roundTo } from '../utilities';
@@ -54,11 +54,56 @@ export const getTransactionsByStatementId = createSelector(
   }
 );
 
+export const getCategorizedTransactionProperties = createSelector(
+  [getTransactionsById, (_: TrackerState, id: string) => id, getCategories, getCategoryAssignmentRules],
+  (transactionsById, id, categories, categoryAssignmentRules): CategorizedTransactionProperties => {
+
+    console.log('getCategorizedTransactionProperties');
+
+    const transaction = transactionsById[id];
+
+    if (transaction.overrideCategory && transaction.overrideCategoryId !== '') {
+      const category = categories.find(cat => cat.id === transaction.overrideCategoryId);
+      if (category) return {
+        categoryName: category.name,
+        source: SourceOfTheDisplayedCategoryForATransactionType.Override
+      }
+    }
+
+    const userDescription = transaction.userDescription.toLowerCase();
+    for (const categoryAssignmentRule of categoryAssignmentRules) {
+      if (userDescription.includes(categoryAssignmentRule.pattern.toLowerCase())) {
+        const category = categories.find(cat => cat.id === categoryAssignmentRule.categoryId);
+        if (category) return {
+          categoryName: category.name,
+          source: SourceOfTheDisplayedCategoryForATransactionType.CategoryAssignmentRule
+        }
+      }
+    }
+
+    if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
+      const creditCardTransaction = transaction as CreditCardTransaction;
+      const category = categories.find(cat => cat.name === creditCardTransaction.category);
+      if (category) return {
+        categoryName: category.name,
+        source: SourceOfTheDisplayedCategoryForATransactionType.Statement
+      }
+    }
+
+    return {
+      categoryName: '',
+      source: SourceOfTheDisplayedCategoryForATransactionType.None,
+    }
+  }
+);
+
 export const categorizeTransaction = (
   transaction: BankTransaction,
   categories: Category[],
   categoryAssignmentRules: CategoryAssignmentRule[]
 ): Category | null => {
+
+  console.log('categorizeTransaction');
 
   if (transaction.overrideCategory && transaction.overrideCategoryId !== '') {
     const category = categories.find(cat => cat.id === transaction.overrideCategoryId);
@@ -82,9 +127,19 @@ export const categorizeTransaction = (
   return null;
 };
 
+// export const getAllCategorizedTranactionsById = createSelector(
+//   [getTransactions],
+//   (transactions): any => {
+
+//   }
+// );
+
 const categorizeTransactions = createSelector(
   [getTransactions, getAllCategories, getIgnoreCategory, getCategoryAssignmentRules],
   (transactions, categories, ignoreCategory, categoryAssignmentRules): ReviewedTransactions => {
+
+    console.log('categorizeTransactions');
+
     const categorizedTransactions: CategorizedTransaction[] = [];
     const uncategorizedTransactions: BankTransaction[] = [];
     const ignoredTransactions: BankTransaction[] = [];
@@ -123,6 +178,9 @@ const categorizeTransactions = createSelector(
 const getCategorizedStatementData = createSelector(
   [categorizeTransactions],
   (reviewedTransactions): CategorizedStatementData => {
+
+    console.log('getCategorizedStatementData');
+
     const { categorizedTransactions } = reviewedTransactions;
 
     const transactions = categorizedTransactions.map(transaction => ({
@@ -157,6 +215,9 @@ export const getOverrideCategoryId = createSelector(
 export const getTransactionsByCategory = createSelector(
   [getCategorizedStatementData],
   (categorizedStatementData) => {
+
+    console.log('getTransactionsByCategory');
+
     const { transactions } = categorizedStatementData;
 
     const transactionsByCategoryId: StringToTransactionsLUT = {};
@@ -175,6 +236,7 @@ export const getTransactionsByCategory = createSelector(
 export const getCategoryByTransactionId = createSelector(
   [getTransactionsByCategory, (_: TrackerState, transactionId: string) => transactionId, (_: TrackerState) => _],
   (transactionsByCategory, transactionId, state) => {
+    console.log('getCategoryByTransactionId');
     for (const categoryId in transactionsByCategory) {
       if (Object.prototype.hasOwnProperty.call(transactionsByCategory, categoryId)) {
         const categorizedTransaction = transactionsByCategory[categoryId].find(transaction => transaction.bankTransaction.id === transactionId);

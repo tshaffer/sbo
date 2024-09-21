@@ -85,6 +85,9 @@ export const isCategoryIdExcluded = createSelector(
 export const getTransactionsByCategoryIdInDateRange = createSelector(
   [getStartDate, getEndDate, getTransactionsByCategory],
   (startDate, endDate, transactionsByCategoryId): StringToTransactionsLUT => {
+
+    console.log('getTransactionsByCategoryIdInDateRange');
+
     const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = {};
     
     // Iterate over each category in the transactionsByCategoryId
