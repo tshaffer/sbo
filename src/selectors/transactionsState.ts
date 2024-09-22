@@ -97,7 +97,7 @@ export const getCategorizedTransactionProperties = createSelector(
   }
 );
 
-export const categorizeTransaction = (
+export const old_categorizeTransaction = (
   transaction: BankTransaction,
   categories: Category[],
   categoryAssignmentRules: CategoryAssignmentRule[]
@@ -127,16 +127,41 @@ export const categorizeTransaction = (
   return null;
 };
 
-// export const getAllCategorizedTranactionsById = createSelector(
-//   [getTransactions],
-//   (transactions): any => {
+export const categorizeTransaction = createSelector
+// <
+//   [typeof getCategories, typeof getCategoryAssignmentRules, (state: TrackerState, transaction: BankTransaction) => BankTransaction], // Input selector types
+//   (categories: Category[], categoryAssignmentRules: CategoryAssignmentRule[], transaction: BankTransaction) => Category | null // Return type
+// >
+(
+  [getCategories, getCategoryAssignmentRules, (_state: TrackerState, transaction: BankTransaction) => transaction],
+  (categories: Category[], categoryAssignmentRules: CategoryAssignmentRule[], transaction: BankTransaction): Category | null => {
+    
+    if (transaction.overrideCategory && transaction.overrideCategoryId !== '') {
+      const category = categories.find(cat => cat.id === transaction.overrideCategoryId);
+      if (category) return category;
+    }
 
-//   }
-// );
+    const userDescription = transaction.userDescription.toLowerCase();
+    for (const categoryAssignmentRule of categoryAssignmentRules) {
+      if (userDescription.includes(categoryAssignmentRule.pattern.toLowerCase())) {
+        const category = categories.find(cat => cat.id === categoryAssignmentRule.categoryId);
+        if (category) return category;
+      }
+    }
+
+    if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
+      const creditCardTransaction = transaction as CreditCardTransaction;
+      const category = categories.find(cat => cat.name === creditCardTransaction.category);
+      if (category) return category;
+    }
+
+    return null;
+  }
+);
 
 const categorizeTransactions = createSelector(
-  [getTransactions, getAllCategories, getIgnoreCategory, getCategoryAssignmentRules],
-  (transactions, categories, ignoreCategory, categoryAssignmentRules): ReviewedTransactions => {
+  [getTransactions, getIgnoreCategory, (_: TrackerState) => _],
+  (transactions, ignoreCategory, state): ReviewedTransactions => {
 
     console.log('categorizeTransactions');
 
@@ -150,7 +175,7 @@ const categorizeTransactions = createSelector(
         return;
       }
 
-      const category = categorizeTransaction(transaction, categories, categoryAssignmentRules);
+      const category = categorizeTransaction(state, transaction);
       if (!isNil(category)) {
         if (category.id === ignoreCategory?.id) {
           ignoredTransactions.push(transaction);
@@ -268,7 +293,7 @@ export const getCreditCardTransactionRowInStatementTableProperties = (state: Tra
         categoryNameFromCategoryOverride: getOverrideCategory(state, creditCardTransaction.id)
           ? getCategoryById(state, getOverrideCategoryId(state, creditCardTransaction.id))!.name
           : '',
-        categorizedTransactionName: categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
+        categorizedTransactionName: categorizeTransaction(state, creditCardTransaction)?.name || '',
       });
     }
   });
@@ -279,7 +304,7 @@ export const getCheckingAccountTransactionRowInStatementTableProperties = (state
   const checkingAccountTransactions: CheckingAccountTransaction[] = getTransactionsByStatementId(state, statementId) as CheckingAccountTransaction[];
   const rows: CheckingAccountTransactionRowInStatementTableProperties[] = [];
   checkingAccountTransactions.forEach((checkingAccountTransaction: CheckingAccountTransaction) => {
-    const categorizedTransactionName: string = categorizeTransaction(checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '';
+    const categorizedTransactionName: string = categorizeTransaction(state, checkingAccountTransaction)?.name || '';
     if (categorizedTransactionName.toLowerCase() !== 'ignore') {
       const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, checkingAccountTransaction);
       rows.push({

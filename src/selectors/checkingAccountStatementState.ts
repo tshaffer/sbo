@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect';
 import { CheckingAccountStatement, CheckingAccountStatementState, CheckingAccountTransaction, TrackerState, Transaction } from '../types';
 import { categorizeTransaction, getTransactionsByStatementId } from './transactionsState';
-import { getCategories } from './categoryState';
-import { getCategoryAssignmentRules } from './categoryAssignmentRulesState';
 
 interface RevisedStatementProperties {
   net: number;
@@ -13,7 +11,7 @@ interface RevisedStatementProperties {
 const checkingAccountStatementState = (state: TrackerState): CheckingAccountStatementState => state.checkingAccountStatementState;
 
 const calculateTransactionNet = (state: TrackerState, checkingAccountTransaction: CheckingAccountTransaction): number => {
-  const categorizedTransactionName: string = categorizeTransaction(checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '';
+  const categorizedTransactionName: string = categorizeTransaction(state, checkingAccountTransaction)?.name || '';
   if (categorizedTransactionName.toLowerCase() !== 'ignore') {
     return checkingAccountTransaction.amount;
   }

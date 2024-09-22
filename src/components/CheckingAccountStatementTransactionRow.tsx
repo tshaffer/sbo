@@ -9,7 +9,7 @@ import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
 import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, SplitTransactionUI, Transaction } from '../types';
-import { categorizeTransaction, getCategories, getCategoryAssignmentRules } from '../selectors';
+import { categorizeTransaction } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
@@ -30,7 +30,7 @@ export interface CheckingAccountStatementProps {
 
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
 
-  const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(props.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '');
+  const categorizedTransactionName = useTypedSelector(state => categorizeTransaction(state, props.checkingAccountTransaction)?.name || '');
 
   const [isEditingComment, setIsEditingComment] = React.useState(false);
   const [comment, setComment] = React.useState(props.checkingAccountTransaction.comment || "");

@@ -39,7 +39,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const categories: Category[] = useTypedSelector(state => getCategories(state));
 
   const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
-  console.log('transactionsByCategoryAssignmentRules', transactionsByCategoryAssignmentRules);
 
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
