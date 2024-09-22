@@ -320,19 +320,20 @@ export const findMatchingRule = (state: TrackerState, transaction: BankTransacti
   return null;
 }
 
-export const getTransactionsByCategoryAssignmentRules = (state: TrackerState): any => {
-
-  const transactions: Transaction[] = getTransactions(state);
-  const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(state);
-
-  const transactionsByCategoryAssignmentRules: any = {};
-  categoryAssignmentRules.forEach(categoryAssignmentRule => {
-    transactionsByCategoryAssignmentRules[categoryAssignmentRule.id] = transactions.filter(transaction => {
-      const userDescription = transaction.userDescription.toLowerCase();
-      return userDescription.includes(categoryAssignmentRule.pattern.toLowerCase());
+export const getTransactionsByCategoryAssignmentRules = createSelector<
+  [typeof getTransactions, typeof getCategoryAssignmentRules], // Input selectors types
+  { [key: string]: Transaction[] } // Return type
+>(
+  [getTransactions, getCategoryAssignmentRules],
+  (transactions: Transaction[], categoryAssignmentRules: CategoryAssignmentRule[]): { [key: string]: Transaction[] } => {
+    const transactionsByCategoryAssignmentRules: { [key: string]: Transaction[] } = {};
+    categoryAssignmentRules.forEach(categoryAssignmentRule => {
+      transactionsByCategoryAssignmentRules[categoryAssignmentRule.id] = transactions.filter(transaction => {
+        const userDescription = transaction.userDescription.toLowerCase();
+        return userDescription.includes(categoryAssignmentRule.pattern.toLowerCase());
+      });
     });
-  });
 
-  console.log('transactionsByCategoryAssignmentRules', transactionsByCategoryAssignmentRules);
-  return transactionsByCategoryAssignmentRules;
-}
+    return transactionsByCategoryAssignmentRules;
+  }
+);
