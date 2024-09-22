@@ -33,10 +33,10 @@ const TransactionsList: React.FC<TransactionsListProps> = (props: TransactionsLi
   const renderTransaction = (transaction: CategorizedTransaction): JSX.Element => {
     return (
       <React.Fragment>
-        <div className="dtc-details-table-row">
-          <div className="dtc-fixed-width-base-table-cell dtc-details-table-cell-date" style={{ marginLeft: '36px' }}>{transaction.bankTransaction.transactionDate}</div>
-          <div className="dtc-fixed-width-base-table-cell dtc-details-table-cell-amount">{transaction.bankTransaction.amount}</div>
-          <div className="dtc-fixed-width-base-table-cell dtc-details-table-cell-description">{transaction.bankTransaction.userDescription}</div>
+        <div className="tbc-details-table-row">
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-date" style={{ marginLeft: '36px' }}>{transaction.bankTransaction.transactionDate}</div>
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-amount">{transaction.bankTransaction.amount}</div>
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-description">{transaction.bankTransaction.userDescription}</div>
         </div>
       </React.Fragment>
     );
@@ -51,15 +51,15 @@ const TransactionsList: React.FC<TransactionsListProps> = (props: TransactionsLi
   }
 
   return (
-    <div className="dtc-details-table-container">
-      <div className="dtc-details-table-header">
-        <div className="dtc-details-table-row">
-          <div className="dtc-fixed-width-base-table-cell dtc-details-table-cell-date" style={{ marginLeft: '36px' }} onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
-          <div className="dtc-fixed-width-base-table-cell dtc-details-table-cell-amount" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
-          <div className="dtc-fixed-width-base-table-cell dtc-details-table-cell-description" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
+    <div className="tbc-details-table-container">
+      <div className="tbc-details-table-header">
+        <div className="tbc-details-table-row">
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-date" style={{ marginLeft: '36px' }} onClick={() => handleSortTransactions('transactionDate')}>Date{renderSortTransactionsIndicator('transactionDate')}</div>
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-amount" onClick={() => handleSortTransactions('amount')}>Amount{renderSortTransactionsIndicator('amount')}</div>
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-description" onClick={() => handleSortTransactions('userDescription')}>Description{renderSortTransactionsIndicator('userDescription')}</div>
         </div>
       </div>
-      <div className="dtc-table-body">
+      <div className="tbc-table-body">
         {renderTransactions()}
       </div>
     </div>

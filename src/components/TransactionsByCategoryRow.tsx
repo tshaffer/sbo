@@ -28,17 +28,17 @@ const TransactionsByCategoryRow: React.FC<TransactionsByCategoryRowProps> = (pro
 
   return (
     <div
-      className="dtc-details-table-row"
+      className="tbc-details-table-row"
       key={category.id}
     >
-      <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-icon">
-      <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-icon">
+      <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-icon">
+      <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-icon">
             <IconButton onClick={() => handleToggleShowTransactions()}>
               {showTransactions ? <RemoveIcon /> : <AddIcon />}
             </IconButton>
           </div>
       </div>
-      <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{category.name}</div>
+      <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{category.name}</div>
     </div>
   );
 }

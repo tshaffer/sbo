@@ -51,15 +51,15 @@ const TransactionsByCategory: React.FC = () => {
         <Typography variant="h5">Transactions by Category</Typography>
         <Box sx={{ padding: '20px' }}>
           <Box>
-            <div className="dtc-fixed-table-container">
-              <div className="dtc-fixed-table-header">
-                <div className="dtc-fixed-table-row">
-                  <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-icon"></div>
-                  <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
-                  <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-property" onClick={() => handleSort('transactionCount')}>Transaction Count{renderSortIndicator('transactionCount')}</div>
+            <div className="tbc-fixed-table-container">
+              <div className="tbc-fixed-table-header">
+                <div className="tbc-fixed-table-row">
+                  <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-icon"></div>
+                  <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
+                  <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-property" onClick={() => handleSort('transactionCount')}>Transaction Count{renderSortIndicator('transactionCount')}</div>
                 </div>
               </div>
-              <div className="dtc-spending-report-table-body">
+              <div className="tbc-spending-report-table-body">
                 {renderRows()}
               </div>
             </div>
