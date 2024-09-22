@@ -40,9 +40,6 @@ const TransactionsByCategory: React.FC = () => {
             categoryId={categoryId}
             transactions={transactions}
           />
-          {/* <div className="fixed-width-base-table-cell fixed-width-table-cell-icon"></div>
-          <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{categoryId}</div>
-          <div className="fixed-width-base-table-cell fixed-width-table-cell-property">{transactions.length}</div> */}
         </div>
       );
     });
@@ -54,21 +51,17 @@ const TransactionsByCategory: React.FC = () => {
         <Typography variant="h5">Transactions by Category</Typography>
         <Box sx={{ padding: '20px' }}>
           <Box>
-            <div className="fixed-table-container">
-              <div className="fixed-table-header">
-                <div className="fixed-table-row">
-                  <div className="fixed-width-base-table-cell fixed-width-table-cell-icon"></div>
-                  <div className="fixed-width-base-table-cell fixed-width-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
-                  <div className="fixed-width-base-table-cell fixed-width-table-cell-property" onClick={() => handleSort('transactionCount')}>Transaction Count{renderSortIndicator('transactionCount')}</div>
+            <div className="dtc-fixed-table-container">
+              <div className="dtc-fixed-table-header">
+                <div className="dtc-fixed-table-row">
+                  <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-icon"></div>
+                  <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
+                  <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-property" onClick={() => handleSort('transactionCount')}>Transaction Count{renderSortIndicator('transactionCount')}</div>
                 </div>
               </div>
-              <div className="spending-report-table-body">
+              <div className="dtc-spending-report-table-body">
                 {renderRows()}
-                {/* {rows.map((categoryExpenses: CategoryExpensesData) => (
-                  renderRow(categoryExpenses)
-                ))} */}
               </div>
-
             </div>
           </Box>
         </Box>

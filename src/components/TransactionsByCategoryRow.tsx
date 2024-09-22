@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BankTransaction, CategorizedTransaction, Category, useTypedSelector } from '../types';
 
 import { getCategoryById } from '../selectors';
 import { isNil, isString } from 'lodash';
 import { IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
@@ -16,31 +18,27 @@ export interface TransactionsByCategoryRowProps {
 
 const TransactionsByCategoryRow: React.FC<TransactionsByCategoryRowProps> = (props: TransactionsByCategoryRowProps) => {
 
+  const [showTransactions, setShowTransactions] = useState<boolean>(false);
+
   const category: Category = useTypedSelector(state => getCategoryById(state, props.categoryId)!);
 
-  // const renderExpandIcon = (categoryExpenses: CategoryExpensesData): JSX.Element | null => {
-  //   if (!isParentCategory(categoryExpenses)) {
-  //     return null;
-  //   }
-  //   return (
-  //     <IconButton onClick={() => handleToggleCategoryExpand(categoryExpenses.id as string)}>
-  //       {isCategoryExpanded(categoryExpenses.id) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-  //     </IconButton>
-  //   );
-  // }
-
+  function handleToggleShowTransactions(): void {
+    setShowTransactions(!showTransactions);
+  }
 
   return (
     <div
-      className="details-table-row"
+      className="dtc-details-table-row"
       key={category.id}
     >
-      <div className="fixed-width-base-table-cell fixed-width-table-cell-icon">
-        <IconButton>
-          <ExpandMoreIcon />
-        </IconButton>
+      <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-icon">
+      <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-icon">
+            <IconButton onClick={() => handleToggleShowTransactions()}>
+              {showTransactions ? <RemoveIcon /> : <AddIcon />}
+            </IconButton>
+          </div>
       </div>
-      <div className="fixed-width-base-table-cell fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{category.name}</div>
+      <div className="dtc-fixed-width-base-table-cell dtc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{category.name}</div>
     </div>
   );
 }

@@ -23,7 +23,6 @@ const SpendingReportTable: React.FC = () => {
   const categoryByCategoryNameLUT: StringToCategoryLUT = useTypedSelector(getCategoryByCategoryNameLUT);
   const startDate: string = useTypedSelector(getStartDate);
   const endDate: string = useTypedSelector(getEndDate);
-  console.log('SpendingReportTable');
   const transactionsByCategoryIdInDateRange: StringToTransactionsLUT = useTypedSelector(getTransactionsByCategoryIdInDateRange);
   const ignoreCategory: Category | undefined = useTypedSelector(state => getCategoryByName(state, 'Ignore'));
   const categoryIdsToExclude: string[] = useTypedSelector(getCategoryIdsToExclude);
