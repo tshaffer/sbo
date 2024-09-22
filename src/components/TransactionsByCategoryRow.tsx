@@ -8,8 +8,9 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-
+import TransactionsList from './TransactionsList';
 import '../styles/Tracker.css';
+import { render } from 'react-dom';
 
 export interface TransactionsByCategoryRowProps {
   categoryId: string;
@@ -26,6 +27,15 @@ const TransactionsByCategoryRow: React.FC<TransactionsByCategoryRowProps> = (pro
     setShowTransactions(!showTransactions);
   }
 
+  const renderTransactionsList = () => {
+    if (showTransactions) {
+      return (
+        <TransactionsList categoryId={props.categoryId}/>
+      );
+    }
+    return null;
+  }
+
   return (
     <div
       className="tbc-details-table-row"
@@ -39,6 +49,7 @@ const TransactionsByCategoryRow: React.FC<TransactionsByCategoryRowProps> = (pro
           </div>
       </div>
       <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{category.name}</div>
+      {renderTransactionsList()}
     </div>
   );
 }
