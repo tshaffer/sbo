@@ -84,6 +84,16 @@ const SideBar: React.FC = () => {
           >
             <span>{SidebarMenuButton.Statements}</span><ChevronRightIcon />
           </Button>
+
+          <Button
+            sx={buttonStyle}
+            onClick={() => handleClose('List')}
+            component={NavLink}
+            to="/transactions-by-category"
+          >
+            <span>{SidebarMenuButton.TransactionsByCategory}</span><ChevronRightIcon />
+          </Button>
+
         </AccordionDetails>
       </Accordion>
     </Box>

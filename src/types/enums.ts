@@ -27,6 +27,7 @@ export enum SidebarMenuButton {
   CategoryAssignmentRules = 'Category Assignment Rules',
   Statements = 'Statements',
   Categories = 'Categories',
+  TransactionsByCategory = 'Transactions By Category',
 }
 
 export enum ReportTypes {
