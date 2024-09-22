@@ -13,6 +13,7 @@ import CreditCardTransactionsTable from './CreditCardTransactionsTable';
 import CheckingAccountTransactionsTable from './CheckingAccountTransactionsTable';
 import { CreditCardStatementsTable } from './CreditCardStatementsTable';
 import { CheckingAccountStatementsTable } from './CheckingAccountStatementsTable';
+import TransactionsByCategory from './TransactionsByCategory';
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: 'reports',
         element: <ReportsContent/>,
+      },
+      {
+        path: 'transactions-by-category',
+        element: <TransactionsByCategory />,
       },
     ],
   },

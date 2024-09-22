@@ -113,3 +113,74 @@
 .chatgpt-category-table-body {
   width: 100%;
 }
+
+/* Transaction table */
+.tbc-table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.tbc-fixed-table-row {
+  display: flex;
+  /* justify-content: space-between; */
+  /* padding: 8px 16px; */
+  border-bottom: 1px solid #ccc;
+  max-width: 1200px;
+}
+
+.tbc-fixed-width-base-table-cell {
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.tbc-fixed-width-table-cell-property {
+  width: 274px;
+}
+
+.tbc-details-table-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  width: 90%;
+  margin: 0 auto;
+  /* max-width: 800px; */
+}
+
+.tbc-details-table-header {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ccc;
+  max-width: 1080px;
+}
+
+.tbc-details-table-row {
+  display: flex;
+  /* justify-content: space-between; */
+  /* padding: 8px 16px; */
+  border-bottom: 1px solid #ccc;
+  max-width: 1080px;
+}
+
+.tbc-details-table-cell-date {
+  width: 114px;
+}
+
+.tbc-details-table-cell-amount {
+  width: 114px;
+}
+
+.tbc-details-table-cell-description {
+  width: 400px;
+}
+
+.tbc-spending-report-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 69vh;
+  overflow-y: auto;
+}
+
+
+
+
+
