@@ -33,6 +33,8 @@ interface CategoryAssignmentRuleTableRow {
 
 const CategoryAssignmentRulesTable: React.FC = () => {
 
+  const updatingReactState = React.useRef(false);
+
   const dispatch = useDispatch();
 
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
@@ -87,6 +89,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
         ruleId: categoryAssignmentRule.id,
       });
     }
+    console.log('updateCategoryAssignmentRuleTableRows invoked, length', localCategoryAssignmentRuleTableRows.length);
     setCategoryAssignmentRuleTableRows(localCategoryAssignmentRuleTableRows);
   }
 
@@ -230,7 +233,16 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const handleDeleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): void => {
     const categoryAssignmentRule: CategoryAssignmentRule = categoryAssignmentRuleById[categoryAssignmentRuleId];
     deleteCategoryAssignmentRuleInReactState(categoryAssignmentRuleId);
-    dispatch(deleteCategoryAssignmentRule(categoryAssignmentRule));
+    console.log('return from deleteCategoryAssignmentRuleInReactState');
+    updatingReactState.current = true;
+    console.log('set updatingReactState.current to', updatingReactState.current);
+    setTimeout(() => {
+      updatingReactState.current = false;
+      console.log('set updatingReactState.current to', updatingReactState.current);
+      dispatch(deleteCategoryAssignmentRule(categoryAssignmentRule));
+      console.log('timeout expired, return from deleteCategoryAssignmentRule');
+      console.log('categoryAssignmentRuleTableRows, length', categoryAssignmentRuleTableRows.length);
+    }, 0);
   }
 
   const getCategory = (categoryId: string): Category => {
@@ -294,6 +306,8 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   }
 
   const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRuleTableRows.map((categoryAssignmentRuleTableRow: CategoryAssignmentRuleTableRow) => {
+    // console.log('sortedCategoryAssignmentRules invoked');
+    // console.log('sortedCategoryAssignmentRuleTableRows length', sortedCategoryAssignmentRuleTableRows.length);
     return {
       id: categoryAssignmentRuleTableRow.ruleId,
       pattern: categoryAssignmentRuleTableRow.pattern,
@@ -319,6 +333,16 @@ const CategoryAssignmentRulesTable: React.FC = () => {
       return 0;
     }
     return transactionsByCategoryAssignmentRules[categoryAssignmentRuleId].length;
+  }
+
+  console.log('render CategoryAssignmentRulesTable');
+  console.log(updatingReactState.current);
+
+  console.log('categoryAssignmentRuleById keys count', Object.keys(categoryAssignmentRuleById).length);
+  console.log('sortedCategoryAssignmentRules count', sortedCategoryAssignmentRules.length);
+  
+  if (updatingReactState.current) {
+    return <></>;
   }
 
   return (
@@ -359,7 +383,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
                     value={categoryAssignmentRuleById[categoryAssignmentRule.id].pattern}
                     onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
                     style={{ minWidth: '400px' }}
-                    // helperText="Edit the pattern"
+                  // helperText="Edit the pattern"
                   />
                 </div>
                 <div
