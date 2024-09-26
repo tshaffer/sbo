@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../selectors'; // Adjust imports as needed
-import { Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../types'; // Adjust imports as needed
+import { CategorizedTransaction, Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../types'; // Adjust imports as needed
 import '../styles/TransactionsByCategory.css'; // Custom CSS
 
-interface TransactionsByCategoryProps { }
+// Define the props and state types
+interface TransactionsByCategoryProps {}
 
+// Main component with TypeScript types
 const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
 
-  const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(state => getTransactionsByCategory(state));
-
+  const transactionsByCategory: StringToTransactionsLUT = useTypedSelector(state => getTransactionsByCategory(state));
   const categories: Category[] = useTypedSelector(state => getCategories(state));
-  // const categories: Category[] = useTypedSelector(state => getCategories(state));
 
-  // const categories = useSelector(getCategories);
-  // const transactionsByCategory = useSelector(getTransactionsByCategoryAssignmentRules);
-
+  // State to manage which categories are expanded
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
+  // Toggles the expanded state of a category
   const toggleCategory = (categoryId: string) => {
     if (expandedCategories.includes(categoryId)) {
       setExpandedCategories(expandedCategories.filter(id => id !== categoryId));
@@ -39,7 +37,7 @@ const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
         <tbody>
           {categories.map((category: Category) => {
             const isExpanded = expandedCategories.includes(category.id);
-            const categoryTransactions = transactionsByCategory[category.id] || [];
+            const categoryTransactions: CategorizedTransaction[] = transactionsByCategory[category.id] || [];
 
             return (
               <React.Fragment key={category.id}>
@@ -68,11 +66,11 @@ const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {categoryTransactions.map((transaction: Transaction) => (
-                              <tr key={transaction.id}>
-                                <td>{transaction.date}</td>
-                                <td>{transaction.amount}</td>
-                                <td>{transaction.description}</td>
+                            {categoryTransactions.map((transaction: CategorizedTransaction) => (
+                              <tr key={transaction.bankTransaction.id}>
+                                <td>{transaction.bankTransaction.transactionDate}</td>
+                                <td>{transaction.bankTransaction.amount}</td>
+                                <td>{transaction.bankTransaction.userDescription}</td>
                               </tr>
                             ))}
                           </tbody>
