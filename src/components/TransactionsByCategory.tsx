@@ -33,7 +33,7 @@ const TransactionsByCategory: React.FC = () => {
   };
 
   const sortedCategories = [...categories].sort((a: any, b: any) => {
-    
+
     let aValue;
     let bValue;
 
@@ -70,7 +70,7 @@ const TransactionsByCategory: React.FC = () => {
   return (
     <React.Fragment>
       <Typography variant="h5">Transactions by Category</Typography>
-      <div className="transactions-by-category-container">
+      <div className="transactions-by-category-container" style={{ maxHeight: 722 }}>
         <table className="category-table" style={{ width: '1200px' }}>
           <thead>
             <tr>
