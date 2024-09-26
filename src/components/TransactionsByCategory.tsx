@@ -1,21 +1,58 @@
 import React, { useState } from 'react';
-import { getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../selectors'; // Adjust imports as needed
+import { getAppInitialized, getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../selectors'; // Adjust imports as needed
 import { CategorizedTransaction, Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../types'; // Adjust imports as needed
 import '../styles/TransactionsByCategory.css'; // Custom CSS
 import { formatCurrency, formatDate } from '../utilities';
 import { Typography } from '@mui/material';
 
-// Define the props and state types
-interface TransactionsByCategoryProps { }
+type SortCriteria = 'name' | 'transactionCount';
+type SortOrder = 'asc' | 'desc';
 
-// Main component with TypeScript types
-const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
+const TransactionsByCategory: React.FC = () => {
 
+  const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
   const transactionsByCategory: StringToTransactionsLUT = useTypedSelector(state => getTransactionsByCategory(state));
   const categories: Category[] = useTypedSelector(state => getCategories(state));
 
-  // State to manage which categories are expanded
+  const [sortCriteria, setSortCriteria] = useState<SortCriteria>('name');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+
+  if (!appInitialized) {
+    return null;
+  }
+
+  const handleSort = (criteria: SortCriteria) => () => {
+    if (sortCriteria === criteria) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortCriteria(criteria);
+      setSortOrder('asc');
+    }
+  };
+
+  const sortedCategories = [...categories].sort((a: any, b: any) => {
+    
+    let aValue;
+    let bValue;
+
+    if (sortCriteria === 'transactionCount') {
+      aValue = transactionsByCategory[a.id]?.length || 0;
+      bValue = transactionsByCategory[b.id]?.length || 0;
+    } else {
+      aValue = a[sortCriteria];
+      bValue = b[sortCriteria];
+    }
+
+    if (aValue < bValue) {
+      return sortOrder === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
 
   // Toggles the expanded state of a category
   const toggleCategory = (categoryId: string) => {
@@ -26,6 +63,10 @@ const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
     }
   };
 
+  const getSortIcon = () => {
+    return sortOrder === 'asc' ? '↑' : '↓';
+  };
+
   return (
     <React.Fragment>
       <Typography variant="h5">Transactions by Category</Typography>
@@ -34,12 +75,16 @@ const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
           <thead>
             <tr>
               <th style={{ width: '36px' }}></th>
-              <th>Category</th>
-              <th>Transaction Count</th>
+              <th onClick={handleSort('name')}>
+                Category {sortCriteria === 'name' && getSortIcon()}
+              </th>
+              <th onClick={handleSort('transactionCount')}>
+                Transaction Count {sortCriteria === 'transactionCount' && getSortIcon()}
+              </th>
             </tr>
           </thead>
           <tbody>
-            {categories.map((category: Category) => {
+            {sortedCategories.map((category: Category) => {
               const isExpanded = expandedCategories.includes(category.id);
               const categoryTransactions: CategorizedTransaction[] = transactionsByCategory[category.id] || [];
 
