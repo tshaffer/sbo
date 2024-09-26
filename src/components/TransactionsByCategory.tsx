@@ -1,73 +1,93 @@
 import React, { useState } from 'react';
-import { StringToTransactionsLUT, useTypedSelector } from '../types';
-import { getTransactionsByCategory } from '../selectors';
-import { Box, Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../selectors'; // Adjust imports as needed
+import { Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../types'; // Adjust imports as needed
+import '../styles/TransactionsByCategory.css'; // Custom CSS
 
-import '../styles/Tracker.css';
-import TransactionsByCategoryRow from './TransactionsByCategoryRow';
+interface TransactionsByCategoryProps { }
 
-const TransactionsByCategory: React.FC = () => {
+const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
 
   const transactionsByCategoryId: StringToTransactionsLUT = useTypedSelector(state => getTransactionsByCategory(state));
-  console.log('transactionsByCategory');
-  console.log(transactionsByCategoryId);
-  console.log(Object.keys(transactionsByCategoryId).length);
 
-  const [sortColumn, setSortColumn] = useState<string>('totalExpenses');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const categories: Category[] = useTypedSelector(state => getCategories(state));
+  // const categories: Category[] = useTypedSelector(state => getCategories(state));
 
-  const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  // const categories = useSelector(getCategories);
+  // const transactionsByCategory = useSelector(getTransactionsByCategoryAssignmentRules);
+
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+
+  const toggleCategory = (categoryId: string) => {
+    if (expandedCategories.includes(categoryId)) {
+      setExpandedCategories(expandedCategories.filter(id => id !== categoryId));
     } else {
-      setSortColumn(column);
-      setSortOrder('asc');
+      setExpandedCategories([...expandedCategories, categoryId]);
     }
   };
 
-  const renderSortIndicator = (column: string) => {
-    if (sortColumn !== column) return null;
-    return sortOrder === 'asc' ? ' ▲' : ' ▼';
-  };
-
-
-  const renderRows = () => {
-    return Object.keys(transactionsByCategoryId).map((categoryId: string) => {
-      const transactions = transactionsByCategoryId[categoryId];
-      return (
-        <div key={categoryId}>
-          <TransactionsByCategoryRow
-            categoryId={categoryId}
-            transactions={transactions}
-          />
-        </div>
-      );
-    });
-  }
-
   return (
-    <React.Fragment>
-      <Box sx={{ width: '100%' }}>
-        <Typography variant="h5">Transactions by Category</Typography>
-        <Box sx={{ padding: '20px' }}>
-          <Box>
-            <div className="tbc-fixed-table-container">
-              <div className="tbc-fixed-table-header">
-                <div className="tbc-fixed-table-row">
-                  <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-icon"></div>
-                  <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }} onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
-                  <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-property" onClick={() => handleSort('transactionCount')}>Transaction Count{renderSortIndicator('transactionCount')}</div>
-                </div>
-              </div>
-              <div className="tbc-spending-report-table-body">
-                {renderRows()}
-              </div>
-            </div>
-          </Box>
-        </Box>
-      </Box>
-    </React.Fragment>
+    <div className="transactions-by-category-container">
+      <table className="category-table" style={{ width: '1200px' }}>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Category</th>
+            <th>Transaction Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map((category: Category) => {
+            const isExpanded = expandedCategories.includes(category.id);
+            const categoryTransactions = transactionsByCategory[category.id] || [];
+
+            return (
+              <React.Fragment key={category.id}>
+                <tr>
+                  <td>
+                    <button onClick={() => toggleCategory(category.id)}>
+                      {isExpanded ? '▼' : '►'}
+                    </button>
+                  </td>
+                  <td>{category.name}</td>
+                  <td>{categoryTransactions.length}</td>
+                </tr>
+                {isExpanded && (
+                  <tr>
+                    <td colSpan={3}>
+                      <div className="subtable-container">
+                        <div className="category-header">
+                          <strong>{category.name}</strong> - {categoryTransactions.length} transactions
+                        </div>
+                        <table className="transaction-subtable">
+                          <thead>
+                            <tr>
+                              <th>Date</th>
+                              <th>Amount</th>
+                              <th>Description</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {categoryTransactions.map((transaction: Transaction) => (
+                              <tr key={transaction.id}>
+                                <td>{transaction.date}</td>
+                                <td>{transaction.amount}</td>
+                                <td>{transaction.description}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
-}
+};
 
 export default TransactionsByCategory;
