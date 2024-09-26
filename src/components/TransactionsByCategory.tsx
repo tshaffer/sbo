@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../selectors'; // Adjust imports as needed
 import { CategorizedTransaction, Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../types'; // Adjust imports as needed
 import '../styles/TransactionsByCategory.css'; // Custom CSS
+import { formatCurrency, formatDate } from '../utilities';
+import { Typography } from '@mui/material';
 
 // Define the props and state types
-interface TransactionsByCategoryProps {}
+interface TransactionsByCategoryProps { }
 
 // Main component with TypeScript types
 const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
@@ -25,66 +27,66 @@ const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
   };
 
   return (
-    <div className="transactions-by-category-container">
-      <table className="category-table" style={{ width: '1200px' }}>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Category</th>
-            <th>Transaction Count</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((category: Category) => {
-            const isExpanded = expandedCategories.includes(category.id);
-            const categoryTransactions: CategorizedTransaction[] = transactionsByCategory[category.id] || [];
+    <React.Fragment>
+      <Typography variant="h5">Transactions by Category</Typography>
+      <div className="transactions-by-category-container">
+        <table className="category-table" style={{ width: '1200px' }}>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Category</th>
+              <th>Transaction Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map((category: Category) => {
+              const isExpanded = expandedCategories.includes(category.id);
+              const categoryTransactions: CategorizedTransaction[] = transactionsByCategory[category.id] || [];
 
-            return (
-              <React.Fragment key={category.id}>
-                <tr>
-                  <td>
-                    <button onClick={() => toggleCategory(category.id)}>
-                      {isExpanded ? '▼' : '►'}
-                    </button>
-                  </td>
-                  <td>{category.name}</td>
-                  <td>{categoryTransactions.length}</td>
-                </tr>
-                {isExpanded && (
+              return (
+                <React.Fragment key={category.id}>
                   <tr>
-                    <td colSpan={3}>
-                      <div className="subtable-container">
-                        <div className="category-header">
-                          <strong>{category.name}</strong> - {categoryTransactions.length} transactions
-                        </div>
-                        <table className="transaction-subtable">
-                          <thead>
-                            <tr>
-                              <th>Date</th>
-                              <th>Amount</th>
-                              <th>Description</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {categoryTransactions.map((transaction: CategorizedTransaction) => (
-                              <tr key={transaction.bankTransaction.id}>
-                                <td>{transaction.bankTransaction.transactionDate}</td>
-                                <td>{transaction.bankTransaction.amount}</td>
-                                <td>{transaction.bankTransaction.userDescription}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                    <td>
+                      <button onClick={() => toggleCategory(category.id)}>
+                        {isExpanded ? '▼' : '►'}
+                      </button>
                     </td>
+                    <td>{category.name}</td>
+                    <td>{categoryTransactions.length}</td>
                   </tr>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+                  {isExpanded && (
+                    <tr>
+                      <td colSpan={3}>
+                        <div className="subtable-container">
+                          <table className="transaction-subtable">
+                            <thead>
+                              <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {categoryTransactions.map((transaction: CategorizedTransaction) => (
+                                <tr key={transaction.bankTransaction.id}>
+                                  <td>{formatDate(transaction.bankTransaction.transactionDate)}</td>
+                                  <td>{formatCurrency(-transaction.bankTransaction.amount)}</td>
+                                  <td>{transaction.bankTransaction.userDescription}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </React.Fragment>
   );
 };
 
