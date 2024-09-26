@@ -3,6 +3,7 @@ import { getCategoryById, getTransactionsByCategory } from '../selectors';
 import { CategorizedTransaction, Category, StringToTransactionsLUT, useTypedSelector } from '../types';
 
 import '../styles/Tracker.css';
+import { formatCurrency, formatDate } from '../utilities';
 
 interface TransactionsListProps {
   categoryId: string;
@@ -34,8 +35,8 @@ const TransactionsList: React.FC<TransactionsListProps> = (props: TransactionsLi
     return (
       <React.Fragment>
         <div className="tbc-details-table-row">
-          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-date" style={{ marginLeft: '36px' }}>{transaction.bankTransaction.transactionDate}</div>
-          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-amount">{transaction.bankTransaction.amount}</div>
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-date" style={{ marginLeft: '36px' }}>{formatDate(transaction.bankTransaction.transactionDate)}</div>
+          <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-amount">{formatCurrency(transaction.bankTransaction.amount)}</div>
           <div className="tbc-fixed-width-base-table-cell tbc-details-table-cell-description">{transaction.bankTransaction.userDescription}</div>
         </div>
       </React.Fragment>
