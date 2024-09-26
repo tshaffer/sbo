@@ -33,7 +33,7 @@ const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
         <table className="category-table" style={{ width: '1200px' }}>
           <thead>
             <tr>
-              <th></th>
+              <th style={{ width: '36px' }}></th>
               <th>Category</th>
               <th>Transaction Count</th>
             </tr>
@@ -61,7 +61,7 @@ const TransactionsByCategory: React.FC<TransactionsByCategoryProps> = () => {
                           <table className="transaction-subtable">
                             <thead>
                               <tr>
-                                <th>Date</th>
+                                <th style={{ width: '92px' }}>Date</th>
                                 <th>Amount</th>
                                 <th>Description</th>
                               </tr>
