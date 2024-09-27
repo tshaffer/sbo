@@ -49,11 +49,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   console.log(Object.keys(categoryAssignmentRuleById).length);
   console.log(categoryAssignmentRuleById);
 
-  // const xcategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule | undefined } = useTypedSelector(state => getCategoryAssignmentRuleByCategoryAssignmentRule(state));
-
-  const [xcategoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
-  // const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
-
   const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
 
   const [sortColumn, setSortColumn] = useState<string>('pattern');
@@ -65,16 +60,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const [showCategoryAssignmentRuleTransactionsListDialog, setShowCategoryAssignmentRuleTransactionsListDialog] = React.useState(false);
 
   const generateReactState = (): void => {
-    const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
-
-    for (const categoryAssignmentRule of categoryAssignmentRules) {
-      localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
-    }
-    // for (const categoryAssignmentRule of categoryAssignmentRules) {
-    //   localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
-    // }
-
-    setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
     updateCategoryAssignmentRuleTableRows();
   }
 

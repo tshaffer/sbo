@@ -19,26 +19,17 @@ export const xgetCategoryAssignmentRuleByCategoryAssignmentRule = createSelector
   (categoryAssignmentRules: CategoryAssignmentRule[], id: string): CategoryAssignmentRule | undefined => categoryAssignmentRules.find(categoryAssignmentRule => categoryAssignmentRule.id === id)
 );
 
-// needs fixing.
-/*
-<
-[typeof categoryAssignmentRulesState], // Input selector types
-{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule } // Return type of the selector
-*/
-export const getCategoryAssignmentRuleByCategoryAssignmentRuleId = createSelector(
+export const getCategoryAssignmentRuleByCategoryAssignmentRuleId = createSelector<
+  [typeof getCategoryAssignmentRules], // Input selector type
+  { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } // Return type
+>(
   [getCategoryAssignmentRules],
   (categoryAssignmentRules: CategoryAssignmentRule[]): { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } => {
     const categoryAssignmentRuleByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
     for (const categoryAssignmentRule of categoryAssignmentRules) {
       categoryAssignmentRuleByCategoryAssignmentRuleId[categoryAssignmentRule.id] = categoryAssignmentRule;
-      
+
     }
-    // for (const categoryAssignmentRuleId in categoryAssignmentRules) {
-    //   if (Object.prototype.hasOwnProperty.call(categoryAssignmentRules, categoryAssignmentRuleId)) {
-    //     const categoryAssignmentRule: CategoryAssignmentRule = categoryAssignmentRules[categoryAssignmentRuleId];
-    //     categoryAssignmentRuleByCategoryAssignmentRuleId[categoryAssignmentRuleId] = categoryAssignmentRule;
-    //   }
-    // }
 
     return categoryAssignmentRuleByCategoryAssignmentRuleId;
   }
