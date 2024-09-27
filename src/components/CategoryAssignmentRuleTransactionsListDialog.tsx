@@ -7,7 +7,7 @@ import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, Tabl
 import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector } from '../types';
 import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
 import { formatCurrency, formatDate } from '../utilities';
-import { getCategoryAssignmentRuleById } from '../selectors';
+import { getCategoryAssignmentRuleByCategoryAssignmentRule } from '../selectors';
 
 export interface CategoryAssignmentRuleTransactionsListDialogProps {
   open: boolean;
@@ -21,7 +21,7 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
 
   const { open, categoryAssignmentRuleId, onClose } = props;
 
-  const categoryAssignmentRule: CategoryAssignmentRule = useTypedSelector(state => getCategoryAssignmentRuleById(state, categoryAssignmentRuleId))!;
+  const categoryAssignmentRule: CategoryAssignmentRule = useTypedSelector(state => getCategoryAssignmentRuleByCategoryAssignmentRule(state, categoryAssignmentRuleId))!;
   const [transactions, setTransactions] = React.useState<CreditCardTransaction[]>([]);
 
   if (!open) {

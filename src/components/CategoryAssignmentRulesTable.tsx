@@ -14,7 +14,7 @@ import '../styles/Tracker.css';
 import '../styles/CategoryAssignmentRulesTable.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
-import { getCategories, getCategoryAssignmentRules, getTransactionsByCategoryAssignmentRules } from '../selectors';
+import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRule, getCategoryAssignmentRules, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
 import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
@@ -35,11 +35,18 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
   const categories: Category[] = useTypedSelector(state => getCategories(state));
+  const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
+  console.log('categoryAssignmentRules', categoryAssignmentRules);
+  const categoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = useTypedSelector(state => getCategoryIdByCategoryAssignmentRuleId(state));
+  console.log('categoryIdByCategoryAssignmentRuleId');
+  console.log(Object.keys(categoryIdByCategoryAssignmentRuleId).length);
+  console.log(categoryIdByCategoryAssignmentRuleId);
+
+  // const xcategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule | undefined } = useTypedSelector(state => getCategoryAssignmentRuleByCategoryAssignmentRule(state));
 
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
-  const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
+  // const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
 
   const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
 
@@ -53,16 +60,20 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const generateReactState = (): void => {
     const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
-    const localCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = {};
 
     for (const categoryAssignmentRule of categoryAssignmentRules) {
       localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
-      localCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id] = categoryAssignmentRule.categoryId;
     }
+    for (const categoryAssignmentRule of categoryAssignmentRules) {
+      localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
+    }
+
     setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
-    setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
     updateCategoryAssignmentRuleTableRows();
   }
+
+  /*
+  */
 
   React.useEffect(() => {
     console.log('useEffect');
