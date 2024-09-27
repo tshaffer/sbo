@@ -19,13 +19,29 @@ export const xgetCategoryAssignmentRuleByCategoryAssignmentRule = createSelector
   (categoryAssignmentRules: CategoryAssignmentRule[], id: string): CategoryAssignmentRule | undefined => categoryAssignmentRules.find(categoryAssignmentRule => categoryAssignmentRule.id === id)
 );
 
-export const getCategoryAssignmentRuleByCategoryAssignmentRule = createSelector<
-  [ (state: TrackerState) => CategoryAssignmentRule[], (state: TrackerState, id: string) => string], // Input selector types
-  CategoryAssignmentRule | undefined // Return type of the selector
->(
-  [getCategoryAssignmentRules, (_: TrackerState, id: string) => id],
-  (categoryAssignmentRules: CategoryAssignmentRule[], id: string): CategoryAssignmentRule | undefined =>
-    categoryAssignmentRules.find(categoryAssignmentRule => categoryAssignmentRule.id === id)
+// needs fixing.
+/*
+<
+[typeof categoryAssignmentRulesState], // Input selector types
+{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule } // Return type of the selector
+*/
+export const getCategoryAssignmentRuleByCategoryAssignmentRuleId = createSelector(
+  [getCategoryAssignmentRules],
+  (categoryAssignmentRules: CategoryAssignmentRule[]): { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } => {
+    const categoryAssignmentRuleByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
+    for (const categoryAssignmentRule of categoryAssignmentRules) {
+      categoryAssignmentRuleByCategoryAssignmentRuleId[categoryAssignmentRule.id] = categoryAssignmentRule;
+      
+    }
+    // for (const categoryAssignmentRuleId in categoryAssignmentRules) {
+    //   if (Object.prototype.hasOwnProperty.call(categoryAssignmentRules, categoryAssignmentRuleId)) {
+    //     const categoryAssignmentRule: CategoryAssignmentRule = categoryAssignmentRules[categoryAssignmentRuleId];
+    //     categoryAssignmentRuleByCategoryAssignmentRuleId[categoryAssignmentRuleId] = categoryAssignmentRule;
+    //   }
+    // }
+
+    return categoryAssignmentRuleByCategoryAssignmentRuleId;
+  }
 );
 
 export const getCategoryIdByCategoryAssignmentRuleId = createSelector<

@@ -14,7 +14,7 @@ import '../styles/Tracker.css';
 import '../styles/CategoryAssignmentRulesTable.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
-import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRule, getCategoryAssignmentRules, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
+import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
 import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
@@ -38,14 +38,20 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const categories: Category[] = useTypedSelector(state => getCategories(state));
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
   console.log('categoryAssignmentRules', categoryAssignmentRules);
+  
   const categoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = useTypedSelector(state => getCategoryIdByCategoryAssignmentRuleId(state));
   console.log('categoryIdByCategoryAssignmentRuleId');
   console.log(Object.keys(categoryIdByCategoryAssignmentRuleId).length);
   console.log(categoryIdByCategoryAssignmentRuleId);
 
+  const categoryAssignmentRuleById = useTypedSelector(state => getCategoryAssignmentRuleByCategoryAssignmentRuleId(state));
+  console.log('categoryAssignmentRuleById');
+  console.log(Object.keys(categoryAssignmentRuleById).length);
+  console.log(categoryAssignmentRuleById);
+
   // const xcategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule | undefined } = useTypedSelector(state => getCategoryAssignmentRuleByCategoryAssignmentRule(state));
 
-  const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
+  const [xcategoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   // const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
 
   const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
@@ -64,16 +70,13 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     for (const categoryAssignmentRule of categoryAssignmentRules) {
       localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
     }
-    for (const categoryAssignmentRule of categoryAssignmentRules) {
-      localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
-    }
+    // for (const categoryAssignmentRule of categoryAssignmentRules) {
+    //   localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
+    // }
 
     setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
     updateCategoryAssignmentRuleTableRows();
   }
-
-  /*
-  */
 
   React.useEffect(() => {
     console.log('useEffect');
@@ -196,6 +199,13 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     return transactionsByCategoryAssignmentRules[categoryAssignmentRuleId].length;
   }
 
+  const getPattern = (categoryAssignmentRuleId: string): string => {
+    console.log('getPattern');
+    console.log(categoryAssignmentRuleById);
+    console.log(categoryAssignmentRuleId);
+    return categoryAssignmentRuleById[categoryAssignmentRuleId].pattern;
+  }
+
   return (
     <React.Fragment>
       <AddCategoryAssignmentRuleDialog
@@ -231,7 +241,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
               <div className="car-t-base-row car-t-body-row" key={categoryAssignmentRule.id}>
                 <div className="car-t-b-t-cell car-t-c-pattern">
                   <TextField
-                    value={categoryAssignmentRuleById[categoryAssignmentRule.id].pattern}
+                    value={getPattern(categoryAssignmentRule.id)}
                     onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
                     style={{ minWidth: '400px' }}
                   // helperText="Edit the pattern"
