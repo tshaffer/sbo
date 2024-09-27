@@ -33,18 +33,15 @@ interface CategoryAssignmentRuleTableRow {
 
 const CategoryAssignmentRulesTable: React.FC = () => {
 
-  const updatingReactState = React.useRef(false);
-
   const dispatch = useDispatch();
 
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
   const categories: Category[] = useTypedSelector(state => getCategories(state));
 
-  const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
-
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
-  const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
   const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
+
+  const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
 
   const [sortColumn, setSortColumn] = useState<string>('pattern');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -54,28 +51,34 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const [categoryAssignmentRuleId, setCategoryAssignmentRuleId] = React.useState('');
   const [showCategoryAssignmentRuleTransactionsListDialog, setShowCategoryAssignmentRuleTransactionsListDialog] = React.useState(false);
 
+  const generateReactState = (): void => {
+    const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
+    const localCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = {};
+
+    for (const categoryAssignmentRule of categoryAssignmentRules) {
+      localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
+      localCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id] = categoryAssignmentRule.categoryId;
+    }
+    setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
+    setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
+    updateCategoryAssignmentRuleTableRows();
+  }
+
+  React.useEffect(() => {
+    console.log('useEffect');
+    generateReactState();
+  }, [categoryAssignmentRules]);
+
   const handleSaveRule = (pattern: string, categoryId: string): void => {
-    const id: string = uuidv4();
-    const categoryAssignmentRule: CategoryAssignmentRule = {
-      id,
-      pattern,
-      categoryId
-    };
-    console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
   }
 
   const handleCloseAddRuleDialog = () => {
-    setShowAddCategoryAssignmentRuleDialog(false);
   }
 
   const handleShowCategoryAssignmentRuleTransactionsListDialog = (id: string) => {
-    setCategoryAssignmentRuleId(id);
-    setShowCategoryAssignmentRuleTransactionsListDialog(true);
   }
 
   const handleCloseCategoryAssignmentRuleTransactionsListDialog = () => {
-    setShowCategoryAssignmentRuleTransactionsListDialog(false);
   }
 
   const updateCategoryAssignmentRuleTableRows = (): void => {
@@ -89,59 +92,13 @@ const CategoryAssignmentRulesTable: React.FC = () => {
         ruleId: categoryAssignmentRule.id,
       });
     }
-    console.log('updateCategoryAssignmentRuleTableRows invoked, length', localCategoryAssignmentRuleTableRows.length);
     setCategoryAssignmentRuleTableRows(localCategoryAssignmentRuleTableRows);
   }
 
-  const generateReactState = (): void => {
-    const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
-    const localSelectedCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: string } = {};
-    const localCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = {};
-    for (const categoryAssignmentRule of categoryAssignmentRules) {
-      localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
-      localSelectedCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule.pattern;
-      localCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id] = categoryAssignmentRule.categoryId;
-    }
-
-    setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
-    setSelectCategoryAssignmentRuleById(localSelectedCategoryAssignmentRuleById);
-    setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
-    updateCategoryAssignmentRuleTableRows();
-  }
-
-  React.useEffect(() => {
-    console.log('useEffect');
-    generateReactState();
-  }, [categoryAssignmentRules]);
-
   const updateCategoryAssignmentRuleFromInReactState = (categoryAssignmentRule: CategoryAssignmentRule): void => {
-    const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = cloneDeep(categoryAssignmentRuleById);
-    const localSelectedCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: string } = cloneDeep(selectCategoryAssignmentRuleById);
-    const localCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = cloneDeep(categoryIdByCategoryAssignmentRuleId);
-
-    localCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule;
-    localSelectedCategoryAssignmentRuleById[categoryAssignmentRule.id] = categoryAssignmentRule.pattern;
-    localCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id] = categoryAssignmentRule.categoryId;
-
-    setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
-    setSelectCategoryAssignmentRuleById(localSelectedCategoryAssignmentRuleById);
-    setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
-    updateCategoryAssignmentRuleTableRows();
   }
 
   const deleteCategoryAssignmentRuleInReactState = (categoryAssignmentRuleId: string): void => {
-    const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = cloneDeep(categoryAssignmentRuleById);
-    const localSelectedCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: string } = cloneDeep(selectCategoryAssignmentRuleById);
-    const localCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = cloneDeep(categoryIdByCategoryAssignmentRuleId);
-
-    delete localCategoryAssignmentRuleById[categoryAssignmentRuleId];
-    delete localSelectedCategoryAssignmentRuleById[categoryAssignmentRuleId];
-    delete localCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRuleId];
-
-    setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
-    setSelectCategoryAssignmentRuleById(localSelectedCategoryAssignmentRuleById);
-    setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
-    updateCategoryAssignmentRuleTableRows();
   }
 
   const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
@@ -149,100 +106,9 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   }
 
   function handleSaveCategoryAssignmentRule(categoryAssignmentRuleId: string): void {
-    console.log('handleSaveCategoryAssignmentRule');
-
-    // original values
-    const originalCategoryAssignmentRule: CategoryAssignmentRule = categoryAssignmentRules.find((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.id === categoryAssignmentRuleId) as CategoryAssignmentRule;
-
-    const originalPattern = originalCategoryAssignmentRule.pattern;
-    const originalCategoryId = originalCategoryAssignmentRule.categoryId;
-    const originalCategory = getCategory(originalCategoryId);
-
-    console.log('original values');
-    console.log('originalCategoryAssignmentRule', originalCategoryAssignmentRule);
-    console.log('originalPattern', originalPattern);
-    console.log('originalCategoryId', originalCategoryId);
-    console.log('originalCategory', originalCategory);
-
-    // check for updated values
-    const updatedCategoryAssignmentRuleViaTextField: CategoryAssignmentRule = categoryAssignmentRuleById[categoryAssignmentRuleId];
-    const updatedPatternViaSelect: string = selectCategoryAssignmentRuleById[categoryAssignmentRuleId];
-    const updatedCategoryId: string = categoryIdByCategoryAssignmentRuleId[categoryAssignmentRuleId];
-
-    console.log('updated values');
-    console.log('updatedCategoryAssignmentRuleViaTextField', updatedCategoryAssignmentRuleViaTextField);
-    console.log('updatedPatternViaSelect', updatedPatternViaSelect);
-    console.log('updatedCategoryId', updatedCategoryId);
-
-    console.log('SUMMARY');
-
-    const categoryChanged: boolean = updatedCategoryId !== originalCategoryId;
-    console.log('categoryChanged', categoryChanged);
-
-    if (updatedCategoryAssignmentRuleViaTextField.pattern !== originalPattern) {
-      console.log('pattern changed');
-      const patternAlreadyExists: boolean = categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === updatedCategoryAssignmentRuleViaTextField.pattern);
-
-      if (patternAlreadyExists) {
-        // pattern has changed, but the updated one already exists
-        console.log('pattern already exists');
-
-        const comboAlreadyExists: boolean = updatedCategoryAssignmentRuleCombinationExistsInProps(updatedCategoryAssignmentRuleViaTextField.pattern, updatedCategoryId);
-        console.log('comboAlreadyExists', comboAlreadyExists);
-
-        if (!comboAlreadyExists) {
-          // pattern changed, new pattern already exists, combo of new pattern and category does not exist
-          // NO - User cannot assign a pattern to a category if the pattern already exists and is assigned to a different category
-          console.log('ERROR - pattern assigned to multiple categories');
-          // HANDLE ERROR CASE - indicate an error to the user and restore old value
-        } else {
-
-          // pattern changed, new pattern already exists, combo of new pattern and category already exists. Delete this instance of categoryAssignmentRule
-          deleteCategoryAssignmentRuleInReactState(categoryAssignmentRuleId);
-          dispatch(deleteCategoryAssignmentRule(originalCategoryAssignmentRule));
-
-        }
-      } else {
-        // pattern is new
-        console.log('pattern is new');
-
-        // pattern is new. Clone selected CategoryAssignmentRule (includes new pattern). Updated categoryId in case it changed.
-        const updatedCategoryAssignmentRule: CategoryAssignmentRule = cloneDeep(updatedCategoryAssignmentRuleViaTextField);
-        updatedCategoryAssignmentRule.categoryId = updatedCategoryId;
-        updateCategoryAssignmentRuleFromInReactState(updatedCategoryAssignmentRule);
-        dispatch(updateCategoryAssignmentRule(updatedCategoryAssignmentRule));
-
-      }
-    } else {
-      console.log('pattern has not changed');
-
-      if (!categoryChanged) {
-        // neither pattern nor category has changed. Do nothing. (Save button should have been disabled).
-        console.log('category unchanged, return');
-        return;
-      } {
-        console.log('category has changed');
-        const updatedCategoryAssignmentRule: CategoryAssignmentRule = cloneDeep(updatedCategoryAssignmentRuleViaTextField);
-        updatedCategoryAssignmentRule.categoryId = updatedCategoryId;
-        updateCategoryAssignmentRuleFromInReactState(updatedCategoryAssignmentRule);
-        dispatch(updateCategoryAssignmentRule(updatedCategoryAssignmentRule));
-      }
-    }
   }
 
   const handleDeleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): void => {
-    const categoryAssignmentRule: CategoryAssignmentRule = categoryAssignmentRuleById[categoryAssignmentRuleId];
-    deleteCategoryAssignmentRuleInReactState(categoryAssignmentRuleId);
-    console.log('return from deleteCategoryAssignmentRuleInReactState');
-    updatingReactState.current = true;
-    console.log('set updatingReactState.current to', updatingReactState.current);
-    setTimeout(() => {
-      updatingReactState.current = false;
-      console.log('set updatingReactState.current to', updatingReactState.current);
-      dispatch(deleteCategoryAssignmentRule(categoryAssignmentRule));
-      console.log('timeout expired, return from deleteCategoryAssignmentRule');
-      console.log('categoryAssignmentRuleTableRows, length', categoryAssignmentRuleTableRows.length);
-    }, 0);
   }
 
   const getCategory = (categoryId: string): Category => {
@@ -250,38 +116,24 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   };
 
   const handleCategoryAssignmentRuleChange = (categoryAssignmentRule: CategoryAssignmentRule, pattern: string) => {
-    const currentCategoryAssignmentRuleById: { [pattern: string]: CategoryAssignmentRule } = cloneDeep(categoryAssignmentRuleById);
-    const currentCategoryByPattern: CategoryAssignmentRule = currentCategoryAssignmentRuleById[categoryAssignmentRule.id];
-    currentCategoryByPattern.pattern = pattern;
-    setCategoryAssignmentRuleById(currentCategoryAssignmentRuleById);
-    updateCategoryAssignmentRuleTableRows();
   };
 
   const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
-    const currentCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = cloneDeep(categoryIdByCategoryAssignmentRuleId);
-    currentCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRuleId] = categoryId;
-    setCategoryIdByCategoryAssignmentRuleId(currentCategoryIdByCategoryAssignmentRuleId);
   }
 
   const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(column);
-      setSortOrder('asc');
-    }
   };
 
   const sortedCategoryAssignmentRuleTableRows = [...(categoryAssignmentRuleTableRows)].sort((a: any, b: any) => {
-    const aValue = a[sortColumn];
-    const bValue = b[sortColumn];
+    // const aValue = a[sortColumn];
+    // const bValue = b[sortColumn];
 
-    if (aValue < bValue) {
-      return sortOrder === 'asc' ? -1 : 1;
-    }
-    if (aValue > bValue) {
-      return sortOrder === 'asc' ? 1 : -1;
-    }
+    // if (aValue < bValue) {
+    //   return sortOrder === 'asc' ? -1 : 1;
+    // }
+    // if (aValue > bValue) {
+    //   return sortOrder === 'asc' ? 1 : -1;
+    // }
     return 0;
   });
 
@@ -306,8 +158,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   }
 
   const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRuleTableRows.map((categoryAssignmentRuleTableRow: CategoryAssignmentRuleTableRow) => {
-    // console.log('sortedCategoryAssignmentRules invoked');
-    // console.log('sortedCategoryAssignmentRuleTableRows length', sortedCategoryAssignmentRuleTableRows.length);
     return {
       id: categoryAssignmentRuleTableRow.ruleId,
       pattern: categoryAssignmentRuleTableRow.pattern,
@@ -333,16 +183,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
       return 0;
     }
     return transactionsByCategoryAssignmentRules[categoryAssignmentRuleId].length;
-  }
-
-  console.log('render CategoryAssignmentRulesTable');
-  console.log(updatingReactState.current);
-
-  console.log('categoryAssignmentRuleById keys count', Object.keys(categoryAssignmentRuleById).length);
-  console.log('sortedCategoryAssignmentRules count', sortedCategoryAssignmentRules.length);
-  
-  if (updatingReactState.current) {
-    return <></>;
   }
 
   return (
