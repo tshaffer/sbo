@@ -6,7 +6,7 @@ import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssi
 import { getCategoryAssignmentRules, getCategoryByName, getMissingCategories } from "../selectors";
 import { isNil } from "lodash";
 import { addCategories } from "./category";
-import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleRedux } from "../models";
+import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, updateCategoryInCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleByIdRedux, updatePatternInCategoryAssignmentRuleRedux } from "../models";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
@@ -149,19 +149,66 @@ export const updateCategoryAssignmentRule = (categoryAssignmentRule: CategoryAss
   };
 };
 
-export const deleteCategoryAssignmentRule = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
+export const updatePatternInCategoryAssignmentRule = (categoryAssignmentRuleId: string, pattern: string): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'updatePatternInCategoryAssignmentRule';
+
+    const updatePatternInCategoryAssignmentRuleBody = { id: categoryAssignmentRuleId, pattern };
+
+    return axios.post(
+      path,
+      updatePatternInCategoryAssignmentRuleBody
+    ).then((response) => {
+      dispatch(updatePatternInCategoryAssignmentRuleRedux(updatePatternInCategoryAssignmentRuleBody));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+
+};
+
+
+export const updateCategoryInCategoryAssignmentRule = (categoryAssignmentRuleId: string, categoryId: string): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'updateCategoryInCategoryAssignmentRule';
+
+    const updateCategoryInCategoryAssignmentRuleBody = { id: categoryAssignmentRuleId, categoryId };
+
+    return axios.post(
+      path,
+      updateCategoryInCategoryAssignmentRuleBody
+    ).then((response) => {
+      dispatch(updateCategoryInCategoryAssignmentRuleRedux(updateCategoryInCategoryAssignmentRuleBody));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+
+};
+
+export const deleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
     const path = serverUrl + apiUrlFragment + 'deleteCategoryAssignmentRule';
 
-    const deleteCategoryAssignmentRuleBody = categoryAssignmentRule;
+    const deleteCategoryAssignmentRuleBody = { id: categoryAssignmentRuleId };
 
     return axios.post(
       path,
       deleteCategoryAssignmentRuleBody
     ).then((response) => {
-      dispatch(deleteCategoryAssignmentRuleRedux(categoryAssignmentRule));
+      dispatch(deleteCategoryAssignmentRuleByIdRedux(categoryAssignmentRuleId));
       return Promise.resolve();
     }).catch((error) => {
       console.log('error');
