@@ -14,9 +14,14 @@ export const getCategoryAssignmentRules = createSelector<
     categoryAssignmentRulesState.categoryAssignmentRules,
 );
 
-export const xgetCategoryAssignmentRuleByCategoryAssignmentRule = createSelector(
+// export const xgetCategoryAssignmentRuleByCategoryAssignmentRule = createSelector(
+//   [getCategoryAssignmentRules, (_: TrackerState, id: string) => id],
+//   (categoryAssignmentRules: CategoryAssignmentRule[], id: string): CategoryAssignmentRule | undefined => categoryAssignmentRules.find(categoryAssignmentRule => categoryAssignmentRule.id === id)
+// );
+
+export const getCategoryAssignmentRuleById = createSelector(
   [getCategoryAssignmentRules, (_: TrackerState, id: string) => id],
-  (categoryAssignmentRules: CategoryAssignmentRule[], id: string): CategoryAssignmentRule | undefined => categoryAssignmentRules.find(categoryAssignmentRule => categoryAssignmentRule.id === id)
+  (categoryAssignmentRules: CategoryAssignmentRule[], id: string): CategoryAssignmentRule | undefined => categoryAssignmentRules.find(category => category.id === id)
 );
 
 export const getCategoryAssignmentRuleByCategoryAssignmentRuleId = createSelector<

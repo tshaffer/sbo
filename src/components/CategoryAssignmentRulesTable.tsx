@@ -37,17 +37,17 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const categories: Category[] = useTypedSelector(state => getCategories(state));
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
-  console.log('categoryAssignmentRules', categoryAssignmentRules);
-  
+  // console.log('categoryAssignmentRules', categoryAssignmentRules);
+
   const categoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = useTypedSelector(state => getCategoryIdByCategoryAssignmentRuleId(state));
-  console.log('categoryIdByCategoryAssignmentRuleId');
-  console.log(Object.keys(categoryIdByCategoryAssignmentRuleId).length);
-  console.log(categoryIdByCategoryAssignmentRuleId);
+  // console.log('categoryIdByCategoryAssignmentRuleId');
+  // console.log(Object.keys(categoryIdByCategoryAssignmentRuleId).length);
+  // console.log(categoryIdByCategoryAssignmentRuleId);
 
   const categoryAssignmentRuleById = useTypedSelector(state => getCategoryAssignmentRuleByCategoryAssignmentRuleId(state));
-  console.log('categoryAssignmentRuleById');
-  console.log(Object.keys(categoryAssignmentRuleById).length);
-  console.log(categoryAssignmentRuleById);
+  // console.log('categoryAssignmentRuleById');
+  // console.log(Object.keys(categoryAssignmentRuleById).length);
+  // console.log(categoryAssignmentRuleById);
 
   const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
 
@@ -58,6 +58,27 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [categoryAssignmentRuleId, setCategoryAssignmentRuleId] = React.useState('');
   const [showCategoryAssignmentRuleTransactionsListDialog, setShowCategoryAssignmentRuleTransactionsListDialog] = React.useState(false);
+
+  // from chatty
+  const [editedPatterns, setEditedPatterns] = useState<{ [key: string]: string }>({});
+
+  const handleInputChange = (categoryAssignmentRuleId: string, newValue: string) => {
+    setEditedPatterns({
+      ...editedPatterns,
+      [categoryAssignmentRuleId]: newValue,
+    });
+  };
+
+  const handleBlur = (categoryAssignmentRuleId: string) => {
+    const newValue = editedPatterns[categoryAssignmentRuleId];
+    if (newValue !== undefined) {
+      console.log('dispatch updateCategoryAssignmentRule');
+      console.log(categoryAssignmentRuleId);
+      console.log(newValue);
+      // Dispatch the updated value to Redux store
+      // dispatch(updateTransactionDescription(categoryAssignmentRuleId, newValue));
+    }
+  };
 
   const generateReactState = (): void => {
     updateCategoryAssignmentRuleTableRows();
@@ -115,6 +136,9 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   };
 
   const handleCategoryAssignmentRuleChange = (categoryAssignmentRule: CategoryAssignmentRule, pattern: string) => {
+    console.log('handleCategoryAssignmentRuleChange');
+    console.log(categoryAssignmentRule);
+    console.log(pattern);
   };
 
   const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
@@ -222,14 +246,21 @@ const CategoryAssignmentRulesTable: React.FC = () => {
             </div>
           </div>
           <div className="car-t-body">
-            {sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
+            {categoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
               <div className="car-t-base-row car-t-body-row" key={categoryAssignmentRule.id}>
                 <div className="car-t-b-t-cell car-t-c-pattern">
                   <TextField
-                    value={getPattern(categoryAssignmentRule.id)}
-                    onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
+                    value={
+                      editedPatterns[categoryAssignmentRule.id] !== undefined
+                        ? editedPatterns[categoryAssignmentRule.id] // Use local value if the user has typed something
+                        : categoryAssignmentRule.pattern // Fallback to Redux store value
+                    }
+                    // value={getPattern(categoryAssignmentRule.id)}
+                    // onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
+                    onChange={(e) => handleInputChange(categoryAssignmentRule.id, e.target.value)}
                     style={{ minWidth: '400px' }}
-                  // helperText="Edit the pattern"
+                    onBlur={() => handleBlur(categoryAssignmentRule.id)}
+                    // helperText="Edit the pattern"
                   />
                 </div>
                 <div
