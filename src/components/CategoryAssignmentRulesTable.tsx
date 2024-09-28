@@ -127,6 +127,9 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   }
 
   const handleDeleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): void => {
+    console.log('handleDeleteCategoryAssignmentRule');
+    console.log(categoryAssignmentRuleId);
+    dispatch(deleteCategoryAssignmentRule(categoryAssignmentRuleId));
   }
 
   const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {

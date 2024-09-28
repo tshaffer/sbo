@@ -35,6 +35,11 @@ const categoryAssignmentRulesSlice = createSlice({
         ((rule: any) => rule.id !== action.payload.id)
       );
     },
+    deleteCategoryAssignmentRuleByIdRedux(state, action: PayloadAction<string>) {
+      state.categoryAssignmentRules = state.categoryAssignmentRules.filter(
+        ((rule: any) => rule.id !== action.payload)
+      );
+    },
     addCategoryAssignmentRules(state, action: PayloadAction<CategoryAssignmentRule[]>) {
       state.categoryAssignmentRules = state.categoryAssignmentRules.concat(action.payload);
     },
@@ -50,6 +55,7 @@ export const {
   updateCategoryAssignmentRuleRedux,
   updateCategoryAssignmentRuleCategoryIdRedux,
   deleteCategoryAssignmentRuleRedux,
+  deleteCategoryAssignmentRuleByIdRedux,
   addCategoryAssignmentRules,
   replaceCategoryAssignmentRulesRedux,
 } = categoryAssignmentRulesSlice.actions;
