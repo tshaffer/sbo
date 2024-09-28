@@ -56,6 +56,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   // from chatty
   const [editedPatterns, setEditedPatterns] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // State to store validation errors
 
   const handleInputChange = (categoryAssignmentRuleId: string, newValue: string) => {
     setEditedPatterns({
@@ -64,14 +65,40 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     });
   };
 
+  const validatePattern = (categoryAssignmentRuleId: string, newValue: string): string | null => {
+    if (!newValue.trim()) {
+      return 'Pattern cannot be empty.';
+    }
+    // if (transactions.some((t) => t.id !== categoryAssignmentRuleId && t.description === newValue)) {
+    //   return 'Description must be unique.';
+    // }
+    return null;
+  };
+
   const handleBlur = (categoryAssignmentRuleId: string) => {
     const newValue = editedPatterns[categoryAssignmentRuleId];
+    // if (newValue !== undefined) {
+    //   console.log('dispatch updateCategoryAssignmentRule');
+    //   console.log(categoryAssignmentRuleId);
+    //   console.log(newValue);
+    //   // Dispatch the updated value to Redux store
+    //   // dispatch(updateTransactionDescription(categoryAssignmentRuleId, newValue));
+    // }
     if (newValue !== undefined) {
-      console.log('dispatch updateCategoryAssignmentRule');
-      console.log(categoryAssignmentRuleId);
-      console.log(newValue);
-      // Dispatch the updated value to Redux store
-      // dispatch(updateTransactionDescription(categoryAssignmentRuleId, newValue));
+      const error = validatePattern(categoryAssignmentRuleId, newValue);
+      if (error) {
+        // Set the error message in the state
+        setErrors((prevErrors) => ({ ...prevErrors, [categoryAssignmentRuleId]: error }));
+      } else {
+        // Clear any previous error if the input is valid
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          delete newErrors[categoryAssignmentRuleId];
+          return newErrors;
+        });
+        // Dispatch the updated value to Redux store
+        // dispatch(updateTransactionDescription(transactionId, newValue));
+      }
     }
   };
 
@@ -222,6 +249,8 @@ const CategoryAssignmentRulesTable: React.FC = () => {
                     onChange={(e) => handleInputChange(categoryAssignmentRule.id, e.target.value)}
                     style={{ minWidth: '400px' }}
                     onBlur={() => handleBlur(categoryAssignmentRule.id)}
+                    error={!!errors[categoryAssignmentRule.id]} // Show error style if there is an error
+                    helperText={errors[categoryAssignmentRule.id] || ''} // Show the error message below the input field
                   />
                 </div>
                 <div
