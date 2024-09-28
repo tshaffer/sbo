@@ -6,7 +6,7 @@ import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssi
 import { getCategoryAssignmentRules, getCategoryByName, getMissingCategories } from "../selectors";
 import { isNil } from "lodash";
 import { addCategories } from "./category";
-import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleRedux } from "../models";
+import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleRedux, updateCategoryAssignmentRuleCategoryIdRedux } from "../models";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
@@ -147,6 +147,23 @@ export const updateCategoryAssignmentRule = (categoryAssignmentRule: CategoryAss
       return '';
     });
   };
+};
+
+export const updateCategoryAssignmentRuleCategoryId = (categoryAssignmentRuleId: string, categoryId: string): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    // const categoryAssignmentRule: CategoryAssignmentRule = {
+    //   ...categoryAssignmentRuleId,
+    //   categoryId: categoryId
+    // };
+    dispatch(updateCategoryAssignmentRuleCategoryIdRedux({
+      id: categoryAssignmentRuleId,
+      categoryId
+    }));
+
+    return Promise.resolve();
+  }
 };
 
 export const deleteCategoryAssignmentRule = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {

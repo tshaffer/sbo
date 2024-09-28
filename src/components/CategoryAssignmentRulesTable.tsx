@@ -15,7 +15,7 @@ import '../styles/CategoryAssignmentRulesTable.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
 import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
-import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
+import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule, updateCategoryAssignmentRuleCategoryId } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
@@ -130,6 +130,10 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   }
 
   const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
+    console.log('handleCategoryChange');
+    console.log(categoryAssignmentRuleId);
+    console.log(categoryId);
+    dispatch(updateCategoryAssignmentRuleCategoryId(categoryAssignmentRuleId, categoryId));
   }
 
   const handleSort = (column: string) => {
