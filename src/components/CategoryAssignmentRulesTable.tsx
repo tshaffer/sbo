@@ -79,12 +79,16 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   }
 
   const handleCloseAddRuleDialog = () => {
+    setShowAddCategoryAssignmentRuleDialog(false);
   }
 
   const handleShowCategoryAssignmentRuleTransactionsListDialog = (id: string) => {
+    setCategoryAssignmentRuleId(id);
+    setShowCategoryAssignmentRuleTransactionsListDialog(true);
   }
 
   const handleCloseCategoryAssignmentRuleTransactionsListDialog = () => {
+    setShowCategoryAssignmentRuleTransactionsListDialog(false);
   }
 
   const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
@@ -92,6 +96,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   }
 
   function handleSaveCategoryAssignmentRule(categoryAssignmentRuleId: string): void {
+    debugger;
   }
 
   const handleDeleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): void => {
