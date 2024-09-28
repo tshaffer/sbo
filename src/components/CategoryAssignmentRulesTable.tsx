@@ -69,15 +69,24 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     if (!newValue.trim()) {
       return 'Pattern cannot be empty.';
     }
-    // if (transactions.some((t) => t.id !== categoryAssignmentRuleId && t.description === newValue)) {
-    //   return 'Description must be unique.';
-    // }
+    if (categoryAssignmentRules.some((t) => t.id !== categoryAssignmentRuleId && t.pattern === newValue)) {
+      return 'Pattern must be unique.';
+    }
     return null;
   };
 
   const handleBlur = (categoryAssignmentRuleId: string) => {
     const newValue = editedPatterns[categoryAssignmentRuleId];
     if (newValue !== undefined) {
+
+      const originalDescription = categoryAssignmentRules.find((t) => t.id === categoryAssignmentRuleId)?.pattern;
+      
+      // Check if the value is unchanged
+      if (newValue === originalDescription) {
+        // If unchanged, do nothing
+        return;
+      }
+
       const error = validatePattern(categoryAssignmentRuleId, newValue);
       if (error) {
         // Set the error message in the state
