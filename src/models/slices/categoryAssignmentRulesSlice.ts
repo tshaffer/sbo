@@ -21,6 +21,15 @@ const categoryAssignmentRulesSlice = createSlice({
         state.categoryAssignmentRules[index] = updatedCategoryAssignmentRule;
       }
     },
+    updateCategoryAssignmentRulePatternRedux(state, action: PayloadAction<{ id: string, pattern: string }>) {
+      const { id, pattern } = action.payload;
+      const index = state.categoryAssignmentRules.findIndex(
+        ((rule: any) => rule.id === id)
+      );
+      if (index !== -1) {
+        state.categoryAssignmentRules[index].pattern = pattern;
+      }
+    },
     updateCategoryAssignmentRuleCategoryIdRedux(state, action: PayloadAction<{ id: string, categoryId: string }>) {
       const { id, categoryId } = action.payload;
       const index = state.categoryAssignmentRules.findIndex(
@@ -53,6 +62,7 @@ const categoryAssignmentRulesSlice = createSlice({
 export const {
   addCategoryAssignmentRuleRedux,
   updateCategoryAssignmentRuleRedux,
+  updateCategoryAssignmentRulePatternRedux,
   updateCategoryAssignmentRuleCategoryIdRedux,
   deleteCategoryAssignmentRuleRedux,
   deleteCategoryAssignmentRuleByIdRedux,

@@ -15,7 +15,7 @@ import '../styles/CategoryAssignmentRulesTable.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
 import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
-import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule, updateCategoryAssignmentRuleCategoryId } from '../controllers';
+import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule, updateCategoryAssignmentRulePattern, updateCategoryAssignmentRuleCategoryId } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
@@ -77,13 +77,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const handleBlur = (categoryAssignmentRuleId: string) => {
     const newValue = editedPatterns[categoryAssignmentRuleId];
-    // if (newValue !== undefined) {
-    //   console.log('dispatch updateCategoryAssignmentRule');
-    //   console.log(categoryAssignmentRuleId);
-    //   console.log(newValue);
-    //   // Dispatch the updated value to Redux store
-    //   // dispatch(updateTransactionDescription(categoryAssignmentRuleId, newValue));
-    // }
     if (newValue !== undefined) {
       const error = validatePattern(categoryAssignmentRuleId, newValue);
       if (error) {
@@ -96,8 +89,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
           delete newErrors[categoryAssignmentRuleId];
           return newErrors;
         });
-        // Dispatch the updated value to Redux store
-        // dispatch(updateTransactionDescription(transactionId, newValue));
+        dispatch(updateCategoryAssignmentRulePattern(categoryAssignmentRuleId, newValue));
       }
     }
   };
