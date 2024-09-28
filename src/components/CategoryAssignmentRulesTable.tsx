@@ -109,6 +109,13 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     }
   };
 
+  const getTransactionCountForRule = (categoryAssignmentRuleId: string): number => {
+    if (!isArray(transactionsByCategoryAssignmentRules[categoryAssignmentRuleId])) {
+      return 0;
+    }
+    return transactionsByCategoryAssignmentRules[categoryAssignmentRuleId].length;
+  }
+
   const sortedCategoryAssignmentRules = [...(categoryAssignmentRules)].sort((a: any, b: any) => {
 
     let aValue: any = 0;
@@ -122,6 +129,9 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     } else if (sortColumn === 'pattern') {
       aValue = a[sortColumn];
       bValue = b[sortColumn];
+    } else if (sortColumn === 'transactionCount') {
+      aValue = getTransactionCountForRule((a as CategoryAssignmentRule).id);
+      bValue = getTransactionCountForRule((b as CategoryAssignmentRule).id);
     }
     if (aValue < bValue) {
       return sortOrder === 'asc' ? -1 : 1;
@@ -130,13 +140,12 @@ const CategoryAssignmentRulesTable: React.FC = () => {
       return sortOrder === 'asc' ? 1 : -1;
     }
     return 0;
-});
+  });
 
   const renderSortIndicator = (column: string) => {
     if (sortColumn !== column) return null;
     return sortOrder === 'asc' ? ' ▲' : ' ▼';
   };
-
 
   if (categoryAssignmentRules.length === 0) {
     return (
@@ -152,14 +161,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     return <></>;
   }
 
-  // const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => {
-  //   return {
-  //     id: categoryAssignmentRule.id,
-  //     pattern: categoryAssignmentRule.pattern,
-  //     categoryId: categoryAssignmentRule.categoryId,
-  //   };
-  // });
-
   const getShowCategoryAssignmentRuleTransactionsListDialog = (): JSX.Element | null => {
     if (showCategoryAssignmentRuleTransactionsListDialog) {
       return (
@@ -172,13 +173,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     }
     return null;
   };
-
-  const getTransactionCountForRule = (categoryAssignmentRuleId: string): number => {
-    if (!isArray(transactionsByCategoryAssignmentRules[categoryAssignmentRuleId])) {
-      return 0;
-    }
-    return transactionsByCategoryAssignmentRules[categoryAssignmentRuleId].length;
-  }
 
   return (
     <React.Fragment>
@@ -206,7 +200,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
             <div className="car-t-base-row">
               <div className="car-t-b-t-cell car-t-c-pattern" onClick={() => handleSort('pattern')}>Pattern{renderSortIndicator('pattern')}</div>
               <div className="car-t-b-t-cell car-t-c-category" onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
-              <div className="car-t-b-t-cell car-t-c-transaction-count">Transaction Count</div>
+              <div className="car-t-b-t-cell car-t-c-transaction-count" onClick={() => handleSort('transactionCount')}>Transaction Count{renderSortIndicator('transactionCount')}</div>
               <div className="car-t-b-t-cell car-t-c-icons"></div>
             </div>
           </div>
