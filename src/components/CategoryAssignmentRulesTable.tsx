@@ -14,7 +14,7 @@ import '../styles/Tracker.css';
 import '../styles/CategoryAssignmentRulesTable.css';
 
 import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
-import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
+import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
 import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
@@ -37,17 +37,12 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const categories: Category[] = useTypedSelector(state => getCategories(state));
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
-  // console.log('categoryAssignmentRules', categoryAssignmentRules);
+
+  const categoryByCategoryIdLUT: any = useTypedSelector(state => getCategoryByCategoryIdLUT(state));
 
   const categoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = useTypedSelector(state => getCategoryIdByCategoryAssignmentRuleId(state));
-  // console.log('categoryIdByCategoryAssignmentRuleId');
-  // console.log(Object.keys(categoryIdByCategoryAssignmentRuleId).length);
-  // console.log(categoryIdByCategoryAssignmentRuleId);
 
   const categoryAssignmentRuleById = useTypedSelector(state => getCategoryAssignmentRuleByCategoryAssignmentRuleId(state));
-  // console.log('categoryAssignmentRuleById');
-  // console.log(Object.keys(categoryAssignmentRuleById).length);
-  // console.log(categoryAssignmentRuleById);
 
   const transactionsByCategoryAssignmentRules: any = useTypedSelector(state => getTransactionsByCategoryAssignmentRules(state))!;
 
@@ -80,15 +75,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     }
   };
 
-  const generateReactState = (): void => {
-    updateCategoryAssignmentRuleTableRows();
-  }
-
-  React.useEffect(() => {
-    console.log('useEffect');
-    generateReactState();
-  }, [categoryAssignmentRules]);
-
   const handleSaveRule = (pattern: string, categoryId: string): void => {
   }
 
@@ -101,26 +87,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const handleCloseCategoryAssignmentRuleTransactionsListDialog = () => {
   }
 
-  const updateCategoryAssignmentRuleTableRows = (): void => {
-    const localCategoryAssignmentRuleTableRows: CategoryAssignmentRuleTableRow[] = [];
-    for (const categoryAssignmentRule of categoryAssignmentRules) {
-      const category: Category = getCategory(categoryAssignmentRule.categoryId);
-      localCategoryAssignmentRuleTableRows.push({
-        pattern: categoryAssignmentRule.pattern,
-        categoryName: category.name,
-        categoryId: category.id,
-        ruleId: categoryAssignmentRule.id,
-      });
-    }
-    setCategoryAssignmentRuleTableRows(localCategoryAssignmentRuleTableRows);
-  }
-
-  const updateCategoryAssignmentRuleFromInReactState = (categoryAssignmentRule: CategoryAssignmentRule): void => {
-  }
-
-  const deleteCategoryAssignmentRuleInReactState = (categoryAssignmentRuleId: string): void => {
-  }
-
   const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
     return categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === pattern && categoryAssignmentRule.categoryId === categoryId);
   }
@@ -131,34 +97,40 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   const handleDeleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): void => {
   }
 
-  const getCategory = (categoryId: string): Category => {
-    return categories.find((category: Category) => category.id === categoryId) as Category;
-  };
-
-  const handleCategoryAssignmentRuleChange = (categoryAssignmentRule: CategoryAssignmentRule, pattern: string) => {
-    console.log('handleCategoryAssignmentRuleChange');
-    console.log(categoryAssignmentRule);
-    console.log(pattern);
-  };
-
   const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
   }
 
   const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
   };
 
-  const sortedCategoryAssignmentRuleTableRows = [...(categoryAssignmentRuleTableRows)].sort((a: any, b: any) => {
-    // const aValue = a[sortColumn];
-    // const bValue = b[sortColumn];
+  const sortedCategoryAssignmentRules = [...(categoryAssignmentRules)].sort((a: any, b: any) => {
 
-    // if (aValue < bValue) {
-    //   return sortOrder === 'asc' ? -1 : 1;
-    // }
-    // if (aValue > bValue) {
-    //   return sortOrder === 'asc' ? 1 : -1;
-    // }
+    let aValue: any = 0;
+    let bValue: any = 0;
+
+    if (sortColumn === 'categoryName') {
+      const aCategory = categoryByCategoryIdLUT[a.categoryId];
+      const bCategory = categoryByCategoryIdLUT[b.categoryId];
+      aValue = aCategory.name;
+      bValue = bCategory.name;
+    } else if (sortColumn === 'pattern') {
+      aValue = a[sortColumn];
+      bValue = b[sortColumn];
+    }
+    if (aValue < bValue) {
+      return sortOrder === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortOrder === 'asc' ? 1 : -1;
+    }
     return 0;
-  });
+});
 
   const renderSortIndicator = (column: string) => {
     if (sortColumn !== column) return null;
@@ -180,13 +152,13 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     return <></>;
   }
 
-  const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRuleTableRows.map((categoryAssignmentRuleTableRow: CategoryAssignmentRuleTableRow) => {
-    return {
-      id: categoryAssignmentRuleTableRow.ruleId,
-      pattern: categoryAssignmentRuleTableRow.pattern,
-      categoryId: categoryAssignmentRuleTableRow.categoryId,
-    };
-  });
+  // const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => {
+  //   return {
+  //     id: categoryAssignmentRule.id,
+  //     pattern: categoryAssignmentRule.pattern,
+  //     categoryId: categoryAssignmentRule.categoryId,
+  //   };
+  // });
 
   const getShowCategoryAssignmentRuleTransactionsListDialog = (): JSX.Element | null => {
     if (showCategoryAssignmentRuleTransactionsListDialog) {
@@ -206,13 +178,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
       return 0;
     }
     return transactionsByCategoryAssignmentRules[categoryAssignmentRuleId].length;
-  }
-
-  const getPattern = (categoryAssignmentRuleId: string): string => {
-    console.log('getPattern');
-    console.log(categoryAssignmentRuleById);
-    console.log(categoryAssignmentRuleId);
-    return categoryAssignmentRuleById[categoryAssignmentRuleId].pattern;
   }
 
   return (
@@ -246,7 +211,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
             </div>
           </div>
           <div className="car-t-body">
-            {categoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
+            {sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
               <div className="car-t-base-row car-t-body-row" key={categoryAssignmentRule.id}>
                 <div className="car-t-b-t-cell car-t-c-pattern">
                   <TextField
@@ -255,12 +220,9 @@ const CategoryAssignmentRulesTable: React.FC = () => {
                         ? editedPatterns[categoryAssignmentRule.id] // Use local value if the user has typed something
                         : categoryAssignmentRule.pattern // Fallback to Redux store value
                     }
-                    // value={getPattern(categoryAssignmentRule.id)}
-                    // onChange={(event) => handleCategoryAssignmentRuleChange(categoryAssignmentRule, event.target.value)}
                     onChange={(e) => handleInputChange(categoryAssignmentRule.id, e.target.value)}
                     style={{ minWidth: '400px' }}
                     onBlur={() => handleBlur(categoryAssignmentRule.id)}
-                    // helperText="Edit the pattern"
                   />
                 </div>
                 <div

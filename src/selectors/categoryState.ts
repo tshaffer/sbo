@@ -40,6 +40,17 @@ export const getCategoryByCategoryNameLUT = createSelector(
   }
 );
 
+export const getCategoryByCategoryIdLUT = createSelector(
+  [getCategories],
+  (categories: Category[]): StringToCategoryLUT => {
+    const categoryLUT: StringToCategoryLUT = {};
+    for (const category of categories) {
+      categoryLUT[category.id] = category;
+    }
+    return categoryLUT;
+  }
+);
+
 // Selector to find missing categories based on uploaded category assignment rules
 export const getMissingCategories = createSelector(
   [getCategories, (_: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]) => uploadedCategoryAssignmentRules],
