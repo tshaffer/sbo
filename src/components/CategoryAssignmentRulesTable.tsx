@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { cloneDeep, isArray, isEmpty, isNil } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 
 import { Box, Button, IconButton, TextField, Tooltip, Typography } from '@mui/material';
-import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import ViewListIcon from '@mui/icons-material/ViewList';
@@ -13,9 +12,9 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 import '../styles/Tracker.css';
 import '../styles/CategoryAssignmentRulesTable.css';
 
-import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
-import { getCategories, getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
-import { addCategoryAssignmentRule, deleteCategoryAssignmentRule, updateCategoryAssignmentRule, updateCategoryAssignmentRulePattern, updateCategoryAssignmentRuleCategoryId } from '../controllers';
+import { CategoryAssignmentRule, SidebarMenuButton } from '../types';
+import { getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
+import { deleteCategoryAssignmentRule, updateCategoryAssignmentRulePattern, updateCategoryAssignmentRuleCategoryId, addCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
@@ -35,7 +34,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  const categories: Category[] = useTypedSelector(state => getCategories(state));
   const categoryAssignmentRules: CategoryAssignmentRule[] = useTypedSelector(state => getCategoryAssignmentRules(state));
 
   const categoryByCategoryIdLUT: any = useTypedSelector(state => getCategoryByCategoryIdLUT(state));
@@ -48,13 +46,11 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const [sortColumn, setSortColumn] = useState<string>('pattern');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [categoryAssignmentRuleTableRows, setCategoryAssignmentRuleTableRows] = React.useState<CategoryAssignmentRuleTableRow[]>([]);
 
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [categoryAssignmentRuleId, setCategoryAssignmentRuleId] = React.useState('');
   const [showCategoryAssignmentRuleTransactionsListDialog, setShowCategoryAssignmentRuleTransactionsListDialog] = React.useState(false);
 
-  // from chatty
   const [editedPatterns, setEditedPatterns] = useState<{ [key: string]: string }>({});
   const [errors, setErrors] = useState<{ [key: string]: string }>({}); // State to store validation errors
 
@@ -104,7 +100,15 @@ const CategoryAssignmentRulesTable: React.FC = () => {
   };
 
   const handleSaveRule = (pattern: string, categoryId: string): void => {
-  }
+    const id: string = uuidv4();
+    const categoryAssignmentRule: CategoryAssignmentRule = {
+      id,
+      pattern,
+      categoryId
+    };
+    console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
+    dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
+}
 
   const handleCloseAddRuleDialog = () => {
     setShowAddCategoryAssignmentRuleDialog(false);
@@ -117,14 +121,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
 
   const handleCloseCategoryAssignmentRuleTransactionsListDialog = () => {
     setShowCategoryAssignmentRuleTransactionsListDialog(false);
-  }
-
-  const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
-    return categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === pattern && categoryAssignmentRule.categoryId === categoryId);
-  }
-
-  function handleSaveCategoryAssignmentRule(categoryAssignmentRuleId: string): void {
-    debugger;
   }
 
   const handleDeleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): void => {
@@ -276,11 +272,6 @@ const CategoryAssignmentRulesTable: React.FC = () => {
                   <Tooltip title="Transactions" arrow>
                     <IconButton onClick={() => handleShowCategoryAssignmentRuleTransactionsListDialog(categoryAssignmentRule.id)}>
                       <ViewListIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Save" arrow>
-                    <IconButton onClick={() => handleSaveCategoryAssignmentRule(categoryAssignmentRule.id)}>
-                      <SaveIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete" arrow>
