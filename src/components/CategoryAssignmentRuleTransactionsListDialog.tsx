@@ -1,13 +1,13 @@
 import React from 'react';
-
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector } from '../types';
+import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector, BankTransactionType } from '../types';
 import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
 import { formatCurrency, formatDate } from '../utilities';
 import { getCategoryAssignmentRuleById } from '../selectors';
+import { useNavigate } from 'react-router-dom';
 
 export interface CategoryAssignmentRuleTransactionsListDialogProps {
   open: boolean;
@@ -18,26 +18,43 @@ export interface CategoryAssignmentRuleTransactionsListDialogProps {
 const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentRuleTransactionsListDialogProps> = (props: CategoryAssignmentRuleTransactionsListDialogProps) => {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Hook for navigation
 
   const { open, categoryAssignmentRuleId, onClose } = props;
 
   const categoryAssignmentRule: CategoryAssignmentRule = useTypedSelector(state => getCategoryAssignmentRuleById(state, categoryAssignmentRuleId))!;
   const [transactions, setTransactions] = React.useState<CreditCardTransaction[]>([]);
 
-  if (!open) {
-    return null;
-  }
-
   React.useEffect(() => {
-    const promise: Promise<CreditCardTransaction[]> = dispatch(getTransactionsByCategoryAssignmentRuleId(categoryAssignmentRuleId));
-    promise.then((transactions: CreditCardTransaction[]) => {
-      setTransactions(transactions);
-    });
-  }, [dispatch, categoryAssignmentRuleId]);
+    if (open) {
+      const promise: Promise<CreditCardTransaction[]> = dispatch(getTransactionsByCategoryAssignmentRuleId(categoryAssignmentRuleId));
+      promise.then((transactions: CreditCardTransaction[]) => {
+        setTransactions(transactions);
+      });
+    }
+  }, [dispatch, categoryAssignmentRuleId, open]);
 
   const handleClose = () => {
     onClose();
   };
+
+  // Handle navigation to the statement
+  const handleNavigateToStatement = (transaction: CreditCardTransaction) => {
+    handleClose(); // Close the dialog before navigating
+
+    // Ensure navigation happens after the dialog closes
+    setTimeout(() => {
+      if (transaction.bankTransactionType === BankTransactionType.Checking) {
+        navigate(`/statements/checking-account/${transaction.statementId}`);
+      } else if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
+        navigate(`/statements/credit-card/${transaction.statementId}`);
+      }
+    }, 300); // Timeout to ensure the dialog is fully closed before navigation
+  };
+
+  if (!open) {
+    return null;
+  }
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
@@ -60,7 +77,12 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
               </TableHead>
               <TableBody>
                 {transactions.map(transaction => (
-                  <TableRow key={transaction.id}>
+                  <TableRow
+                    key={transaction.id}
+                    hover
+                    onClick={() => handleNavigateToStatement(transaction)} // Handle row click
+                    style={{ cursor: 'pointer' }} // Change cursor to pointer for visual feedback
+                  >
                     <TableCell>{formatDate(transaction.transactionDate)}</TableCell>
                     <TableCell>{formatCurrency(-transaction.amount)}</TableCell>
                     <TableCell>{transaction.userDescription}</TableCell>
