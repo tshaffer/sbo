@@ -13,7 +13,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 import '../styles/Tracker.css';
-import { useDispatch } from '../types';
+import { BankTransactionType, useDispatch } from '../types';
 import { CategoryAssignmentRule, Transaction } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
 
@@ -42,7 +42,11 @@ const SpendingReportTableRow: React.FC<SpendingReportTableRowProps> = (props: Sp
   };
 
   const handleNavigateToStatement = (transaction: Transaction) => {
-    navigate(`/statements/credit-card/${transaction.statementId}`);
+    if (transaction.bankTransactionType === BankTransactionType.Checking) {
+      navigate(`/statements/checking-account/${transaction.statementId}`);
+    } else if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
+      navigate(`/statements/credit-card/${transaction.statementId}`);
+    }
   };
 
   const handleEditTransaction = (transaction: Transaction) => {
