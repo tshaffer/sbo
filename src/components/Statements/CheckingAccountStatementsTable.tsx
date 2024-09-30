@@ -1,6 +1,6 @@
 import React from 'react';
-import { CheckingAccountStatement, useTypedSelector } from '../types';
-import { getCheckingAccountStatements } from '../selectors';
+import { CheckingAccountStatement, useTypedSelector } from '../../types';
+import { getCheckingAccountStatements } from '../../selectors';
 import BaseStatementsTable from './BaseStatementsTable';
 
 const CheckingAccountStatementsTable: React.FC = () => {

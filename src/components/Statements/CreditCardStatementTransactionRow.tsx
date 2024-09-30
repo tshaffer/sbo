@@ -1,5 +1,5 @@
 import React from 'react';
-import { CategorizedTransactionProperties, SourceOfTheDisplayedCategoryForATransactionType, useDispatch, useTypedSelector } from '../types';
+import { CategorizedTransactionProperties, SourceOfTheDisplayedCategoryForATransactionType, useDispatch, useTypedSelector } from '../../types';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,15 +8,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
-import { CategoryAssignmentRule, CreditCardTransaction, Transaction } from '../types';
-import { getTransactionById, getCategorizedTransactionProperties } from '../selectors';
-import { formatCurrency, formatDate } from '../utilities';
+import { CategoryAssignmentRule, CreditCardTransaction, Transaction } from '../../types';
+import { getTransactionById, getCategorizedTransactionProperties } from '../../selectors';
+import { formatCurrency, formatDate } from '../../utilities';
 
-import '../styles/Grid.css';
+import '../../styles/Grid.css';
 import { Tooltip, IconButton, Checkbox } from '@mui/material';
-import EditTransactionDialog from './EditTransactionDialog';
-import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
+import EditTransactionDialog from '../EditTransactionDialog';
+import AddCategoryAssignmentRuleDialog from '../AddCategoryAssignmentRuleDialog';
+import { addCategoryAssignmentRule, updateTransaction } from '../../controllers';
 
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';

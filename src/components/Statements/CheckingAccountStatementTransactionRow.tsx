@@ -8,21 +8,21 @@ import EditIcon from '@mui/icons-material/Edit';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 
-import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, SplitTransactionUI, Transaction } from '../types';
-import { categorizeTransaction } from '../selectors';
-import { formatCurrency, formatDate } from '../utilities';
+import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, SplitTransactionUI, Transaction } from '../../types';
+import { categorizeTransaction } from '../../selectors';
+import { formatCurrency, formatDate } from '../../utilities';
 
-import '../styles/Grid.css';
+import '../../styles/Grid.css';
 import { Tooltip, IconButton } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRule, splitTransaction, updateTransaction } from '../controllers';
-import SplitTransactionDialog from './SplitTransactionDialog';
-import EditTransactionDialog from './EditTransactionDialog';
-import EditCheckFromStatementDialog from './EditCheckFromStatementDialog';
-import { useDispatch, useTypedSelector } from '../types';
+import AddCategoryAssignmentRuleDialog from '../AddCategoryAssignmentRuleDialog';
+import { addCategoryAssignmentRule, splitTransaction, updateTransaction } from '../../controllers';
+import SplitTransactionDialog from '../SplitTransactionDialog';
+import EditTransactionDialog from '../EditTransactionDialog';
+import EditCheckFromStatementDialog from '../EditCheckFromStatementDialog';
+import { useDispatch, useTypedSelector } from '../../types';
 
 export interface CheckingAccountStatementProps {
   checkingAccountTransaction: CheckingAccountTransaction;

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cloneDeep, isEmpty } from 'lodash';
-import '../styles/Grid.css';
-import { formatCurrency, formatDate } from '../utilities';
-import { Statement } from '../types';
+import '../../styles/Grid.css';
+import { formatCurrency, formatDate } from '../../utilities';
+import { Statement } from '../../types';
 
 interface BaseStatementsTableProps<T extends Statement> {
   statements: T[];

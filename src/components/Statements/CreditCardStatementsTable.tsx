@@ -1,6 +1,6 @@
 import React from 'react';
-import { Statement, useTypedSelector } from '../types';
-import { getCreditCardStatements } from '../selectors';
+import { Statement, useTypedSelector } from '../../types';
+import { getCreditCardStatements } from '../../selectors';
 import BaseStatementsTable from './BaseStatementsTable';
 
 const CreditCardStatementsTable: React.FC = () => {

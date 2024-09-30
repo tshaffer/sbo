@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../selectors';
 import { CreditCardStatement, CreditCardTransactionRowInStatementTableProperties } from '../types';
 import { loadTransactions, updateCategoryInTransactions } from '../controllers';
-import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
+import CreditCardStatementTransactionRow from './Statements/CreditCardStatementTransactionRow';
 import TransactionsTable from './TransactionsTable';
 import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
 
