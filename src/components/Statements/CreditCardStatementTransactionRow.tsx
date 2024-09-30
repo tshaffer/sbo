@@ -14,8 +14,8 @@ import { formatCurrency, formatDate } from '../../utilities';
 
 import '../../styles/Grid.css';
 import { Tooltip, IconButton, Checkbox } from '@mui/material';
-import EditTransactionDialog from '../EditTransactionDialog';
-import AddCategoryAssignmentRuleDialog from '../AddCategoryAssignmentRuleDialog';
+import EditTransactionDialog from '../Dialogs/EditTransactionDialog';
+import AddCategoryAssignmentRuleDialog from '../Dialogs/AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, updateTransaction } from '../../controllers';
 
 import SaveIcon from '@mui/icons-material/Save';

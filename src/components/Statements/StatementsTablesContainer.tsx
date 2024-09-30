@@ -5,8 +5,8 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 
-import { SidebarMenuButton } from '../types';
-import UploadStatementDialog from './UploadStatementDialog';
+import { SidebarMenuButton } from '../../types';
+import UploadStatementDialog from '../Dialogs/UploadStatementDialog';
 
 const StatementsTablesContainer: React.FC = () => {
   const navigate = useNavigate();

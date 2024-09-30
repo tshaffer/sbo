@@ -5,10 +5,10 @@ import {
   Autocomplete
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CategoryAssignmentRule, CheckingAccountTransaction, SplitTransactionUI } from '../types';
-import { getCategoryAssignmentRules, getTransactionById } from '../selectors';
+import { CategoryAssignmentRule, CheckingAccountTransaction, SplitTransactionUI } from '../../types';
+import { getCategoryAssignmentRules, getTransactionById } from '../../selectors';
 
-import { useTypedSelector } from '../types';
+import { useTypedSelector } from '../../types';
 
 import SplitTransactionDescription from './SplitTransactionDescription';
 

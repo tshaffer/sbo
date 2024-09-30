@@ -17,11 +17,11 @@ import { Tooltip, IconButton } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-import AddCategoryAssignmentRuleDialog from '../AddCategoryAssignmentRuleDialog';
+import AddCategoryAssignmentRuleDialog from '../Dialogs/AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRule, splitTransaction, updateTransaction } from '../../controllers';
-import SplitTransactionDialog from '../SplitTransactionDialog';
-import EditTransactionDialog from '../EditTransactionDialog';
-import EditCheckFromStatementDialog from '../EditCheckFromStatementDialog';
+import SplitTransactionDialog from '../Dialogs/SplitTransactionDialog';
+import EditTransactionDialog from '../Dialogs/EditTransactionDialog';
+import EditCheckFromStatementDialog from '../Dialogs/EditCheckFromStatementDialog';
 import { useDispatch, useTypedSelector } from '../../types';
 
 export interface CheckingAccountStatementProps {

@@ -1,7 +1,7 @@
 import { Autocomplete, TextField, Tooltip } from '@mui/material';
 import React from 'react';
-import { CategoryAssignmentRule, StringToCategoryLUT, useTypedSelector } from '../types';
-import { getCategoryAssignmentRules, getCategoryAssignRuleByPattern, getCategoryByCategoryAssignmentRulePatterns } from '../selectors';
+import { CategoryAssignmentRule, StringToCategoryLUT, useTypedSelector } from '../../types';
+import { getCategoryAssignmentRules, getCategoryAssignRuleByPattern, getCategoryByCategoryAssignmentRulePatterns } from '../../selectors';
 import { isNil, isString } from 'lodash';
 
 interface SplitTransactionDescriptionProps {

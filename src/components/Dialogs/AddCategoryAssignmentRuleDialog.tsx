@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useDispatch, useTypedSelector } from '../../types';
 
 import { isNil } from 'lodash';
 
@@ -10,10 +10,10 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, Tooltip } from '@mui/material';
 
-import { SidebarMenuButton, Transaction } from '../types';
-import SelectCategory from './SelectCategory';
-import { getCategoryByTransactionId, getTransactionById } from '../selectors';
-import { canAddCategoryAssignmentRule } from '../controllers';
+import { SidebarMenuButton, Transaction } from '../../types';
+import SelectCategory from '../SelectCategory';
+import { getCategoryByTransactionId, getTransactionById } from '../../selectors';
+import { canAddCategoryAssignmentRule } from '../../controllers';
 
 export interface AddCategoryAssignmentRuleDialogProps {
   open: boolean;
@@ -28,7 +28,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
 
   const transaction: Transaction | undefined = useTypedSelector(state => getTransactionById(state, props.transactionId));
   const initialCategoryId: string | null | undefined = useTypedSelector(state => getCategoryByTransactionId(state, props.transactionId)?.id);
-  
+
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
   const getTransactionDetails = (transaction: Transaction | undefined): string => {
@@ -89,7 +89,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
           console.log('Category Assignment Rule added');
         })
         .catch((error: any) => {
-          throw(error);
+          throw (error);
           console.log('Error adding category assignment rule: ', error);
           alert('Error: ' + error);
         });

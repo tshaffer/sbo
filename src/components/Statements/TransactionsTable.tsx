@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { cloneDeep } from 'lodash';
-import { Statement } from '../types';
+import { Statement } from '../../types';
 
 interface TransactionsTableProps<T> {
   statements: T[];

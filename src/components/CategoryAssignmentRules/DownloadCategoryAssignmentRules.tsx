@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Category, CategoryAssignmentRule, UploadedCategoryAssignmentRule } from '../types';
-import { getCategories, getCategoryAssignmentRules } from '../selectors';
+import { Category, CategoryAssignmentRule, UploadedCategoryAssignmentRule } from '../../types';
+import { getCategories, getCategoryAssignmentRules } from '../../selectors';
 
-import { useTypedSelector } from '../types';
+import { useTypedSelector } from '../../types';
 
 const DownloadCategoryAssignmentRules: React.FC = () => {
 

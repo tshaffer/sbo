@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
-import { useTypedSelector } from '../types';
+import { useTypedSelector } from '../../types';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box,
   Checkbox, FormControlLabel, RadioGroup, Radio, FormControl, FormLabel, Slider, Typography
 } from '@mui/material';
-import { Category, Transaction } from '../types';
-import { getCategoryByTransactionId, getTransactionById } from '../selectors';
-import { formatCurrency, formatDate } from '../utilities';
-import SelectCategory from './SelectCategory';
+import { Category, Transaction } from '../../types';
+import { getCategoryByTransactionId, getTransactionById } from '../../selectors';
+import { formatCurrency, formatDate } from '../../utilities';
+import SelectCategory from '../SelectCategory';
 import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog';
 
 export interface EditTransactionDialogProps {

@@ -10,7 +10,7 @@ import { Button, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, 
 
 import { Category, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
 import { getCategories } from '../selectors';
-import AddCategoryDialog from './AddCategoryDialog';
+import AddCategoryDialog from './Dialogs/AddCategoryDialog';
 import { addCategory } from '../controllers';
 
 export interface SelectCategoryProps {

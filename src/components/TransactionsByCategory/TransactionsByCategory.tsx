@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { getAppInitialized, getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../selectors'; // Adjust imports as needed
-import { CategorizedTransaction, Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../types'; // Adjust imports as needed
-import '../styles/TransactionsByCategory.css'; // Custom CSS
-import { formatCurrency, formatDate } from '../utilities';
+import { getAppInitialized, getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../../selectors'; // Adjust imports as needed
+import { CategorizedTransaction, Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../../types'; // Adjust imports as needed
+import '../../styles/TransactionsByCategory.css'; // Custom CSS
+import { formatCurrency, formatDate } from '../../utilities';
 import { Typography } from '@mui/material';
 
 type TableSortCriteria = 'name' | 'transactionCount';
@@ -155,7 +155,7 @@ const TransactionsByCategory: React.FC = () => {
                               <tr>
                                 <th onClick={handleSubTableSort('date')} style={{ width: '92px' }}>
                                   Date {subTableSortCriteria === 'date' && getSubTableSortIcon()}
-                                  </th>
+                                </th>
                                 <th onClick={handleSubTableSort('amount')}>
                                   Amount {subTableSortCriteria === 'amount' && getSubTableSortIcon()}
                                 </th>

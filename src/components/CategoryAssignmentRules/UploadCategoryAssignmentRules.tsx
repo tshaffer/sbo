@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { UploadedCategoryAssignmentRule } from '../types';
-import { replaceCategoryAssignmentRules } from '../controllers';
+import { UploadedCategoryAssignmentRule } from '../../types';
+import { replaceCategoryAssignmentRules } from '../../controllers';
 
-import { useDispatch } from '../types';
+import { useDispatch } from '../../types';
 
 const UploadCategoryAssignmentRules: React.FC = () => {
 

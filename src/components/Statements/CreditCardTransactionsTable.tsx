@@ -1,12 +1,12 @@
 import React from 'react';
-import { Statement, useDispatch, useTypedSelector } from '../types';
+import { Statement, useDispatch, useTypedSelector } from '../../types';
 import { useParams } from 'react-router-dom';
-import { getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../selectors';
-import { CreditCardStatement, CreditCardTransactionRowInStatementTableProperties } from '../types';
-import { loadTransactions, updateCategoryInTransactions } from '../controllers';
-import CreditCardStatementTransactionRow from './Statements/CreditCardStatementTransactionRow';
+import { getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../../selectors';
+import { CreditCardStatement, CreditCardTransactionRowInStatementTableProperties } from '../../types';
+import { updateCategoryInTransactions } from '../../controllers';
+import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 import TransactionsTable from './TransactionsTable';
-import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
+import OverrideTransactionCategoriesDialog from '../Dialogs/OverrideTransactionCategoriesDialog';
 
 const CreditCardTransactionsTable: React.FC = () => {
   const { id } = useParams<{ id: string }>();

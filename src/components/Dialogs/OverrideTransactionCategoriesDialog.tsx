@@ -1,9 +1,9 @@
-import React, {  } from 'react';
+import React, { } from 'react';
 
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { Button, DialogActions, DialogContent } from '@mui/material';
-import SelectCategory from './SelectCategory';
+import SelectCategory from '../SelectCategory';
 
 export interface OverrideTransactionCategoriesDialogProps {
   open: boolean;
@@ -29,7 +29,7 @@ const OverrideTransactionCategoriesDialog = (props: OverrideTransactionCategorie
   function handleCategoryChange(categoryId: string): void {
     setSelectedCategoryId(categoryId)
   }
-  
+
   const handleClose = () => {
     onClose();
   };

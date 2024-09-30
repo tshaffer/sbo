@@ -3,32 +3,30 @@ import React, { useRef, useEffect } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
-import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip, RadioGroup, FormControl, FormLabel, Radio, Slider, Typography, TextField } from '@mui/material';
-import SelectCategory from './SelectCategory';
+import { Button, DialogActions, DialogContent, TextField } from '@mui/material';
+import { getCategoryById } from '../../selectors';
+import { Category, useTypedSelector } from '../../types';
 import SetImportance from './SetImportance';
 
-export interface AddCategoryDialogProps {
+export interface EditCategoryDialogProps {
   open: boolean;
-  onAddCategory: (
-    categoryLabel: string,
-    isSubCategory: boolean,
-    parentCategoryId: string,
-    consensusImportance?: number,
-    loriImportance?: number,
-    tedImportance?: number,
-  ) => void;
+  categoryId: string;
+  onSave: (category: Category) => void;
   onClose: () => void;
 }
 
-const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryDialogProps) => {
-  const { open, onClose } = props;
+const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCategoryDialogProps) => {
 
-  const [categoryLabel, setCategoryLabel] = React.useState('');
-  const [isSubCategory, setIsSubCategory] = React.useState(false);
-  const [parentCategoryId, setParentCategoryId] = React.useState('');
-  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(6);
-  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(6);
-  const [tedImportance, setTedImportance] = React.useState<number | undefined>(6);
+  const { open, onClose } = props;
+  if (!open) {
+    return null;
+  }
+
+  const category: Category | undefined = useTypedSelector(state => getCategoryById(state, props.categoryId));
+  const [categoryLabel, setCategoryLabel] = React.useState(category ? category.name : '');
+  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(category ? category.consensusImportance : undefined);
+  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(category ? category.loriImportance : undefined);
+  const [tedImportance, setTedImportance] = React.useState<number | undefined>(category ? category.tedImportance : undefined);
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
@@ -43,46 +41,35 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
     }
   }, [open]);
 
-  if (!open) {
-    return null;
-  }
-
   const handleClose = () => {
     onClose();
   };
 
-  const handleAddCategory = (): void => {
+  const handleSaveCategory = (): void => {
+
     if (categoryLabel === '') {
       setError('Category Label cannot be empty.');
       return;
     }
-    if (isSubCategory && parentCategoryId === '') {
-      setError('Parent Category cannot be empty for a subcategory.');
-      return;
-    }
 
-    // If validation passes, add the category
-    props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, consensusImportance, loriImportance, tedImportance);
+    const updatedCategory: Category = {
+      ...category!,
+      name: categoryLabel,
+      consensusImportance,
+      loriImportance,
+      tedImportance,
+    }
+    props.onSave(updatedCategory);
     props.onClose();
+
   };
 
   const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
     if (event.key === 'Enter') {
       event.preventDefault(); // Prevent form submission
-      handleAddCategory();
+      handleSaveCategory();
     }
   };
-
-  const handleIsSubCategoryChanged = (event: any) => {
-    setIsSubCategory(event.target.checked);
-    if (!event.target.checked) {
-      setParentCategoryId('');
-    }
-  };
-
-  function handleCategoryChange(categoryId: string): void {
-    setParentCategoryId(categoryId);
-  }
 
   const handleImportanceChange = (newImportanceValues: { consensusImportance?: number; loriImportance?: number; tedImportance?: number }) => {
 
@@ -113,7 +100,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
-      <DialogTitle>Add Category</DialogTitle>
+      <DialogTitle>Edit Category</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
         <Box
           component="form"
@@ -130,20 +117,10 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
               fullWidth
             />
           </div>
-          <FormControlLabel
-            control={<Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
-            label="Is this a subcategory?"
-          />
-          {isSubCategory && (
-            <SelectCategory
-              selectedCategoryId={parentCategoryId}
-              onSetCategoryId={handleCategoryChange}
-            />
-          )}
           <SetImportance
-            initialConsensusImportance={consensusImportance}
-            initialLoriImportance={loriImportance}
-            initialTedImportance={tedImportance}
+            initialConsensusImportance={category!.consensusImportance}
+            initialLoriImportance={category!.loriImportance}
+            initialTedImportance={category!.tedImportance}
             onImportanceChange={handleImportanceChange}
             onError={handleError}
           />
@@ -152,19 +129,17 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryD
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Tooltip title="Press Enter to add the category" arrow>
-          <Button
-            onClick={handleAddCategory}
-            autoFocus
-            variant="contained"
-            color="primary"
-          >
-            Add
-          </Button>
-        </Tooltip>
+        <Button
+          onClick={handleSaveCategory}
+          autoFocus
+          variant="contained"
+          color="primary"
+        >
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddCategoryDialog;
+export default EditCategoryDialog;

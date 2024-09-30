@@ -5,15 +5,15 @@ import { createBrowserRouter } from 'react-router-dom';
 import { store } from '../models';
 
 import Layout from './Layout';
-import StatementsTablesContainer from './StatementsTablesContainer';
-import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
-import ReportsContent from './ReportsContent';
-import CategoriesContent from './CategoriesContent';
-import CreditCardTransactionsTable from './CreditCardTransactionsTable';
-import CheckingAccountTransactionsTable from './CheckingAccountTransactionsTable';
+import StatementsTablesContainer from './Statements/StatementsTablesContainer';
+import CategoryAssignmentRulesTable from './CategoryAssignmentRules/CategoryAssignmentRulesTable';
+import ReportsContent from './Reports/ReportsContent';
+import CategoriesContent from './Categories/CategoriesContent';
+import CreditCardTransactionsTable from './Statements/CreditCardTransactionsTable';
+import CheckingAccountTransactionsTable from './Statements/CheckingAccountTransactionsTable';
 import { CreditCardStatementsTable } from './Statements/CreditCardStatementsTable';
 import { CheckingAccountStatementsTable } from './Statements/CheckingAccountStatementsTable';
-import TransactionsByCategory from './TransactionsByCategory';
+import TransactionsByCategory from './TransactionsByCategory/TransactionsByCategory';
 
 const router = createBrowserRouter([
   {

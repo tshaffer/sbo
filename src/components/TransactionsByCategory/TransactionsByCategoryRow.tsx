@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import { BankTransaction, CategorizedTransaction, Category, useTypedSelector } from '../types';
+import { BankTransaction, CategorizedTransaction, Category, useTypedSelector } from '../../types';
 
-import { getCategoryById } from '../selectors';
-import { isNil, isString } from 'lodash';
+import { getCategoryById } from '../../selectors';
 import { IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import TransactionsList from './TransactionsList';
-import '../styles/Tracker.css';
-import { render } from 'react-dom';
+import '../../styles/Tracker.css';
 
 export interface TransactionsByCategoryRowProps {
   categoryId: string;
@@ -30,7 +26,7 @@ const TransactionsByCategoryRow: React.FC<TransactionsByCategoryRowProps> = (pro
   const renderTransactionsList = () => {
     if (showTransactions) {
       return (
-        <TransactionsList categoryId={props.categoryId}/>
+        <TransactionsList categoryId={props.categoryId} />
       );
     }
     return null;
@@ -42,11 +38,11 @@ const TransactionsByCategoryRow: React.FC<TransactionsByCategoryRowProps> = (pro
       key={category.id}
     >
       <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-icon">
-      <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-icon">
-            <IconButton onClick={() => handleToggleShowTransactions()}>
-              {showTransactions ? <RemoveIcon /> : <AddIcon />}
-            </IconButton>
-          </div>
+        <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-icon">
+          <IconButton onClick={() => handleToggleShowTransactions()}>
+            {showTransactions ? <RemoveIcon /> : <AddIcon />}
+          </IconButton>
+        </div>
       </div>
       <div className="tbc-fixed-width-base-table-cell tbc-fixed-width-table-cell-property" style={{ marginLeft: '36px' }}>{category.name}</div>
       {renderTransactionsList()}

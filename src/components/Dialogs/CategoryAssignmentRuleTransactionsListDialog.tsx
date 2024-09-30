@@ -3,10 +3,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector, BankTransactionType } from '../types';
-import { getTransactionsByCategoryAssignmentRuleId } from '../controllers';
-import { formatCurrency, formatDate } from '../utilities';
-import { getCategoryAssignmentRuleById } from '../selectors';
+import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector, BankTransactionType } from '../../types';
+import { getTransactionsByCategoryAssignmentRuleId } from '../../controllers';
+import { formatCurrency, formatDate } from '../../utilities';
+import { getCategoryAssignmentRuleById } from '../../selectors';
 import { useNavigate } from 'react-router-dom';
 
 export interface CategoryAssignmentRuleTransactionsListDialogProps {

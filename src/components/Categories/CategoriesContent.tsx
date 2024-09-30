@@ -5,12 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { Box, Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import { Category, SidebarMenuButton } from '../types';
-import AddCategoryDialog from './AddCategoryDialog';
+import { Category, SidebarMenuButton } from '../../types';
+import AddCategoryDialog from '../Dialogs/AddCategoryDialog';
 import CategoriesTable from './CategoriesTable';
-import { addCategory } from '../controllers';
+import { addCategory } from '../../controllers';
 
-import { useDispatch } from '../types';
+import { useDispatch } from '../../types';
 
 const CategoriesContent: React.FC = () => {
 

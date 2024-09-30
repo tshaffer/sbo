@@ -1,14 +1,14 @@
 import React, { ChangeEvent, useState } from 'react';
 
-import { useTypedSelector } from '../types';
+import { useTypedSelector } from '../../types';
 
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Box,
   Checkbox,
   FormControlLabel
 } from '@mui/material';
-import { Transaction } from '../types';
-import { getTransactionById } from '../selectors';
+import { Transaction } from '../../types';
+import { getTransactionById } from '../../selectors';
 
 export interface EditTransactionMoreOptionsDialogProps {
   open: boolean;

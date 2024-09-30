@@ -9,19 +9,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import ViewListIcon from '@mui/icons-material/ViewList';
 
-import '../styles/Tracker.css';
-import '../styles/CategoryAssignmentRulesTable.css';
+import '../../styles/Tracker.css';
+import '../../styles/CategoryAssignmentRulesTable.css';
 
-import { CategoryAssignmentRule, SidebarMenuButton } from '../types';
-import { getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
-import { deleteCategoryAssignmentRule, updatePatternInCategoryAssignmentRule, updateCategoryInCategoryAssignmentRule, addCategoryAssignmentRule } from '../controllers';
-import SelectCategory from './SelectCategory';
+import { CategoryAssignmentRule, SidebarMenuButton } from '../../types';
+import { getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../../selectors';
+import { deleteCategoryAssignmentRule, updatePatternInCategoryAssignmentRule, updateCategoryInCategoryAssignmentRule, addCategoryAssignmentRule } from '../../controllers';
+import SelectCategory from '../SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
-import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import CategoryAssignmentRuleTransactionsListDialog from './CategoryAssignmentRuleTransactionsListDialog';
+import AddCategoryAssignmentRuleDialog from '../Dialogs/AddCategoryAssignmentRuleDialog';
+import CategoryAssignmentRuleTransactionsListDialog from '../Dialogs/CategoryAssignmentRuleTransactionsListDialog';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useDispatch, useTypedSelector } from '../../types';
 
 interface CategoryAssignmentRuleTableRow {
   pattern: string;

@@ -6,16 +6,16 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-import '../styles/Tracker.css';
-import { BankTransaction, CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, DescendentCategoryProperties, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
-import { formatCurrency, formatPercentage, expensesPerMonth, roundTo } from '../utilities';
-import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategoryIdInDateRange } from '../selectors';
+import '../../styles/Tracker.css';
+import { BankTransaction, CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, DescendentCategoryProperties, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../../types';
+import { formatCurrency, formatPercentage, expensesPerMonth, roundTo } from '../../utilities';
+import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude, selectReportDataState, getStartDate, getEndDate, getTransactionsByCategoryIdInDateRange } from '../../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
-import { useTypedSelector } from '../types';
+import { useTypedSelector } from '../../types';
 import SpendingReportTableRow from './SpendingReportTableRow';
 import { Box, Button } from '@mui/material';
-import ReportFiltersDialog from './ReportFiltersDialog';
+import ReportFiltersDialog from '../Dialogs/ReportFiltersDialog';
 
 const SpendingReportTable: React.FC = () => {
 

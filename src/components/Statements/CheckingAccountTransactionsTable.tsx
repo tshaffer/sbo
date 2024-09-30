@@ -1,9 +1,9 @@
 import React from 'react';
-import { useTypedSelector } from '../types';
+import { useTypedSelector } from '../../types';
 import { useParams } from 'react-router-dom';
-import { getCheckingAccountStatements, getCheckingAccountTransactionRowInStatementTableProperties } from '../selectors';
-import { CheckingAccountStatement, CheckingAccountTransactionRowInStatementTableProperties } from '../types';
-import CheckingAccountStatementTransactionRow from './Statements/CheckingAccountStatementTransactionRow';
+import { getCheckingAccountStatements, getCheckingAccountTransactionRowInStatementTableProperties } from '../../selectors';
+import { CheckingAccountStatement, CheckingAccountTransactionRowInStatementTableProperties } from '../../types';
+import CheckingAccountStatementTransactionRow from './CheckingAccountStatementTransactionRow';
 import TransactionsTable from './TransactionsTable';
 
 const CheckingAccountTransactionsTable: React.FC = () => {

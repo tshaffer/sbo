@@ -3,30 +3,32 @@ import React, { useRef, useEffect } from 'react';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
-import { Button, DialogActions, DialogContent, TextField } from '@mui/material';
-import { getCategoryById } from '../selectors';
-import { Category, useTypedSelector } from '../types';
+import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip, RadioGroup, FormControl, FormLabel, Radio, Slider, Typography, TextField } from '@mui/material';
+import SelectCategory from '../SelectCategory';
 import SetImportance from './SetImportance';
 
-export interface EditCategoryDialogProps {
+export interface AddCategoryDialogProps {
   open: boolean;
-  categoryId: string;
-  onSave: (category: Category) => void;
+  onAddCategory: (
+    categoryLabel: string,
+    isSubCategory: boolean,
+    parentCategoryId: string,
+    consensusImportance?: number,
+    loriImportance?: number,
+    tedImportance?: number,
+  ) => void;
   onClose: () => void;
 }
 
-const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCategoryDialogProps) => {
-
+const AddCategoryDialog: React.FC<AddCategoryDialogProps> = (props: AddCategoryDialogProps) => {
   const { open, onClose } = props;
-  if (!open) {
-    return null;
-  }
 
-  const category: Category | undefined = useTypedSelector(state => getCategoryById(state, props.categoryId));
-  const [categoryLabel, setCategoryLabel] = React.useState(category ? category.name : '');
-  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(category ? category.consensusImportance : undefined);
-  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(category ? category.loriImportance : undefined);
-  const [tedImportance, setTedImportance] = React.useState<number | undefined>(category ? category.tedImportance : undefined);
+  const [categoryLabel, setCategoryLabel] = React.useState('');
+  const [isSubCategory, setIsSubCategory] = React.useState(false);
+  const [parentCategoryId, setParentCategoryId] = React.useState('');
+  const [consensusImportance, setConsensusImportance] = React.useState<number | undefined>(6);
+  const [loriImportance, setLoriImportance] = React.useState<number | undefined>(6);
+  const [tedImportance, setTedImportance] = React.useState<number | undefined>(6);
   const [error, setError] = React.useState<string | null>(null);
 
   const textFieldRef = useRef(null);
@@ -41,46 +43,57 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
     }
   }, [open]);
 
+  if (!open) {
+    return null;
+  }
+
   const handleClose = () => {
     onClose();
   };
 
-  const handleSaveCategory = (): void => {
-
+  const handleAddCategory = (): void => {
     if (categoryLabel === '') {
       setError('Category Label cannot be empty.');
       return;
     }
-
-    const updatedCategory: Category = {
-      ...category!,
-      name: categoryLabel,
-      consensusImportance,
-      loriImportance,
-      tedImportance,
+    if (isSubCategory && parentCategoryId === '') {
+      setError('Parent Category cannot be empty for a subcategory.');
+      return;
     }
-    props.onSave(updatedCategory);
-    props.onClose();
 
+    // If validation passes, add the category
+    props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, consensusImportance, loriImportance, tedImportance);
+    props.onClose();
   };
 
   const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
     if (event.key === 'Enter') {
       event.preventDefault(); // Prevent form submission
-      handleSaveCategory();
+      handleAddCategory();
     }
   };
 
-  const handleImportanceChange = (newImportanceValues: { consensusImportance?: number; loriImportance?: number; tedImportance?: number }) => {  
-    
+  const handleIsSubCategoryChanged = (event: any) => {
+    setIsSubCategory(event.target.checked);
+    if (!event.target.checked) {
+      setParentCategoryId('');
+    }
+  };
+
+  function handleCategoryChange(categoryId: string): void {
+    setParentCategoryId(categoryId);
+  }
+
+  const handleImportanceChange = (newImportanceValues: { consensusImportance?: number; loriImportance?: number; tedImportance?: number }) => {
+
     // Check for and update consensus importance
     if (newImportanceValues.consensusImportance !== undefined) {
       setConsensusImportance(newImportanceValues.consensusImportance);
       // Reset individual importances if switching to consensus
       setLoriImportance(undefined);
       setTedImportance(undefined);
-    } 
-  
+    }
+
     // Check for and update Lori and Ted importances
     if (newImportanceValues.loriImportance !== undefined || newImportanceValues.tedImportance !== undefined) {
       if (newImportanceValues.loriImportance !== undefined) {
@@ -100,7 +113,7 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth>
-      <DialogTitle>Edit Category</DialogTitle>
+      <DialogTitle>Add Category</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
         <Box
           component="form"
@@ -117,10 +130,20 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
               fullWidth
             />
           </div>
+          <FormControlLabel
+            control={<Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
+            label="Is this a subcategory?"
+          />
+          {isSubCategory && (
+            <SelectCategory
+              selectedCategoryId={parentCategoryId}
+              onSetCategoryId={handleCategoryChange}
+            />
+          )}
           <SetImportance
-            initialConsensusImportance={category!.consensusImportance}
-            initialLoriImportance={category!.loriImportance}
-            initialTedImportance={category!.tedImportance}
+            initialConsensusImportance={consensusImportance}
+            initialLoriImportance={loriImportance}
+            initialTedImportance={tedImportance}
             onImportanceChange={handleImportanceChange}
             onError={handleError}
           />
@@ -129,17 +152,19 @@ const EditCategoryDialog: React.FC<EditCategoryDialogProps> = (props: EditCatego
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button
-          onClick={handleSaveCategory}
-          autoFocus
-          variant="contained"
-          color="primary"
-        >
-          Save
-        </Button>
+        <Tooltip title="Press Enter to add the category" arrow>
+          <Button
+            onClick={handleAddCategory}
+            autoFocus
+            variant="contained"
+            color="primary"
+          >
+            Add
+          </Button>
+        </Tooltip>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default EditCategoryDialog;
+export default AddCategoryDialog;

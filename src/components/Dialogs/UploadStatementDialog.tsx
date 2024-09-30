@@ -4,11 +4,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
-import { getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
-import { loadAllTransactions, loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
-import { CheckingAccountStatement, CreditCardStatement } from '../types';
+import { getCheckingAccountStatements, getCreditCardStatements } from '../../selectors';
+import { loadAllTransactions, loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../../controllers';
+import { CheckingAccountStatement, CreditCardStatement } from '../../types';
 
-import { useDispatch, useTypedSelector } from '../types';
+import { useDispatch, useTypedSelector } from '../../types';
 
 export interface UploadStatementDialogProps {
   open: boolean;

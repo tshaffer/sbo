@@ -12,14 +12,14 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
-import '../styles/Tracker.css';
-import { BankTransactionType, useDispatch } from '../types';
-import { CategoryAssignmentRule, Transaction } from '../types';
-import { formatCurrency, formatDate } from '../utilities';
+import '../../styles/Tracker.css';
+import { BankTransactionType, useDispatch } from '../../types';
+import { CategoryAssignmentRule, Transaction } from '../../types';
+import { formatCurrency, formatDate } from '../../utilities';
 
-import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import EditTransactionDialog from './EditTransactionDialog';
-import { addCategoryAssignmentRule, updateTransaction } from '../controllers';
+import AddCategoryAssignmentRuleDialog from '../Dialogs/AddCategoryAssignmentRuleDialog';
+import EditTransactionDialog from '../Dialogs/EditTransactionDialog';
+import { addCategoryAssignmentRule, updateTransaction } from '../../controllers';
 
 export interface SpendingReportTableRowProps {
   transaction: Transaction;
