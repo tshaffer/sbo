@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Button } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { cloneDeep } from 'lodash';
 import { Statement } from '../types';
 
@@ -27,10 +27,55 @@ const TransactionsTable = <T extends Statement,>({
   columnKeys,
   tableContainerClassName,
 }: TransactionsTableProps<T>) => {
+
+  const location = useLocation();
   const navigate = useNavigate();
+
   const [sortColumn, setSortColumn] = useState<string>(columnKeys[1]);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedTransactionIds, setSelectedTransactionIds] = useState<Set<string>>(new Set());
+
+  const transactionId = new URLSearchParams(location.search).get('transactionId');
+  console.log('TransactionsTable');
+  console.log(transactionId);
+
+  const transactionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  
+  useEffect(() => {
+    console.log('Transaction refs:', transactionRefs.current);
+  }, [transactionRefs]);
+
+  // After the component mounts, scroll to the transaction
+  useEffect(() => {
+    if (transactionId && transactionRefs.current[transactionId]) {
+      console.log('Attempting to scroll to transaction:', transactionId);
+      
+      setTimeout(() => {
+        const transactionElement = transactionRefs.current[transactionId];
+        if (transactionElement) {
+          console.log('Scrolling to:', transactionElement);
+          transactionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          console.log('Transaction element not found:', transactionId);
+        }
+      }, 100); // Delay to ensure rendering is complete
+    }
+  }, [transactionId]);
+  // useEffect(() => {
+  //   console.log('useEffect');
+  //   if (transactionId && transactionRefs.current[transactionId]) {
+  //     console.log('Attempting to scroll to transaction:', transactionId);
+  //     // transactionRefs.current[transactionId]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //     setTimeout(() => {
+  //       const transactionElement = transactionRefs.current[transactionId];
+  //       if (transactionElement) {
+  //         console.log('Scrolling to:', transactionElement);
+  //         transactionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //       } else {
+  //         console.log('Transaction element not found:', transactionId);
+  //       }
+  //     }, 100); // Delay to ensure rendering is complete    }
+  //   }, [transactionId]);
 
   // Determine the current statement and its index
   const { id } = useParams<{ id: string }>();
@@ -119,7 +164,11 @@ const TransactionsTable = <T extends Statement,>({
         </div>
         <div className="grid-table-body">
           {sortedTransactions.map(transaction => (
-            <div className="grid-table-row" key={getTransactionId(transaction)}>
+            <div
+              className="grid-table-row"
+              key={getTransactionId(transaction)}
+              ref={el => (transactionRefs.current[transaction.id] = el)} // Store each row ref by transaction ID
+            >
               {renderTransactionRow(transaction, selectedTransactionIds, handleTransactionSelectedChanged)}
             </div>
           ))}

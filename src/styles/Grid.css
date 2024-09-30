@@ -23,6 +23,8 @@
 
 .grid-table-body {
   display: contents;
+  overflow-y: auto;
+  height: 540px;
 }
 
 .grid-table-row {
@@ -82,6 +84,7 @@
   border: 1px solid #ccc;
   position: relative;
   max-height: 650px;
+  height: 650px;
   overflow-y: auto;
 }
 
