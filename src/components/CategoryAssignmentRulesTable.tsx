@@ -14,7 +14,7 @@ import '../styles/CategoryAssignmentRulesTable.css';
 
 import { CategoryAssignmentRule, SidebarMenuButton } from '../types';
 import { getCategoryAssignmentRuleByCategoryAssignmentRuleId, getCategoryAssignmentRules, getCategoryByCategoryIdLUT, getCategoryIdByCategoryAssignmentRuleId, getTransactionsByCategoryAssignmentRules } from '../selectors';
-import { deleteCategoryAssignmentRule, updateCategoryAssignmentRulePattern, updateCategoryAssignmentRuleCategoryId, addCategoryAssignmentRule } from '../controllers';
+import { deleteCategoryAssignmentRule, updatePatternInCategoryAssignmentRule, updateCategoryInCategoryAssignmentRule, addCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
@@ -76,7 +76,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     if (newValue !== undefined) {
 
       const originalDescription = categoryAssignmentRules.find((t) => t.id === categoryAssignmentRuleId)?.pattern;
-      
+
       // Check if the value is unchanged
       if (newValue === originalDescription) {
         // If unchanged, do nothing
@@ -94,7 +94,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
           delete newErrors[categoryAssignmentRuleId];
           return newErrors;
         });
-        dispatch(updateCategoryAssignmentRulePattern(categoryAssignmentRuleId, newValue));
+        dispatch(updatePatternInCategoryAssignmentRule(categoryAssignmentRuleId, newValue));
       }
     }
   };
@@ -108,7 +108,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     };
     console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
     dispatch(addCategoryAssignmentRule(categoryAssignmentRule));
-}
+  }
 
   const handleCloseAddRuleDialog = () => {
     setShowAddCategoryAssignmentRuleDialog(false);
@@ -133,7 +133,7 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     console.log('handleCategoryChange');
     console.log(categoryAssignmentRuleId);
     console.log(categoryId);
-    dispatch(updateCategoryAssignmentRuleCategoryId(categoryAssignmentRuleId, categoryId));
+    dispatch(updateCategoryInCategoryAssignmentRule(categoryAssignmentRuleId, categoryId));
   }
 
   const handleSort = (column: string) => {

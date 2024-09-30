@@ -6,7 +6,7 @@ import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssi
 import { getCategoryAssignmentRules, getCategoryByName, getMissingCategories } from "../selectors";
 import { isNil } from "lodash";
 import { addCategories } from "./category";
-import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleRedux, updateCategoryAssignmentRuleCategoryIdRedux, deleteCategoryAssignmentRuleByIdRedux, updateCategoryAssignmentRulePatternRedux } from "../models";
+import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleRedux, updateCategoryInCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleByIdRedux, updatePatternInCategoryAssignmentRuleRedux } from "../models";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
@@ -149,11 +149,11 @@ export const updateCategoryAssignmentRule = (categoryAssignmentRule: CategoryAss
   };
 };
 
-export const updateCategoryAssignmentRulePattern = (categoryAssignmentRuleId: string, pattern: string): TrackerAnyPromiseThunkAction => {
+export const updatePatternInCategoryAssignmentRule = (categoryAssignmentRuleId: string, pattern: string): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    dispatch(updateCategoryAssignmentRulePatternRedux({
+    dispatch(updatePatternInCategoryAssignmentRuleRedux({
       id: categoryAssignmentRuleId,
       pattern
     }));
@@ -163,7 +163,7 @@ export const updateCategoryAssignmentRulePattern = (categoryAssignmentRuleId: st
 };
 
 
-export const updateCategoryAssignmentRuleCategoryId = (categoryAssignmentRuleId: string, categoryId: string): TrackerAnyPromiseThunkAction => {
+export const updateCategoryInCategoryAssignmentRule = (categoryAssignmentRuleId: string, categoryId: string): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
@@ -171,7 +171,7 @@ export const updateCategoryAssignmentRuleCategoryId = (categoryAssignmentRuleId:
     //   ...categoryAssignmentRuleId,
     //   categoryId: categoryId
     // };
-    dispatch(updateCategoryAssignmentRuleCategoryIdRedux({
+    dispatch(updateCategoryInCategoryAssignmentRuleRedux({
       id: categoryAssignmentRuleId,
       categoryId
     }));
