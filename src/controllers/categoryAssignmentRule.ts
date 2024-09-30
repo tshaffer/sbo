@@ -6,7 +6,7 @@ import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssi
 import { getCategoryAssignmentRules, getCategoryByName, getMissingCategories } from "../selectors";
 import { isNil } from "lodash";
 import { addCategories } from "./category";
-import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleRedux, updateCategoryInCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleByIdRedux, updatePatternInCategoryAssignmentRuleRedux } from "../models";
+import { addCategoryAssignmentRules, addCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux, updateCategoryInCategoryAssignmentRuleRedux, deleteCategoryAssignmentRuleByIdRedux, updatePatternInCategoryAssignmentRuleRedux } from "../models";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
@@ -153,13 +153,23 @@ export const updatePatternInCategoryAssignmentRule = (categoryAssignmentRuleId: 
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    dispatch(updatePatternInCategoryAssignmentRuleRedux({
-      id: categoryAssignmentRuleId,
-      pattern
-    }));
+    const path = serverUrl + apiUrlFragment + 'updatePatternInCategoryAssignmentRule';
 
-    return Promise.resolve();
-  }
+    const updatePatternInCategoryAssignmentRuleBody = { id: categoryAssignmentRuleId, pattern };
+
+    return axios.post(
+      path,
+      updatePatternInCategoryAssignmentRuleBody
+    ).then((response) => {
+      dispatch(updatePatternInCategoryAssignmentRuleRedux(updatePatternInCategoryAssignmentRuleBody));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+
 };
 
 
@@ -167,41 +177,44 @@ export const updateCategoryInCategoryAssignmentRule = (categoryAssignmentRuleId:
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    // const categoryAssignmentRule: CategoryAssignmentRule = {
-    //   ...categoryAssignmentRuleId,
-    //   categoryId: categoryId
-    // };
-    dispatch(updateCategoryInCategoryAssignmentRuleRedux({
-      id: categoryAssignmentRuleId,
-      categoryId
-    }));
+    const path = serverUrl + apiUrlFragment + 'updateCategoryInCategoryAssignmentRule';
 
-    return Promise.resolve();
-  }
+    const updateCategoryInCategoryAssignmentRuleBody = { id: categoryAssignmentRuleId, categoryId };
+
+    return axios.post(
+      path,
+      updateCategoryInCategoryAssignmentRuleBody
+    ).then((response) => {
+      dispatch(updateCategoryInCategoryAssignmentRuleRedux(updateCategoryInCategoryAssignmentRuleBody));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+
 };
 
 export const deleteCategoryAssignmentRule = (categoryAssignmentRuleId: string): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    dispatch(deleteCategoryAssignmentRuleByIdRedux(categoryAssignmentRuleId));
-    return Promise.resolve();
+    const path = serverUrl + apiUrlFragment + 'deleteCategoryAssignmentRule';
 
-    // const path = serverUrl + apiUrlFragment + 'deleteCategoryAssignmentRule';
+    const deleteCategoryAssignmentRuleBody = { id: categoryAssignmentRuleId };
 
-    // const deleteCategoryAssignmentRuleBody = categoryAssignmentRule;
-
-    // return axios.post(
-    //   path,
-    //   deleteCategoryAssignmentRuleBody
-    // ).then((response) => {
-    //   dispatch(deleteCategoryAssignmentRuleRedux(categoryAssignmentRule));
-    //   return Promise.resolve();
-    // }).catch((error) => {
-    //   console.log('error');
-    //   console.log(error);
-    //   return '';
-    // });
+    return axios.post(
+      path,
+      deleteCategoryAssignmentRuleBody
+    ).then((response) => {
+      dispatch(deleteCategoryAssignmentRuleByIdRedux(categoryAssignmentRuleId));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
   };
 };
 
