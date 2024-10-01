@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { getAppInitialized, getCategories, getTransactionsByCategory, getTransactionsByCategoryAssignmentRules } from '../../selectors'; // Adjust imports as needed
-import { CategorizedTransaction, Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../../types'; // Adjust imports as needed
+import { BankTransactionType, CategorizedTransaction, Category, StringToTransactionsLUT, Transaction, useTypedSelector } from '../../types'; // Adjust imports as needed
 import '../../styles/TransactionsByCategory.css'; // Custom CSS
 import { formatCurrency, formatDate } from '../../utilities';
 import { Typography } from '@mui/material';
@@ -12,6 +14,8 @@ type SubTableSortCriteria = 'date' | 'amount' | 'description';
 type SubTableSortOrder = 'asc' | 'desc';
 
 const TransactionsByCategory: React.FC = () => {
+
+  const navigate = useNavigate(); // Hook for navigation
 
   const appInitialized: boolean = useTypedSelector(state => getAppInitialized(state));
   const transactionsByCategory: StringToTransactionsLUT = useTypedSelector(state => getTransactionsByCategory(state));
@@ -97,6 +101,15 @@ const TransactionsByCategory: React.FC = () => {
     });
   }
 
+  const handleNavigateToStatement = (transaction: Transaction) => {
+    if (transaction.bankTransactionType === BankTransactionType.Checking) {
+      navigate(`/statements/checking-account/${transaction.statementId}`);
+    } else if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
+      navigate(`/statements/credit-card/${transaction.statementId}`);
+    }
+  };
+
+
   // Toggles the expanded state of a category
   const toggleCategory = (categoryId: string) => {
     if (expandedCategories.includes(categoryId)) {
@@ -166,7 +179,12 @@ const TransactionsByCategory: React.FC = () => {
                             </thead>
                             <tbody>
                               {getSortedCategoryTransactions(categoryTransactions).map((transaction: CategorizedTransaction) => (
-                                <tr key={transaction.bankTransaction.id}>
+                                <tr
+                                  className="transaction-subtable-row"
+                                  key={transaction.bankTransaction.id}
+                                  onClick={() => handleNavigateToStatement(transaction.bankTransaction)} // Handle row click
+                                  style={{ cursor: 'pointer' }} // Change cursor to pointer for visual feedback
+                                >
                                   <td>{formatDate(transaction.bankTransaction.transactionDate)}</td>
                                   <td>{formatCurrency(-transaction.bankTransaction.amount)}</td>
                                   <td>{transaction.bankTransaction.userDescription}</td>
