@@ -23,13 +23,6 @@ import CategoryAssignmentRuleTransactionsListDialog from '../Dialogs/CategoryAss
 
 import { useDispatch, useTypedSelector } from '../../types';
 
-interface CategoryAssignmentRuleTableRow {
-  pattern: string;
-  categoryName: string;
-  categoryId: string;
-  ruleId: string;
-}
-
 const CategoryAssignmentRulesTable: React.FC = () => {
 
   const dispatch = useDispatch();
@@ -160,11 +153,11 @@ const CategoryAssignmentRulesTable: React.FC = () => {
     if (sortColumn === 'categoryName') {
       const aCategory = categoryByCategoryIdLUT[a.categoryId];
       const bCategory = categoryByCategoryIdLUT[b.categoryId];
-      aValue = aCategory.name;
-      bValue = bCategory.name;
+      aValue = aCategory.name.toLowerCase();
+      bValue = bCategory.name.toLowerCase();
     } else if (sortColumn === 'pattern') {
-      aValue = a[sortColumn];
-      bValue = b[sortColumn];
+      aValue = a[sortColumn].toLowerCase();
+      bValue = b[sortColumn].toLowerCase();
     } else if (sortColumn === 'transactionCount') {
       aValue = getTransactionCountForRule((a as CategoryAssignmentRule).id);
       bValue = getTransactionCountForRule((b as CategoryAssignmentRule).id);
