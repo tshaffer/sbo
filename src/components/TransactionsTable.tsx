@@ -42,6 +42,20 @@ const TransactionsTable = <T extends Statement,>({
   console.log(transactionId);
 
   const transactionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const transactionPositions = useRef<{ [key: string]: number }>({}); // Store the Y position here
+
+  useEffect(() => {
+    transactions.forEach((transaction) => {
+      const transactionElement = transactionRefs.current[transaction.id];
+      if (transactionElement) {
+        // Capture the Y position relative to the scrollable parent
+        transactionPositions.current[transaction.id] = (transactionElement.childNodes[0] as any).offsetTop;
+      }
+      console.log('Transaction positions:');
+      console.log(transactionPositions.current);
+    });
+  }, [transactions]);
+
 
   useEffect(() => {
     console.log('Transaction refs:', transactionRefs.current);
@@ -237,26 +251,50 @@ const TransactionsTable = <T extends Statement,>({
   //   }
   // }, [transactionId]);
 
-  useEffect(() => {
-    if (transactionId && transactionRefs.current[transactionId]) {
-      console.log('Attempting to scroll to transaction:', transactionId);
+  // useEffect(() => {
+  //   if (transactionId && transactionRefs.current[transactionId]) {
+  //     console.log('Attempting to scroll to transaction:', transactionId);
 
+  //     setTimeout(() => {
+  //       const transactionElement = transactionRefs.current[transactionId];
+  //       if (transactionElement) {
+  //         const scrollableParent = transactionElement.closest('.credit-card-statement-grid-table-container'); // Replace with the correct class
+
+  //         if (scrollableParent) {
+  //           // Calculate the distance between the transactionElement and the scrollable parent
+  //           const transactionOffsetTop = transactionElement.offsetTop; // The element's offset within its parent
+  //           const parentScrollTop = scrollableParent.scrollTop; // The parent's current scroll position
+
+  //           console.log('Transaction offsetTop:', transactionOffsetTop);
+  //           console.log('Scrollable parent scrollTop before scroll:', parentScrollTop);
+
+  //           // Scroll to the transaction element's offset position within the scrollable container
+  //           scrollableParent.scrollTo({ top: transactionOffsetTop, behavior: 'smooth' });
+
+  //           console.log('Scrollable parent scrollTop after scroll:', scrollableParent.scrollTop);
+  //         } else {
+  //           console.log('Scrollable parent not found');
+  //         }
+  //       } else {
+  //         console.log('Transaction element not found');
+  //       }
+  //     }, 1000); // Delay to ensure rendering is complete
+  //   }
+  // }, [transactionId]);
+
+  useEffect(() => {
+    if (transactionId && transactionPositions.current[transactionId]) {
+      console.log('Attempting to scroll to transaction:', transactionId);
       setTimeout(() => {
         const transactionElement = transactionRefs.current[transactionId];
         if (transactionElement) {
+          const yPosition = transactionPositions.current[transactionId];
+          transactionElement.parentElement?.parentElement?.scrollTo({ top: yPosition, behavior: 'smooth' });
+
           const scrollableParent = transactionElement.closest('.credit-card-statement-grid-table-container'); // Replace with the correct class
 
           if (scrollableParent) {
-            // Calculate the distance between the transactionElement and the scrollable parent
-            const transactionOffsetTop = transactionElement.offsetTop; // The element's offset within its parent
-            const parentScrollTop = scrollableParent.scrollTop; // The parent's current scroll position
-
-            console.log('Transaction offsetTop:', transactionOffsetTop);
-            console.log('Scrollable parent scrollTop before scroll:', parentScrollTop);
-
-            // Scroll to the transaction element's offset position within the scrollable container
-            scrollableParent.scrollTo({ top: transactionOffsetTop, behavior: 'smooth' });
-
+            scrollableParent.scrollTo({ top: yPosition, behavior: 'smooth' });
             console.log('Scrollable parent scrollTop after scroll:', scrollableParent.scrollTop);
           } else {
             console.log('Scrollable parent not found');
@@ -267,6 +305,7 @@ const TransactionsTable = <T extends Statement,>({
       }, 1000); // Delay to ensure rendering is complete
     }
   }, [transactionId]);
+
 
   // Determine the current statement and its index
   const { id } = useParams<{ id: string }>();
