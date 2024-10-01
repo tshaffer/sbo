@@ -8,6 +8,8 @@ import CreditCardStatementTransactionRow from './CreditCardStatementTransactionR
 import TransactionsTable from './TransactionsTable';
 import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
 
+import '../styles/Grid.css';
+
 const CreditCardTransactionsTable: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
