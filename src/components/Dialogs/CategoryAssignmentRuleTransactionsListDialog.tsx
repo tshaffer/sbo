@@ -3,7 +3,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Button, DialogActions, DialogContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector, BankTransactionType } from '../../types';
+import { CategoryAssignmentRule, CreditCardTransaction, useDispatch, useTypedSelector, BankTransactionType, Transaction } from '../../types';
 import { getTransactionsByCategoryAssignmentRuleId } from '../../controllers';
 import { formatCurrency, formatDate } from '../../utilities';
 import { getCategoryAssignmentRuleById } from '../../selectors';
@@ -38,17 +38,15 @@ const CategoryAssignmentRuleTransactionsListDialog: React.FC<CategoryAssignmentR
     onClose();
   };
 
-  // Handle navigation to the statement
-  const handleNavigateToStatement = (transaction: CreditCardTransaction) => {
+  const handleNavigateToStatement = (transaction: Transaction) => {
     handleClose(); // Close the dialog before navigating
 
     // Ensure navigation happens after the dialog closes
     setTimeout(() => {
-      if (transaction.bankTransactionType === BankTransactionType.Checking) {
-        navigate(`/statements/checking-account/${transaction.statementId}`);
-      } else if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
-        navigate(`/statements/credit-card/${transaction.statementId}`);
-      }
+      const path = transaction.bankTransactionType === BankTransactionType.Checking
+        ? `/statements/checking-account/${transaction.statementId}`
+        : `/statements/credit-card/${transaction.statementId}`;
+      navigate(`${path}?transactionId=${transaction.id}`);
     }, 300); // Timeout to ensure the dialog is fully closed before navigation
   };
 

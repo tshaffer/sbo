@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Button } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { cloneDeep } from 'lodash';
 import { Statement } from '../../types';
+
+import '../../styles/Grid.css';
 
 interface TransactionsTableProps<T> {
   statements: T[];
@@ -27,12 +29,56 @@ const TransactionsTable = <T extends Statement,>({
   columnKeys,
   tableContainerClassName,
 }: TransactionsTableProps<T>) => {
+
+  const location = useLocation();
   const navigate = useNavigate();
   const [sortColumn, setSortColumn] = useState<string>(columnKeys[1]);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedTransactionIds, setSelectedTransactionIds] = useState<Set<string>>(new Set());
 
-  // Determine the current statement and its index
+  const transactionId = new URLSearchParams(location.search).get('transactionId');
+  console.log('TransactionsTable');
+  console.log(transactionId);
+
+  const transactionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const transactionPositions = useRef<{ [key: string]: number }>({}); // Store the Y position here
+
+  useEffect(() => {
+    transactions.forEach((transaction) => {
+      const transactionElement = transactionRefs.current[transaction.id];
+      if (transactionElement) {
+        // Capture the Y position relative to the scrollable parent
+        transactionPositions.current[transaction.id] = (transactionElement.childNodes[0] as any).offsetTop;
+      }
+    });
+  }, [transactions]);
+
+  useEffect(() => {
+    if (transactionId && transactionPositions.current[transactionId]) {
+      console.log('Attempting to scroll to transaction:', transactionId);
+      setTimeout(() => {
+        const transactionElement = transactionRefs.current[transactionId];
+        if (transactionElement) {
+          const yPosition = transactionPositions.current[transactionId];
+          transactionElement.parentElement?.parentElement?.scrollTo({ top: yPosition, behavior: 'smooth' });
+
+          const scrollableParent = transactionElement.closest('.credit-card-statement-grid-table-container');
+
+          if (scrollableParent) {
+            const hackOffsetValue = 50;
+            scrollableParent.scrollTo({ top: yPosition - hackOffsetValue, behavior: 'smooth' });
+            console.log('Scrollable parent scrollTop after scroll:', scrollableParent.scrollTop);
+          } else {
+            console.log('Scrollable parent not found');
+          }
+        } else {
+          console.log('Transaction element not found');
+        }
+      }, 1000); // Delay to ensure rendering is complete
+    }
+  }, [transactionId]);
+
+// Determine the current statement and its index
   const { id } = useParams<{ id: string }>();
   const sortedStatements = cloneDeep(statements).sort((a, b) => b.endDate.localeCompare(a.endDate));
 
@@ -119,7 +165,12 @@ const TransactionsTable = <T extends Statement,>({
         </div>
         <div className="grid-table-body">
           {sortedTransactions.map(transaction => (
-            <div className="grid-table-row" key={getTransactionId(transaction)}>
+            <div
+              className="grid-table-row"
+              key={getTransactionId(transaction)}
+              data-transaction-id={transaction.id}
+              ref={el => (transactionRefs.current[transaction.id] = el)} // Store each row ref by transaction ID
+            >
               {renderTransactionRow(transaction, selectedTransactionIds, handleTransactionSelectedChanged)}
             </div>
           ))}
