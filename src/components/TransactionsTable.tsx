@@ -56,10 +56,6 @@ const TransactionsTable = <T extends Statement,>({
 
 
   useEffect(() => {
-    console.log('Transaction refs:', transactionRefs.current);
-  }, [transactionRefs]);
-
-  useEffect(() => {
     if (transactionId && transactionPositions.current[transactionId]) {
       console.log('Attempting to scroll to transaction:', transactionId);
       setTimeout(() => {
@@ -68,7 +64,7 @@ const TransactionsTable = <T extends Statement,>({
           const yPosition = transactionPositions.current[transactionId];
           transactionElement.parentElement?.parentElement?.scrollTo({ top: yPosition, behavior: 'smooth' });
 
-          const scrollableParent = transactionElement.closest('.credit-card-statement-grid-table-container'); // Replace with the correct class
+          const scrollableParent = transactionElement.closest('.credit-card-statement-grid-table-container');
 
           if (scrollableParent) {
             const hackOffsetValue = 50;
