@@ -86,7 +86,7 @@
 .spending-report-table-body {
   display: flex;
   flex-direction: column;
-  max-height: 69vh;
+  max-height: 68vh;
   overflow-y: auto;
 }
 
@@ -171,13 +171,6 @@
 
 .tbc-details-table-cell-description {
   width: 400px;
-}
-
-.tbc-spending-report-table-body {
-  display: flex;
-  flex-direction: column;
-  max-height: 69vh;
-  overflow-y: auto;
 }
 
 

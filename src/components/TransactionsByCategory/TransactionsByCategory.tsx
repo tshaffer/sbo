@@ -102,11 +102,10 @@ const TransactionsByCategory: React.FC = () => {
   }
 
   const handleNavigateToStatement = (transaction: Transaction) => {
-    if (transaction.bankTransactionType === BankTransactionType.Checking) {
-      navigate(`/statements/checking-account/${transaction.statementId}`);
-    } else if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
-      navigate(`/statements/credit-card/${transaction.statementId}`);
-    }
+    const path = transaction.bankTransactionType === BankTransactionType.Checking
+      ? `/statements/checking-account/${transaction.statementId}`
+      : `/statements/credit-card/${transaction.statementId}`;
+    navigate(`${path}?transactionId=${transaction.id}`);
   };
 
 

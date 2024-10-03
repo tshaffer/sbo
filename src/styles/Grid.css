@@ -5,7 +5,7 @@
   margin: 0 auto;
   border: 1px solid #ccc;
   position: relative;
-  max-height: 650px;
+  max-height: 556px;
   overflow-y: auto;
 }
 
@@ -23,6 +23,8 @@
 
 .grid-table-body {
   display: contents;
+  max-height: 478px;
+  overflow-y: auto;
 }
 
 .grid-table-row {
@@ -70,7 +72,7 @@
   margin: 0 auto;
   border: 1px solid #ccc;
   position: relative;
-  max-height: 650px;
+  max-height: 632px;
   overflow-y: auto;
 }
 
@@ -81,7 +83,7 @@
   margin: 0 auto;
   border: 1px solid #ccc;
   position: relative;
-  max-height: 650px;
+  max-height: 568px;
   overflow-y: auto;
 }
 
