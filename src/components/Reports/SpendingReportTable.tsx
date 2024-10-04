@@ -253,9 +253,6 @@ const SpendingReportTable: React.FC = () => {
       }
     });
 
-    console.log('rows');
-    console.log(rows);
-
     const sortedRows: CategoryExpensesData[] = sortCategoriesRecursively(rows);
 
     // Flatten the sorted structure for rendering

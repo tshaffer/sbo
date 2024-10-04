@@ -55,19 +55,20 @@ const TransactionsTable = <T extends Statement,>({
 
   useEffect(() => {
     if (transactionId && transactionPositions.current[transactionId]) {
-      console.log('Attempting to scroll to transaction:', transactionId);
       setTimeout(() => {
         const transactionElement = transactionRefs.current[transactionId];
         if (transactionElement) {
           const yPosition = transactionPositions.current[transactionId];
           transactionElement.parentElement?.parentElement?.scrollTo({ top: yPosition, behavior: 'smooth' });
 
-          const scrollableParent = transactionElement.closest('.credit-card-statement-grid-table-container');
+          let scrollableParent = transactionElement.closest('.credit-card-statement-grid-table-container');
+          if (!scrollableParent) {
+            scrollableParent = transactionElement.closest('.checking-account-statement-grid-table-container');
+          }
 
           if (scrollableParent) {
-            const hackOffsetValue = 50;
-            scrollableParent.scrollTo({ top: yPosition - hackOffsetValue, behavior: 'smooth' });
-            console.log('Scrollable parent scrollTop after scroll:', scrollableParent.scrollTop);
+            const headerHeight = 39;  // TEDTODO: Replace with the actual height of the header
+            scrollableParent.scrollTo({ top: yPosition - headerHeight, behavior: 'smooth' });
           } else {
             console.log('Scrollable parent not found');
           }
@@ -78,7 +79,7 @@ const TransactionsTable = <T extends Statement,>({
     }
   }, [transactionId]);
 
-// Determine the current statement and its index
+  // Determine the current statement and its index
   const { id } = useParams<{ id: string }>();
   const sortedStatements = cloneDeep(statements).sort((a, b) => b.endDate.localeCompare(a.endDate));
 
