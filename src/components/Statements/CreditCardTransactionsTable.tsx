@@ -1,7 +1,7 @@
 import React from 'react';
 import { Statement, useDispatch, useTypedSelector } from '../../types';
 import { useParams } from 'react-router-dom';
-import { getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../../selectors';
+import { getCreditCardStatementById, getCreditCardStatements, getCreditCardTransactionRowInStatementTableProperties } from '../../selectors';
 import { CreditCardStatement, CreditCardTransactionRowInStatementTableProperties } from '../../types';
 import { updateCategoryInTransactions } from '../../controllers';
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
@@ -17,6 +17,7 @@ const CreditCardTransactionsTable: React.FC = () => {
   const [selectedTransactionIds, setSelectedTransactionId] = React.useState<Set<string>>(new Set());
   const [showOverrideTransactionCategoriesDialog, setShowOverrideTransactionCategoriesDialog] = React.useState(false);
 
+  const statement: Statement = useTypedSelector(state => getCreditCardStatementById(state, id!))!;
   const statements: Statement[] = useTypedSelector(getCreditCardStatements);
   const transactions: CreditCardTransactionRowInStatementTableProperties[] = useTypedSelector(state => getCreditCardTransactionRowInStatementTableProperties(state, id!));
 
@@ -44,6 +45,9 @@ const CreditCardTransactionsTable: React.FC = () => {
         onSave={handleSaveOverrideTransactionCategories}
       />
       <TransactionsTable
+        headerString='Credit Card Transactions'
+        statementStartDate={statement.startDate}
+        statementEndDate={statement.endDate}
         statements={statements}
         transactions={transactions}
         onOverrideTransactionCategories={handleOverrideTransactionCategories}

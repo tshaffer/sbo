@@ -21,6 +21,14 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
+        path: 'statements/credit-card/:id',
+        element: <CreditCardTransactionsTable />,
+      },
+      {
+        path: 'statements/checking-account/:id',
+        element: <CheckingAccountTransactionsTable />,
+      },
+      {
         path: 'statements',
         element: <StatementsTablesContainer />,
         children: [
@@ -29,16 +37,8 @@ const router = createBrowserRouter([
             element: <CreditCardStatementsTable />,
           },
           {
-            path: 'credit-card/:id',
-            element: <CreditCardTransactionsTable />,
-          },
-          {
             path: 'checking-account',
             element: <CheckingAccountStatementsTable />,
-          },
-          {
-            path: 'checking-account/:id',
-            element: <CheckingAccountTransactionsTable />,
           },
         ],
       },

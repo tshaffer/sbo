@@ -1,12 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { cloneDeep } from 'lodash';
 import { Statement } from '../../types';
 
 import '../../styles/Grid.css';
+import { formatDate } from '../../utilities';
 
 interface TransactionsTableProps<T> {
+  headerString: string;
+  statementStartDate: string;
+  statementEndDate: string;
   statements: T[];
   transactions: any[];
   onOverrideTransactionCategories?: (selectedTransactionIds: Set<string>) => void;
@@ -19,6 +23,9 @@ interface TransactionsTableProps<T> {
 }
 
 const TransactionsTable = <T extends Statement,>({
+  headerString,
+  statementStartDate,
+  statementEndDate,
   statements,
   transactions,
   onOverrideTransactionCategories,
@@ -130,6 +137,11 @@ const TransactionsTable = <T extends Statement,>({
 
   return (
     <React.Fragment>
+      <Typography variant="h5">{headerString}</Typography>
+      <Typography variant='subtitle2' style={{ marginLeft: '8px', marginTop: '8px' }}>
+        <span>Start Date: {formatDate(statementStartDate)}</span>
+        <span style={{ marginLeft: '16px' }} >End Date: {formatDate(statementEndDate)}</span>
+      </Typography>
       <Box display="flex" justifyContent="space-between" mb={2}>
         <Button
           onClick={() => navigateToStatement(previousStatement)}
