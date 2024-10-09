@@ -166,7 +166,11 @@ const SelectCategory = (props: SelectCategoryProps) => {
             const selectedCategory = alphabetizedCategories.find(category => category.id === selected);
             return selectedCategory ? selectedCategory.name : '';
           }}
-        >
+          sx={{
+            '& .MuiSelect-select': {
+              padding: '4px', // Set your custom padding here
+            },
+          }}        >
           {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
           <MenuItem onClick={handleOpenNewCategoryDialog}>
             <Button fullWidth>Add New Category</Button>

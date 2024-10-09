@@ -243,6 +243,13 @@ const CategoryAssignmentRulesTable: React.FC = () => {
                         ? editedPatterns[categoryAssignmentRule.id] // Use local value if the user has typed something
                         : categoryAssignmentRule.pattern // Fallback to Redux store value
                     }
+                    InputProps={{
+                      sx: {
+                        '& .MuiInputBase-input': {
+                          padding: '4px', // Set your custom padding here
+                        },
+                      },
+                    }}
                     onChange={(e) => handleInputChange(categoryAssignmentRule.id, e.target.value)}
                     style={{ minWidth: '400px' }}
                     onBlur={() => handleBlur(categoryAssignmentRule.id)}
